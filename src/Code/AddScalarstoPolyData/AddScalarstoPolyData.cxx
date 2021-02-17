@@ -24,7 +24,7 @@ int  main(int argc, char** argv)
     // char *      InputFilename = strdup(argv[1]);
     // char *      OutputFilename = strdup(argv[2]);
     // char *      ScalarsFilename = strdup(argv[3]);
-
+    std::cout<<"AddScalars"<< std::endl;
 	vtkSmartPointer<vtkPolyDataReader> polyIn = vtkSmartPointer<vtkPolyDataReader>::New();
     polyIn->SetFileName(InputFileName.c_str());
     polyIn->Update();

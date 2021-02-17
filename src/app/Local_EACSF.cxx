@@ -34,8 +34,6 @@ int  main(int argc, char** argv)
 
 	PARSE_ARGS;
     QJsonObject root_obj = readConfig(QString::fromStdString(parameters));
-    std::cout<< "tahya" << std::endl;
-    std::cout<< "tahya" << std::endl;
    
 	QApplication app(argc,argv);
     Q_INIT_RESOURCE(Local_EACSF_Resources);
