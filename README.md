@@ -7,20 +7,16 @@ cerbrospinal fluid density
 
 <h2>Build instructions</h2>
 
-1.Get files from Github
-
+1.Get files from Github:
 $ git clone https://github.com/tahya-deddah/Local_EACSF
 
-2.Make an out-of-source build directory
-
+2.Make an out-of-source build directory:
 $ mkdir ./Local_EACSF-build
 $ cd Local_EACSF-build
 
-3.Configure the build
-
+3.Configure the build:
 $ cmake ../Local_EACSF
 $ make
 
-4.Open the application by typing the line below 
-
+4.Open the application by typing the line below :
 $ ./Local_EACSF
