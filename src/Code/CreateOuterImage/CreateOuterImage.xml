@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<executable>
+  <category></category>
+  <title>CreateOuterImage</title>
+  <description></description>
+  <version>1.7.7</version>
+   <parameters advanced="false">
+	   	<file>
+	   		<name>InputImageFile</name>
+	    </file>
+		<file>
+			<name>OutputImageFile</name>
+		</file>
+		<integer>
+		<name>closingradius</name>
+		</integer>
+		<integer>
+			<name>dilationradius</name>
+		</integer>
+		<integer>
+          <name>Reverse</name>
+     	</integer>
+	</parameters>
+</executable>

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<executable>
+  <category>PROJECT</category>
+  <title>Local_EACSF</title>
+  <description>local csf extraction </description>
+  <version>1.7.7</version>
+  <contributor> </contributor>
+   <parameters>
+      <file>
+          <name>parameters</name>
+          <longflag>param</longflag>
+          <flag>p</flag>
+          <description>Input parameters in a json file</description>
+          <channel>input</channel>
+      </file>
+      <boolean>
+          <name>noGUI</name>
+          <longflag>noGUI</longflag>
+          <description>Use AutoEACSF without the GUI</description>
+          <channel>input</channel>
+          <default>true</default>
+      </boolean>
+    </parameters>
+</executable>

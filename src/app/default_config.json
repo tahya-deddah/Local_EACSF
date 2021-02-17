@@ -1,0 +1,46 @@
+{
+	"data":{
+	 	"T1": "/work/tahya/Data/local_EACSf_Extraction/Ben_Test/101247/101247_T1.nrrd",
+		"Seg": "/work/tahya/Data/local_EACSf_Extraction/Ben_Test/101247/101247_Seg.nrrd",
+		"CSF_Prop": "/work/tahya/Data/local_EACSf_Extraction/Ben_Test/101247/101247_CSF_Prop.nrrd",
+		"LH_MID_surface": "/work/tahya/Data/local_EACSf_Extraction/Ben_Test/101247/101247_LH_MID.vtk",
+		"LH_GM_surface": "/work/tahya/Data/local_EACSf_Extraction/Ben_Test/101247/101247_LH_GM.vtk",
+		"RH_MID_surface": "/work/tahya/Data/local_EACSf_Extraction/Ben_Test/101247/101247_RH_MID.vtk",
+        "RH_GM_surface": "/work/tahya/Data/local_EACSf_Extraction/Ben_Test/101247/101247_RH_GM.vtk",
+		"Output_Directory": "/work/tahya/Test/101247"
+	},
+	
+
+ "executables": [
+        {
+            "name": "CreateOuterImage",
+            "path": ""
+        },
+        {
+            "name": "CreateOuterSurface",
+            "path": ""
+        },
+        {
+            "name": "EditPolyData",
+            "path": ""
+        },
+        {
+            "name": "klaplace",
+            "path": "/work/tahya/src/Local_EACSF/src/Code/klaplace/build/klaplace"
+        },
+        {
+            "name": "EstimateCortexStreamlinesDensity",
+            "path": ""
+        },
+        {
+            "name": "AddScalarstoPolyData",
+            "path": ""
+        },
+        {
+            "name": "python3",
+            "path": ""
+        }
+    ]
+
+
+}

@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<executable>
+  <category></category>
+  <title>EditPolyData</title>
+  <description></description>
+  <version>1.7.7</version>
+   <parameters>
+
+      <file>
+        	<name>InputSurfaceFileName</name>
+        	<description>Input Surface FileName</description>
+      </file>
+
+  	  <file>
+  		    <name>OutputSurfaceFileName</name>
+  		    <description>Output Surface FileName</description>
+  	  </file>
+
+      <double>
+          <name>flipx</name>
+      </double>
+
+      <double>
+          <name>flipy</name>
+      </double>
+
+      <double>
+          <name>flipz</name>
+      </double>
+
+  	</parameters>
+</executable>

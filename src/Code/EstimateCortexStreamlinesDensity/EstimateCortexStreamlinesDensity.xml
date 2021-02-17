@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<executable>
+  <category></category>
+  <title>EstimateCortexStreamlinesDensity</title>
+  <description></description>
+  <version>1.7.7</version>
+  <parameters advanced="false">
+ 	  <file>
+      <name>InputSurfaceFileName</name>
+      <description>Input Surface FileName</description>
+    </file>
+    <file>
+      <name>InputOuterStreamlinesFileName</name>
+      <description>Input Outer Streamlines FileName</description>
+    </file>
+    <file>
+      <name>InputSegmentationFileName</name>
+      <description>Input Segmentation FileName</description>
+    </file>
+    <file>
+      <name>InputMaskFileName</name>
+      <description>Input Mask FileName </description>
+    </file>
+    <file>
+      <name>OutputSurfacename</name>
+      <description> Output Surface name </description>
+    </file>
+    <file>
+      <name>OutputVoxelVistitingMap</name>
+      <description> Output Voxel Vistiting Map </description>
+    </file>
+    <integer>
+      <name>SmoothingIter</name>
+      <description>Smoothing Iter</description>
+    </integer>
+    <double>
+      <name>MaxVertexSmoothingDist</name>
+      <description>Max Vertex Smoothing Dist</description>
+    </double>
+  </parameters> 
+</executable>

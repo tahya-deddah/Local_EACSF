@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<executable>
+  <category></category>
+  <title>CreateOuterSurface</title>
+  <description></description>
+  <version>1.7.7</version>
+   <parameters>
+
+   	<file>
+      	<name>InputBinaryImage</name>
+      	<description>Input Binary Image</description>
+    </file>
+	<file>
+		<name>OutputSurfacename</name>
+		<description>Output Surface name</description>
+	</file>
+	<string>
+		<name>NumberOfIterations</name>
+		<description>Number Of Iterations</description>
+	</string>
+	
+   </parameters>
+ 
+</executable>

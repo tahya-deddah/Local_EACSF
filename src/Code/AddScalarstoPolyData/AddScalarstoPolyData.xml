@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<executable>
+  <category></category>
+  <title>AddScalarstoPolyData</title>
+  <description></description>
+  <version>1.7.7</version>
+   <parameters advanced="false">
+	   	<file>
+	   		<name>InputFileName</name>
+	    </file>
+		<file>
+			<name>OutputFileName</name>
+		</file>
+		<file>
+			<name>ScalarsFilename</name>
+		</file>
+		<string>
+			<name>ScalarsName</name>
+		</string>
+	</parameters>
+</executable>

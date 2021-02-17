@@ -1,0 +1,7 @@
+add_subdirectory(CreateOuterImage)
+add_subdirectory(CreateOuterSurface)
+add_subdirectory(EditPolyData)
+add_subdirectory(EstimateCortexStreamlinesDensity)
+#add_subdirectory(klaplace)
+add_subdirectory(AddScalarstoPolyData)
+
