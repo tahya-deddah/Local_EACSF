@@ -12,18 +12,18 @@ from subprocess import Popen
 
 def call_and_print(args):
     #external process calling function with output and errors printing
-    proc = subprocess.Popen(args, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-    proc.wait()
-    out, err = proc.communicate()
 
-    out=out.decode('utf-8')
-    err=err.decode('utf-8')
-    if(out!=''):
-        print(out)
-    if(err!='' and err !='.'):
-        print(err, file=sys.stderr)
-    else:
-        print('exit with success')
+    exe_path = args[0]
+    print(" ".join(args))
+    completed_process = subprocess.run(args)
+    status_code = completed_process.returncode
+    out = completed_process.stdout
+    err = completed_process.stderr
+    print(out)
+    print(status_code)
+    if status_code != 0:
+    	print(err)
+    	print(completed_process.check_returncode())
 
 
 

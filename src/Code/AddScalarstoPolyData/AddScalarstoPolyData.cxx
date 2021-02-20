@@ -24,7 +24,6 @@ int  main(int argc, char** argv)
     // char *      InputFilename = strdup(argv[1]);
     // char *      OutputFilename = strdup(argv[2]);
     // char *      ScalarsFilename = strdup(argv[3]);
-    std::cout<<"AddScalars"<< std::endl;
 	vtkSmartPointer<vtkPolyDataReader> polyIn = vtkSmartPointer<vtkPolyDataReader>::New();
     polyIn->SetFileName(InputFileName.c_str());
     polyIn->Update();
@@ -42,14 +41,13 @@ int  main(int argc, char** argv)
     aux = strtok(line, " = ");
     aux = strtok(NULL, " = ");
     NPoints = atof(aux);
-    std::cout<<NPoints<<std::endl;
+   
 
     input.getline(line, 500, '\n');
     aux = strtok(line, " = ");
     aux = strtok(NULL, " = ");
     NDimension = atof(aux);
 
-    std::cout<<NDimension<<std::endl;
 
     input.getline(line, 500, '\n'); // read type line (Scalars)
 
@@ -57,11 +55,11 @@ int  main(int argc, char** argv)
 
     vtkSmartPointer<vtkFloatArray> scalars = vtkSmartPointer<vtkFloatArray>::New();
     scalars->SetNumberOfComponents(NDimension);
-    //scalars->SetName("EACSF");
     scalars->SetName(ScalarsName.c_str());
 
     for( int i = 0; i < NPoints; i++ )
-    {
+    {   
+        
         input.getline(line, 500, '\n');
         float value=0;
         std::string proc_string = line;
@@ -97,14 +95,15 @@ int  main(int argc, char** argv)
     input.close();
   
     polydataAtt->GetPointData()->AddArray(scalars);
-    //polydataAtt->GetPointData()->SetScalars(scalars);
-    
+    std::cout<<"Add scalars done"<<std::endl;
+
     
     // Writing the new mesh
     vtkSmartPointer<vtkPolyDataWriter> SurfaceWriter = vtkSmartPointer<vtkPolyDataWriter>::New();
     SurfaceWriter->SetInputData(polydataAtt);
     SurfaceWriter->SetFileName(OutputFileName.c_str());
     SurfaceWriter->Update();
+    std::cout<<"add scalars write to the output"<<std::endl;
     
 }
 
