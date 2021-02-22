@@ -16,18 +16,19 @@ def call_and_print(args):
 	exe_path = args[0]
 	print(" ".join(args))
 	    
-	completed_process = subprocess.run(args, capture_output=True)
+	completed_process = subprocess.run(args, capture_output=True, text=True)
 	   
 	status_code = completed_process.returncode
 	out = completed_process.stdout
 	err = completed_process.stderr
+	check_returncode = completed_process.check_returncode()
 
 	    
 	print(out)
 	print(status_code)
 	if status_code != 0:
 	   	print(err)
-	   	print(completed_process.check_returncode())
+	   	print(check_returncode)
 
 	
 
@@ -80,32 +81,33 @@ def process_LH(args):
 	else:
 		print('Creating Outer LH Convex Hull Surface')
 		print('Creating LH Outer Image')
-		call_and_print([CreateOuterImage,"Seg.nrrd","LH_GM_Dilated.nrrd", '15','2','0'])
-		print('Creating LH Outer Surface')
-		call_and_print([CreateOuterSurface,"LH_GM_Dilated.nrrd", "LH_GM_Outer_MC.vtk",'1'])
-		call_and_print([EditPolyData,"LH_GM_Outer_MC.vtk", "LH_GM_Outer_MC.vtk", ' -1', ' -1', '1'])
-		print('Creating Outer LH Convex Hull Surface Done!')
+		#call_and_print([CreateOuterImage,"Seg.nrrd","LH_GM_Dilated.nrrd", '15','2','0'])
+		call_and_print([CreateOuterImage,"Seg.nrrd","LH_GM_Dilated.nrrd", '15','2'])
+		# print('Creating LH Outer Surface')
+		# call_and_print([CreateOuterSurface,"LH_GM_Dilated.nrrd", "LH_GM_Outer_MC.vtk",'1'])
+		# call_and_print([EditPolyData,"LH_GM_Outer_MC.vtk", "LH_GM_Outer_MC.vtk", ' -1', ' -1', '1'])
+		# print('Creating Outer LH Convex Hull Surface Done!')
 
 
-		print('Creating LH streamlines')
-		print('CEstablishing Surface Correspondance')
-		call_and_print([klaplace,'-dims','300',"LH_MID.vtk", "LH_GM_Outer_MC.vtk",'-surfaceCorrespondence',"LH_Outer.corr"])
+	# 	print('Creating LH streamlines')
+	# 	print('CEstablishing Surface Correspondance')
+	# 	call_and_print([klaplace,'-dims','300',"LH_MID.vtk", "LH_GM_Outer_MC.vtk",'-surfaceCorrespondence',"LH_Outer.corr"])
 
-		print('CEstablishing Streamlines')
-		call_and_print([klaplace, '-traceStream',"LH_Outer.corr_field.vts","LH_MID.vtk", "LH_GM_Outer_MC.vtk", "LH_Outer_streamlines.vtp", \
-									"LH_Outer_points.vtp",'-traceDirection','forward'])
-		call_and_print([klaplace, '-conv',"LH_Outer_streamlines.vtp", "LH_Outer_streamlines.vtk"])
-		print('Creating LH streamlines Done!')
+	# 	print('CEstablishing Streamlines')
+	# 	call_and_print([klaplace, '-traceStream',"LH_Outer.corr_field.vts","LH_MID.vtk", "LH_GM_Outer_MC.vtk", "LH_Outer_streamlines.vtp", \
+	# 								"LH_Outer_points.vtp",'-traceDirection','forward'])
+	# 	call_and_print([klaplace, '-conv',"LH_Outer_streamlines.vtp", "LH_Outer_streamlines.vtk"])
+	# 	print('Creating LH streamlines Done!')
 
 
-	CSFDensdity_Path=os.path.join(LH_Directory,"LH_MID.CSFDensity.txt")
-	CSFDensityExistenceTest = os.path.isfile(CSFDensdity_Path)
-	if CSFDensityExistenceTest==True :
-		print('Computing LH EACSF Done')
-	else :
-		print('Computing LH EACSF  ')
-		call_and_print([EstimateCortexStreamlinesDensity, "LH_MID.vtk", "LH_Outer_streamlines.vtk", "CSF_Prop.nrrd", "LH_GM_Dilated.nrrd", "LH_CSF_Density.vtk","LH__Visitation.nrrd",'0','0'])
-		call_and_print([AddScalarstoPolyData,"LH_GM.vtk", "LH_GM.vtk", "LH_MID.CSFDensity.txt", "EACSF"])
+	# CSFDensdity_Path=os.path.join(LH_Directory,"LH_MID.CSFDensity.txt")
+	# CSFDensityExistenceTest = os.path.isfile(CSFDensdity_Path)
+	# if CSFDensityExistenceTest==True :
+	# 	print('Computing LH EACSF Done')
+	# else :
+	# 	print('Computing LH EACSF  ')
+	# 	call_and_print([EstimateCortexStreamlinesDensity, "LH_MID.vtk", "LH_Outer_streamlines.vtk", "CSF_Prop.nrrd", "LH_GM_Dilated.nrrd", "LH_CSF_Density.vtk","LH__Visitation.nrrd",'0','0'])
+	# 	call_and_print([AddScalarstoPolyData,"LH_GM.vtk", "LH_GM.vtk", "LH_MID.CSFDensity.txt", "EACSF"])
 
 
 

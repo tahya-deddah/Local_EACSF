@@ -3,6 +3,9 @@ cmake_minimum_required(VERSION 2.8.7)
 # specify the C++ standard
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
+if(COMMAND CMAKE_POLICY)
+  cmake_policy(SET CMP0003 NEW)
+endif()
 
 
 SET(APP_NAME CreateOuterImage)

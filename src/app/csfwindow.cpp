@@ -11,7 +11,9 @@
 #include <QFileDialog>
 #include <QtCore>
 #include <QBoxLayout>
+#include <QTextStream>
 #include "ui_csfwindow.h"
+
 
 
 CSFWindow::CSFWindow(QWidget *m_parent)
@@ -39,7 +41,6 @@ CSFWindow::CSFWindow(QWidget *m_parent)
 
     if (!executables.keys().isEmpty())
     {
-
         m_exeWidget->buildInterface(executables);
         m_exeWidget->setExeDir(QDir::currentPath());
         exe_layout->addWidget(m_exeWidget,Qt::AlignCenter);
@@ -304,7 +305,7 @@ void CSFWindow::prc_finished(int exitCode, QProcess::ExitStatus exitStatus){
     QString output_dir = data_obj["output_dir"].toString();
 
     QString exit_message;
-    exit_message = QString("EACSF pipeline ") + ((exitStatus == QProcess::NormalExit) ? QString("exited with code ") + QString::number(exitCode) : QString("crashed"));
+    exit_message = QString("Local_EACSF pipeline ") + ((exitStatus == QProcess::NormalExit) ? QString("exited with code ") + QString::number(exitCode) : QString("crashed"));
     if (exitCode==0)
     {
         exit_message="<font color=\"green\"><b>"+exit_message+"</b></font>";
@@ -319,19 +320,37 @@ void CSFWindow::prc_finished(int exitCode, QProcess::ExitStatus exitStatus){
 }
 
 
-void CSFWindow::disp_output(){
-     QString p_stdout = prc->readAll();
-     output->append(p_stdout);
-     qDebug()<<"Python result="<<p_stdout;
+void CSFWindow::disp_output(QString output_dir)
+{
+
+    QFile Output_filename(QDir::cleanPath(output_dir + QString("/Output_filename.txt"))); 
+    Output_filename.open(QIODevice::ReadOnly);
+    QTextStream out(&Output_filename); 
+    qDebug()<< QDir::cleanPath(output_dir + QString("/Output_filename.txt"));
+    while (!out.atEnd())
+        {   
+            std::cout<< "fd" <<std::endl;
+            QString line = out.readLine(); 
+            output->append(line); 
+            qDebug()<<line ;
+        }   
 }
 
-void CSFWindow::disp_err(){
-    QString p_stderr = prc->readAllStandardError();
-    error->append(p_stderr);
-    qDebug()<<"Python error:"<<p_stderr;
+void CSFWindow::disp_err(QString output_dir)
+{       
+
+    QFile Output_filename(QDir::cleanPath(output_dir + QString("/Errors_filename.txt"))); 
+    Output_filename.open(QIODevice::ReadOnly);
+    QTextStream out(&Output_filename); 
+    qDebug()<< QDir::cleanPath(output_dir + QString("/Errors_filename.txt"));
+    while (!out.atEnd())
+        {   
+            std::cout<< "fd" <<std::endl;
+            QString line = out.readLine(); 
+            error->append(line); 
+            qDebug()<<line ;
+        }   
 }
-
-
 
 
 void CSFWindow::on_Execute_clicked()
@@ -349,22 +368,27 @@ void CSFWindow::on_Execute_clicked()
     QString main_script = QDir::cleanPath(scripts_dir + QString("/main_script.py"));
     QStringList params = QStringList() << main_script;
 
-    connect(prc, SIGNAL(finished(int,QProcess::ExitStatus)), this, SLOT(prc_finished(int, QProcess::ExitStatus)));
-    //connect(prc, SIGNAL(started()), this, SLOT(prc_started()));
-    connect(prc, SIGNAL(readyReadStandardOutput()), this, SLOT(disp_output()));
-    connect(prc, SIGNAL(readyReadStandardError()), this, SLOT(disp_err()));
-    prc->setWorkingDirectory(output_dir);
+    prc->setStandardOutputFile(QDir::cleanPath(output_dir + QString("/Output_filename.txt")));
+    prc->setStandardErrorFile(QDir::cleanPath(output_dir + QString("/Errors_filename.txt")));
 
+    connect(prc, SIGNAL(finished(int,QProcess::ExitStatus)), this, SLOT(prc_finished(int, QProcess::ExitStatus)));
+   
+    prc->setWorkingDirectory(output_dir);
+    
     QMap<QString, QString> executables = m_exeWidget->GetExeMap();
     
     prc->start(executables[QString("python3")], params);
-    
+  
     QMessageBox::information(
         this,
         tr("Auto EACSF"),
         tr("Is running.")
     );
 
+// Display the output and errors in the interface
+    prc->waitForFinished();
+    disp_output(output_dir);
+    disp_err(output_dir);
 
 }
 

@@ -17,8 +17,5 @@
 		<integer>
 			<name>dilationradius</name>
 		</integer>
-		<integer>
-          <name>Reverse</name>
-     	</integer>
 	</parameters>
 </executable>

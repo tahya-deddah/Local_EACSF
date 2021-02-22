@@ -68,8 +68,8 @@ private:
 private slots:
 
     void prc_finished(int exitCode, QProcess::ExitStatus exitStatus);
-    void disp_output();
-    void disp_err();
+    void disp_output(QString output_dir);
+    void disp_err(QString output_dir);
 
     void on_actionSave_Config_File_triggered();
     void on_actionLoad_Config_File_triggered();

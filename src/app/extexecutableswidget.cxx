@@ -16,11 +16,15 @@ ExtExecutablesWidget::ExtExecutablesWidget(QWidget *m_parent) :
 vector<QString> ExtExecutablesWidget::buildInterface(QMap<QString,QString> exeMap)
 {
     QLayout *verticalLayout = new QVBoxLayout();
+    verticalLayout->setAlignment(Qt::AlignTop);
     vector<QString> notFound;
+    
 
     foreach (const QString exeName, exeMap.keys()) //create the buttons/lineEdit for each executable
     {
-        QWidget *containerWidget = new QWidget;
+        QWidget *containerWidget = new QWidget();
+        containerWidget->setFixedSize(800, 40);
+        containerWidget->move(10, 10);
         QLayout *horizontalLayout = new QHBoxLayout();
         verticalLayout->addWidget(containerWidget);
         QPushButton *qpb =  new QPushButton();
@@ -50,6 +54,7 @@ vector<QString> ExtExecutablesWidget::buildInterface(QMap<QString,QString> exeMa
         horizontalLayout->addWidget(qpb);
         horizontalLayout->addWidget(lined);
         containerWidget->setLayout(horizontalLayout);
+    
     }
     this->setLayout(verticalLayout);
 
