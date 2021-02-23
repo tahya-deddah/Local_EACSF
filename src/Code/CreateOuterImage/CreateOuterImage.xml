@@ -3,19 +3,37 @@
   <category></category>
   <title>CreateOuterImage</title>
   <description></description>
-  <version>1.7.7</version>
+  <version></version>
    <parameters advanced="false">
 	   	<file>
 	   		<name>InputImageFile</name>
+	   		<longflag>InputImg</longflag>
+          	<flag>I</flag>
+          	<description>Input Image a nrrd file </description>
 	    </file>
 		<file>
 			<name>OutputImageFile</name>
+			<longflag>OutputImg</longflag>
+          	<flag>O</flag>
+          	<description>Output Image a nrrd file </description>
 		</file>
 		<integer>
-		<name>closingradius</name>
+			<name>closingradius</name>
+			<longflag>closingradius</longflag>
+          	<flag>c</flag>
+          	<description></description>
 		</integer>
 		<integer>
 			<name>dilationradius</name>
+			<longflag>dilationradius</longflag>
+          	<flag>d</flag>
+          	<description></description>
+		</integer>
+		<integer>
+			<name>Reverse</name>
+			<longflag>Reverse</longflag>
+          	<flag>R</flag>
+          	<description></description>
 		</integer>
 	</parameters>
 </executable>

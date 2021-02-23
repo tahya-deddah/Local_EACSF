@@ -16,12 +16,6 @@ int main(int argc, char ** argv)
 {  
   PARSE_ARGS;
 
-  if(argc < 4)
-    {
-        std::cerr << "Usage: " << argv[0] << "InputBinaryImage OutputSurfacename NumberOfIterations" << endl;
-        return EXIT_FAILURE;
-    }
-
   const unsigned int Dimension = 3;
   typedef unsigned char PixelType;
   typedef itk::Image<PixelType, Dimension>  ImageType;
@@ -62,7 +56,7 @@ int main(int argc, char ** argv)
   vtkSmartPointer<vtkSmoothPolyDataFilter> smoothFilter =
   vtkSmartPointer<vtkSmoothPolyDataFilter>::New();
   smoothFilter->SetInputConnection( decimate->GetOutputPort());
-    smoothFilter->SetNumberOfIterations(atoi(const_cast<char*>(NumberOfIterations.c_str())));
+    smoothFilter->SetNumberOfIterations(NumberOfIterations);
     smoothFilter->SetRelaxationFactor(0.5);
     smoothFilter->FeatureEdgeSmoothingOff();
     smoothFilter->BoundarySmoothingOn();
@@ -70,12 +64,9 @@ int main(int argc, char ** argv)
   std::cout << "VTK Smoothing mesh finished...." << std::endl;
   vtkPolyData* SmoothedPolyData = smoothFilter->GetOutput();
 
-  // Get the Surface filename from the command line
-
-  std::string outputSurfaceFilename = OutputSurfacename;
 
   vtkSmartPointer<vtkPolyDataWriter> writer = vtkSmartPointer<vtkPolyDataWriter>::New();
-  writer->SetFileName(outputSurfaceFilename.c_str());
+  writer->SetFileName(OutputSurfacename.c_str());
   writer->SetInputData(SmoothedPolyData);
   writer->SetFileTypeToASCII();
   writer->Write();

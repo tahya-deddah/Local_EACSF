@@ -23,16 +23,15 @@ def call_and_print(args):
 	err = completed_process.stderr
 	check_returncode = completed_process.check_returncode()
 
-	    
-	print(out)
-	print(status_code)
+	print("status code is:",status_code)
+	if err!="":
+		print("error: ",err)
+	if out!="":
+		print("output message :",out)
 	if status_code != 0:
-	   	print(err)
-	   	print(check_returncode)
+	   	print("return code:",check_returncode)
 
 	
-
-
 
 def main_loop(args):
 	start = time.time()
@@ -81,23 +80,22 @@ def process_LH(args):
 	else:
 		print('Creating Outer LH Convex Hull Surface')
 		print('Creating LH Outer Image')
-		#call_and_print([CreateOuterImage,"Seg.nrrd","LH_GM_Dilated.nrrd", '15','2','0'])
-		call_and_print([CreateOuterImage,"Seg.nrrd","LH_GM_Dilated.nrrd", '15','2'])
-		# print('Creating LH Outer Surface')
-		# call_and_print([CreateOuterSurface,"LH_GM_Dilated.nrrd", "LH_GM_Outer_MC.vtk",'1'])
-		# call_and_print([EditPolyData,"LH_GM_Outer_MC.vtk", "LH_GM_Outer_MC.vtk", ' -1', ' -1', '1'])
-		# print('Creating Outer LH Convex Hull Surface Done!')
+		call_and_print([CreateOuterImage,"--InputImg", "Seg.nrrd", "--OutputImg", "LH_GM_Dilated.nrrd", "--closingradius", '15', "--dilationradius", '2', "--Reverse", '0'])
+		print('Creating LH Outer Surface')
+		call_and_print([CreateOuterSurface,"--InputBinaryImg","LH_GM_Dilated.nrrd", "--OutputSurface","LH_GM_Outer_MC.vtk", "--NumberIterations",'1'])
+		call_and_print([EditPolyData, "--InputSurface","LH_GM_Outer_MC.vtk", "--OutputSurface","LH_GM_Outer_MC.vtk", "--flipx", ' -1', "--flipy", ' -1', "--flipz", '1'])
+		print('Creating Outer LH Convex Hull Surface Done!')
 
 
-	# 	print('Creating LH streamlines')
-	# 	print('CEstablishing Surface Correspondance')
-	# 	call_and_print([klaplace,'-dims','300',"LH_MID.vtk", "LH_GM_Outer_MC.vtk",'-surfaceCorrespondence',"LH_Outer.corr"])
+		print('Creating LH streamlines')
+		print('CEstablishing Surface Correspondance')
+		call_and_print([klaplace,'-dims','300',"LH_MID.vtk", "LH_GM_Outer_MC.vtk",'-surfaceCorrespondence',"LH_Outer.corr"])
 
-	# 	print('CEstablishing Streamlines')
-	# 	call_and_print([klaplace, '-traceStream',"LH_Outer.corr_field.vts","LH_MID.vtk", "LH_GM_Outer_MC.vtk", "LH_Outer_streamlines.vtp", \
-	# 								"LH_Outer_points.vtp",'-traceDirection','forward'])
-	# 	call_and_print([klaplace, '-conv',"LH_Outer_streamlines.vtp", "LH_Outer_streamlines.vtk"])
-	# 	print('Creating LH streamlines Done!')
+		print('CEstablishing Streamlines')
+		call_and_print([klaplace, '-traceStream',"LH_Outer.corr_field.vts","LH_MID.vtk", "LH_GM_Outer_MC.vtk", "LH_Outer_streamlines.vtp", \
+									"LH_Outer_points.vtp",'-traceDirection','forward'])
+		call_and_print([klaplace, '-conv',"LH_Outer_streamlines.vtp", "LH_Outer_streamlines.vtk"])
+		print('Creating LH streamlines Done!')
 
 
 	# CSFDensdity_Path=os.path.join(LH_Directory,"LH_MID.CSFDensity.txt")

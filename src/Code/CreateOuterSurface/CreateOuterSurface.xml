@@ -1,24 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
 <executable>
   <category></category>
-  <title>CreateOuterSurface</title>
+  <title>Create Outer Surface</title>
   <description></description>
-  <version>1.7.7</version>
+  <version></version>
    <parameters>
-
-   	<file>
-      	<name>InputBinaryImage</name>
-      	<description>Input Binary Image</description>
-    </file>
-	<file>
-		<name>OutputSurfacename</name>
-		<description>Output Surface name</description>
-	</file>
-	<string>
-		<name>NumberOfIterations</name>
-		<description>Number Of Iterations</description>
-	</string>
-	
-   </parameters>
- 
+     	<file>
+        <name>InputBinaryImage</name>
+        <longflag>InputBinaryImg</longflag>
+        <flag>I</flag>
+        <description>Input Image a binary  nrrd file </description>
+      </file>
+  	  <file>
+    		<name>OutputSurfacename</name>
+    		<longflag>OutputSurface</longflag>
+        <flag>O</flag>
+        <description>output surface a vtk file </description>
+  	  </file>
+  	  <integer>
+    		<name>NumberOfIterations</name>
+    		<longflag>NumberIterations</longflag>
+        <flag>N</flag>
+        <description>Number of iteration </description>
+  	  </integer>
+	 </parameters>
 </executable>

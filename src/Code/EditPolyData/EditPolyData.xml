@@ -3,30 +3,37 @@
   <category></category>
   <title>EditPolyData</title>
   <description></description>
-  <version>1.7.7</version>
+  <version></version>
    <parameters>
-
       <file>
-        	<name>InputSurfaceFileName</name>
-        	<description>Input Surface FileName</description>
+        <name>InputSurfaceFileName</name>
+        <longflag>InputSurface</longflag>
+        <flag>I</flag>
+        <description>Input surface file name a vtk file </description>
       </file>
-
   	  <file>
-  		    <name>OutputSurfaceFileName</name>
-  		    <description>Output Surface FileName</description>
+		    <name>OutputSurfaceFileName</name>
+		    <longflag>OutputSurface</longflag>
+        <flag>O</flag>
+        <description>Output surface file name a vtk file </description>
   	  </file>
-
       <double>
-          <name>flipx</name>
+        <name>flipx</name>
+        <longflag>flipx</longflag>
+        <flag>x</flag>
+        <description>value of flip following the x direction </description>
       </double>
-
       <double>
-          <name>flipy</name>
+        <name>flipy</name>
+        <longflag>flipy</longflag>
+        <flag>y</flag>
+        <description>value of flip following the y direction </description>
       </double>
-
       <double>
-          <name>flipz</name>
+        <name>flipz</name>
+        <longflag>flipz</longflag>
+        <flag>z</flag>
+        <description>value of flip following the z direction </description>
       </double>
-
   	</parameters>
 </executable>

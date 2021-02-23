@@ -14,20 +14,11 @@
 int main ( int argc, char *argv[] )
 {
    PARSE_ARGS;
-  // Ensure a filename was specified
-  if(argc < 6)
-    {
-    std::cerr << "Usage: " << argv[0] << " InputSurfaceFileName OutputSurfaceFileName flipx flipy flipz" << endl;
-    return EXIT_FAILURE;
-    }
-
-  // Get the Surface filename from the command line
-  std::string inputSurfaceFilename = InputSurfaceFileName;
 
   // Get all surface data from the file
   vtkSmartPointer<vtkGenericDataObjectReader> reader = 
       vtkSmartPointer<vtkGenericDataObjectReader>::New();
-  reader->SetFileName(inputSurfaceFilename.c_str());
+  reader->SetFileName(InputSurfaceFileName.c_str());
   reader->Update();
 
   vtkPolyData* inputPolyData = reader->GetPolyDataOutput();

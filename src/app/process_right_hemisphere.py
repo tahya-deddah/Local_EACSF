@@ -11,22 +11,24 @@ from subprocess import Popen
 
 
 def call_and_print(args):
-    #external process calling function with output and errors printing
 
-    exe_path = args[0]
-    print(" ".join(args))
-    completed_process = subprocess.run(args,capture_output=True)
-    status_code = completed_process.returncode
-    out = completed_process.stdout
-    err = completed_process.stderr
-    check_returncode = completed_process.check_returncode()
+	exe_path = args[0]
+	print(" ".join(args))
+	    
+	completed_process = subprocess.run(args, capture_output=True, text=True)
+	   
+	status_code = completed_process.returncode
+	out = completed_process.stdout
+	err = completed_process.stderr
+	check_returncode = completed_process.check_returncode()
 
-    
-    print(out)
-    print(status_code)
-    if status_code != 0:
-    	print(err)
-    	print(check_returncode)
+	print("status code is:",status_code)
+	if err!="":
+		print("error: ",err)
+	if out!="":
+		print("output message :",out)
+	if status_code != 0:
+	   	print("return code:",check_returncode)
 
 
 
@@ -78,21 +80,21 @@ def process_RH(args):
 	else:
 		print('Creating Outer RH Convex Hull Surface')
 		print('Creating RH Outer Image')
-		call_and_print([CreateOuterImage,"Seg.nrrd","RH_GM_Dilated.nrrd", '15','2','1'])
-		# print('Creating RH Outer Surface')
-		# call_and_print([CreateOuterSurface,"RH_GM_Dilated.nrrd", "RH_GM_Outer_MC.vtk",'1'])
-		# call_and_print([EditPolyData,"RH_GM_Outer_MC.vtk","RH_GM_Outer_MC.vtk",' -1',' -1','1'])
-		# print('Creating Outer RH Convex Hull Surface Done!')
+		call_and_print([CreateOuterImage,"--InputImg", "Seg.nrrd", "--OutputImg","RH_GM_Dilated.nrrd", "--closingradius",'15', "--dilationradius",'2', "--Reverse",'1'])
+		print('Creating RH Outer Surface')
+		call_and_print([CreateOuterSurface, "--InputBinaryImg", "RH_GM_Dilated.nrrd", "--OutputSurface", "RH_GM_Outer_MC.vtk", "--NumberIterations", '1'])
+		call_and_print([EditPolyData, "--InputSurface", "RH_GM_Outer_MC.vtk", "--OutputSurface", "RH_GM_Outer_MC.vtk", "--flipx", ' -1', "--flipy", ' -1', "--flipz", '1'])
+		print('Creating Outer RH Convex Hull Surface Done!')
 
-	# 	print('Creating RH streamlines')
-	# 	print('CEstablishing Surface Correspondance')
-	# 	call_and_print([klaplace,'-dims','300',"RH_MID.vtk", "RH_GM_Outer_MC.vtk",'-surfaceCorrespondence',"RH_Outer.corr"])
+		print('Creating RH streamlines')
+		print('CEstablishing Surface Correspondance')
+		call_and_print([klaplace,'-dims','300',"RH_MID.vtk", "RH_GM_Outer_MC.vtk",'-surfaceCorrespondence',"RH_Outer.corr"])
 
-	# 	print('CEstablishing Streamlines')
-	# 	call_and_print([klaplace, '-traceStream',"RH_Outer.corr_field.vts","RH_MID.vtk", "RH_GM_Outer_MC.vtk", "RH_Outer_streamlines.vtp", \
-	# 								"RH_Outer_points.vtp",'-traceDirection','forward'])
-	# 	call_and_print([klaplace, '-conv',"RH_Outer_streamlines.vtp", "RH_Outer_streamlines.vtk"])
-	# 	print('Creating RH streamlines Done!')
+		print('CEstablishing Streamlines')
+		call_and_print([klaplace, '-traceStream',"RH_Outer.corr_field.vts","RH_MID.vtk", "RH_GM_Outer_MC.vtk", "RH_Outer_streamlines.vtp", \
+									"RH_Outer_points.vtp",'-traceDirection','forward'])
+		call_and_print([klaplace, '-conv',"RH_Outer_streamlines.vtp", "RH_Outer_streamlines.vtk"])
+		print('Creating RH streamlines Done!')
 
 
 	# CSFDensdity_Path=os.path.join(RH_Directory,"RH_MID.CSFDensity.txt")

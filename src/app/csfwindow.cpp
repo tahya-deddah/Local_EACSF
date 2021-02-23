@@ -326,10 +326,9 @@ void CSFWindow::disp_output(QString output_dir)
     QFile Output_filename(QDir::cleanPath(output_dir + QString("/Output_filename.txt"))); 
     Output_filename.open(QIODevice::ReadOnly);
     QTextStream out(&Output_filename); 
-    qDebug()<< QDir::cleanPath(output_dir + QString("/Output_filename.txt"));
     while (!out.atEnd())
-        {   
-            std::cout<< "fd" <<std::endl;
+        {  
+            qDebug()<< "fff"; 
             QString line = out.readLine(); 
             output->append(line); 
             qDebug()<<line ;
@@ -342,10 +341,8 @@ void CSFWindow::disp_err(QString output_dir)
     QFile Output_filename(QDir::cleanPath(output_dir + QString("/Errors_filename.txt"))); 
     Output_filename.open(QIODevice::ReadOnly);
     QTextStream out(&Output_filename); 
-    qDebug()<< QDir::cleanPath(output_dir + QString("/Errors_filename.txt"));
     while (!out.atEnd())
         {   
-            std::cout<< "fd" <<std::endl;
             QString line = out.readLine(); 
             error->append(line); 
             qDebug()<<line ;
