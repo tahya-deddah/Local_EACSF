@@ -1,4 +1,3 @@
-
 #ifndef CSFWINDOW_H
 #define CSFWINDOW_H
 
@@ -39,7 +38,6 @@ namespace Ui{
 class CSFWindow;
 }
 
-//Declaration of myWindow
 class CSFWindow: public QMainWindow, public Ui::CSFWindow
 {
 
@@ -96,6 +94,7 @@ private:
     QProcess *visualization;
     QJsonObject root_obj ;
     ExtExecutablesWidget* m_exeWidget;
+static const QString m_github_url;
 
     
 };

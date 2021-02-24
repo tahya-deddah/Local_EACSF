@@ -3,7 +3,7 @@
   <category>PROJECT</category>
   <title>Local_EACSF</title>
   <description>local csf extraction </description>
-  <version>1.7.7</version>
+  <version></version>
   <contributor> </contributor>
    <parameters>
       <file>
@@ -16,8 +16,8 @@
       <boolean>
           <name>noGUI</name>
           <longflag>noGUI</longflag>
+          <flag>n</flag>
           <description>Use AutoEACSF without the GUI</description>
-          <channel>input</channel>
           <default>true</default>
       </boolean>
     </parameters>

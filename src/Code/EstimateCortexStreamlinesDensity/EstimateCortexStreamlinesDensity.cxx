@@ -45,31 +45,21 @@
 int main ( int argc, char *argv[] )
 {
   PARSE_ARGS;
-  // Ensure a filename was specified
-  if(argc < 7)
-    {
-    std::cerr << "Usage: " << argv[0] << " InputSurfaceFileName InputOuterStreamlinesFileName InputSegmentationFileName InputMaskFileName OutputSurfacename OutputVoxelVistitingMap [SmoothingIter] [MaxVertexSmoothingDist]" <<std::endl;
-    return EXIT_FAILURE;
-    }
-
-
-
   int start_s=clock();
 
   
 
-// Get the Surface filename from the command line
 std::string inputSurfaceFilename = InputSurfaceFileName;
-// Get all surface data from the file
 vtkSmartPointer<vtkPolyDataReader> surfacereader =
   vtkSmartPointer<vtkPolyDataReader>::New();
 surfacereader->SetFileName(inputSurfaceFilename.c_str());
 surfacereader->Update();
 
+
 vtkPolyData* inputPolyData = surfacereader->GetOutput();
 std::cout << "Input surface has " << inputPolyData->GetNumberOfPoints() << " points." << std::endl;
 
-// Get the Outer Streamlines filename from the command line
+
 std::string outerstreamlinesFileName = InputOuterStreamlinesFileName;
 vtkSmartPointer<vtkGenericDataObjectReader> outerstreamlinesreader = 
     vtkSmartPointer<vtkGenericDataObjectReader>::New();
@@ -82,7 +72,6 @@ vtkDoubleArray* OuterLengthArray = vtkDoubleArray::SafeDownCast(outerstreamlines
 
 // Get the segmentation filename from the command line
 std::string inputSegmentationFilename = InputSegmentationFileName;
-// Get all segmentation data from the image
 const unsigned int Dimension = 3;
 typedef double                      PixelType;
 typedef itk::Image< PixelType, Dimension > ImageType;
@@ -344,7 +333,7 @@ for (int iter = 0; iter < Max_iter; iter++)
       {
               //std::cout << "Current Connected Vertex = " << connectedVertices->GetId(ID) << " to seed " << seed << endl;
               double seed_np[3];
-        inputPolyData->GetPoint(connectedVertices->GetId(ID),seed_np);
+              inputPolyData->GetPoint(connectedVertices->GetId(ID),seed_np);
               double squaredDistance = vtkMath::Distance2BetweenPoints(seed_p, seed_np);
               double distance = sqrt(squaredDistance);
               double weight = (1-distance/MAXDIST) * int(distance<MAXDIST);

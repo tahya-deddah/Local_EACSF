@@ -3,38 +3,54 @@
   <category></category>
   <title>EstimateCortexStreamlinesDensity</title>
   <description></description>
-  <version>1.7.7</version>
+  <version></version>
   <parameters advanced="false">
  	  <file>
       <name>InputSurfaceFileName</name>
-      <description>Input Surface FileName</description>
+      <longflag>InputSurface</longflag>
+      <flag>I</flag>
+      <description>Input MID surface a VTK file </description>
     </file>
     <file>
       <name>InputOuterStreamlinesFileName</name>
-      <description>Input Outer Streamlines FileName</description>
+      <longflag>InputOuterStreamlines</longflag>
+      <flag>S</flag>
+      <description>Input Streamlines FileName a VTK file </description>
     </file>
     <file>
       <name>InputSegmentationFileName</name>
-      <description>Input Segmentation FileName</description>
+      <longflag>InputSegmentation</longflag>
+      <flag>p</flag>
+      <description>Input Segmentation FileName a nnrd file </description>
     </file>
     <file>
       <name>InputMaskFileName</name>
-      <description>Input Mask FileName </description>
+      <longflag>InputMask</longflag>
+      <flag>m</flag>
+      <description>Input Mask FileName a nnrd file </description>
     </file>
     <file>
       <name>OutputSurfacename</name>
-      <description> Output Surface name </description>
+      <longflag>OutputSurface</longflag>
+      <flag>O</flag>
+      <description> Output Surface filename </description>
     </file>
     <file>
       <name>OutputVoxelVistitingMap</name>
-      <description> Output Voxel Vistiting Map </description>
+      <longflag>VistitingMap</longflag>
+      <flag>v</flag>
+      <description> Output Voxel Vistiting Map a nrrd file</description>
     </file>
     <integer>
       <name>SmoothingIter</name>
+      <longflag>SmoothingIter</longflag>
+      <flag>i</flag>
       <description>Smoothing Iter</description>
     </integer>
     <double>
       <name>MaxVertexSmoothingDist</name>
+      <longflag>MaxVertexSmoothingDist</longflag>
+      <flag>j</flag>
       <description>Max Vertex Smoothing Dist</description>
     </double>
   </parameters> 

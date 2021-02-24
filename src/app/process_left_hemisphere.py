@@ -98,14 +98,16 @@ def process_LH(args):
 		print('Creating LH streamlines Done!')
 
 
-	# CSFDensdity_Path=os.path.join(LH_Directory,"LH_MID.CSFDensity.txt")
-	# CSFDensityExistenceTest = os.path.isfile(CSFDensdity_Path)
-	# if CSFDensityExistenceTest==True :
-	# 	print('Computing LH EACSF Done')
-	# else :
-	# 	print('Computing LH EACSF  ')
-	# 	call_and_print([EstimateCortexStreamlinesDensity, "LH_MID.vtk", "LH_Outer_streamlines.vtk", "CSF_Prop.nrrd", "LH_GM_Dilated.nrrd", "LH_CSF_Density.vtk","LH__Visitation.nrrd",'0','0'])
-	# 	call_and_print([AddScalarstoPolyData,"LH_GM.vtk", "LH_GM.vtk", "LH_MID.CSFDensity.txt", "EACSF"])
+	CSFDensdity_Path=os.path.join(LH_Directory,"LH_MID.CSFDensity.txt")
+	CSFDensityExistenceTest = os.path.isfile(CSFDensdity_Path)
+	if CSFDensityExistenceTest==True :
+		print('Computing LH EACSF Done')
+	else :
+		print('Computing LH EACSF  ')
+		call_and_print([EstimateCortexStreamlinesDensity, "--InputSurface" ,"LH_MID.vtk", "--InputOuterStreamlines",  "LH_Outer_streamlines.vtk",\
+			"--InputSegmentation", "CSF_Prop.nrrd", "--InputMask", "LH_GM_Dilated.nrrd", "--OutputSurface", "LH_CSF_Density.vtk", "--VistitingMap",\
+			"LH__Visitation.nrrd", "--SmoothingIter", '0',"--MaxVertexSmoothingDist", '0'])
+		call_and_print([AddScalarstoPolyData, "--InputFile", "LH_GM.vtk", "--OutputFile", "LH_GM.vtk", "--ScalarsFile", "LH_MID.CSFDensity.txt", "--Scalars_Name", 'EACSF'])
 
 
 

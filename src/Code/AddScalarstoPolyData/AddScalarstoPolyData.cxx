@@ -15,15 +15,8 @@
 int  main(int argc, char** argv) 
 {
     PARSE_ARGS;
-	if(argc < 5)
-    {
-    std::cerr << "Usage: " << argv[0] << " InputFileName  OutputFileName ScalarsFilename ScalarsName " << endl;
-    return EXIT_FAILURE;
-    }
-
-    // char *      InputFilename = strdup(argv[1]);
-    // char *      OutputFilename = strdup(argv[2]);
-    // char *      ScalarsFilename = strdup(argv[3]);
+   
+	
 	vtkSmartPointer<vtkPolyDataReader> polyIn = vtkSmartPointer<vtkPolyDataReader>::New();
     polyIn->SetFileName(InputFileName.c_str());
     polyIn->Update();
@@ -42,13 +35,12 @@ int  main(int argc, char** argv)
     aux = strtok(NULL, " = ");
     NPoints = atof(aux);
    
-
     input.getline(line, 500, '\n');
     aux = strtok(line, " = ");
     aux = strtok(NULL, " = ");
     NDimension = atof(aux);
 
-
+   
     input.getline(line, 500, '\n'); // read type line (Scalars)
 
 
@@ -56,6 +48,7 @@ int  main(int argc, char** argv)
     vtkSmartPointer<vtkFloatArray> scalars = vtkSmartPointer<vtkFloatArray>::New();
     scalars->SetNumberOfComponents(NDimension);
     scalars->SetName(ScalarsName.c_str());
+    std::cout<< ScalarsName.c_str() << std::endl;
 
     for( int i = 0; i < NPoints; i++ )
     {   
@@ -95,7 +88,7 @@ int  main(int argc, char** argv)
     input.close();
   
     polydataAtt->GetPointData()->AddArray(scalars);
-    std::cout<<"Add scalars done"<<std::endl;
+
 
     
     // Writing the new mesh
@@ -103,7 +96,8 @@ int  main(int argc, char** argv)
     SurfaceWriter->SetInputData(polydataAtt);
     SurfaceWriter->SetFileName(OutputFileName.c_str());
     SurfaceWriter->Update();
-    std::cout<<"add scalars write to the output"<<std::endl;
+
+    return EXIT_SUCCESS;
     
 }
 

@@ -3,19 +3,31 @@
   <category></category>
   <title>AddScalarstoPolyData</title>
   <description></description>
-  <version>1.7.7</version>
-   <parameters advanced="false">
+  <version></version>
+   <parameters>
 	   	<file>
 	   		<name>InputFileName</name>
+	   		<longflag>InputFile</longflag>
+      		<flag>I</flag>
+      		<description>Input file name </description>
 	    </file>
 		<file>
 			<name>OutputFileName</name>
+			<longflag>OutputFile</longflag>
+      		<flag>O</flag>
+      		<description>Output file Name </description>
 		</file>
 		<file>
 			<name>ScalarsFilename</name>
+			<longflag>ScalarsFile</longflag>
+      		<flag>F</flag>
+      		<description>file containing scalars to add to the polydata</description>
 		</file>
 		<string>
 			<name>ScalarsName</name>
+			<longflag>Scalars_Name</longflag>
+      		<flag>N</flag>
+      		<description>name to give to the scalars array </description>
 		</string>
 	</parameters>
 </executable>

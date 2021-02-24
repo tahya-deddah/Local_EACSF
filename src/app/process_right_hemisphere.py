@@ -97,14 +97,16 @@ def process_RH(args):
 		print('Creating RH streamlines Done!')
 
 
-	# CSFDensdity_Path=os.path.join(RH_Directory,"RH_MID.CSFDensity.txt")
-	# CSFDensityExistenceTest = os.path.isfile(CSFDensdity_Path)
-	# if CSFDensityExistenceTest==True :
-	# 	print('Computing RH EACSF Done')
-	# else :
-	# 	print('Computing RH EACSF  ')
-	# 	call_and_print([EstimateCortexStreamlinesDensity,"RH_MID.vtk", "RH_Outer_streamlines.vtk","CSF_Prop.nrrd", "RH_GM_Dilated.nrrd", "RH_CSF_Density.vtk","RH__Visitation.nrrd",'0','0'])
-	# 	call_and_print([AddScalarstoPolyData,"RH_GM.vtk", "RH_GM.vtk", "RH_MID.CSFDensity.txt",'EACSF']) 
+	CSFDensdity_Path=os.path.join(RH_Directory,"RH_MID.CSFDensity.txt")
+	CSFDensityExistenceTest = os.path.isfile(CSFDensdity_Path)
+	if CSFDensityExistenceTest==True :
+		print('Computing RH EACSF Done')
+	else :
+		print('Computing RH EACSF  ')
+		call_and_print([EstimateCortexStreamlinesDensity, "--InputSurface" ,"RH_MID.vtk", "--InputOuterStreamlines",  "RH_Outer_streamlines.vtk",\
+			"--InputSegmentation", "CSF_Prop.nrrd", "--InputMask", "RH_GM_Dilated.nrrd", "--OutputSurface", "RH_CSF_Density.vtk", "--VistitingMap",\
+			"RH__Visitation.nrrd", "--SmoothingIter", '0', "--MaxVertexSmoothingDist", '0'])
+		call_and_print([AddScalarstoPolyData, "--InputFile", "RH_GM.vtk", "--OutputFile", "RH_GM.vtk", "--ScalarsFile", "RH_MID.CSFDensity.txt", "--Scalars_Name", 'EACSF'])
 
 	
 

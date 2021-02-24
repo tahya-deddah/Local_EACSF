@@ -16,6 +16,18 @@
 
 
 
+#ifndef Local_EACSF_TITLE
+#define Local_EACSF_TITLE "Local_EACSF"
+#endif
+
+#ifndef Local_EACSF_CONTRIBUTORS
+#define Local_EACSF_CONTRIBUTORS "Martin Styner, Juan Prieto, Tahya Deddah"
+#endif
+
+const QString CSFWindow::m_github_url = "https://github.com/tahya-deddah/Local_EACSF";
+
+
+
 CSFWindow::CSFWindow(QWidget *m_parent)
     :QMainWindow(m_parent)
 {
@@ -328,7 +340,6 @@ void CSFWindow::disp_output(QString output_dir)
     QTextStream out(&Output_filename); 
     while (!out.atEnd())
         {  
-            qDebug()<< "fff"; 
             QString line = out.readLine(); 
             output->append(line); 
             qDebug()<<line ;
