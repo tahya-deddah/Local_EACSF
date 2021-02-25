@@ -1,8 +1,8 @@
 {
 	"data":{
 	 	"T1": "/work/tahya/Data/local_EACSf_Extraction/Ben_Test/101247/101247_T1.nrrd",
-		"Seg": "/work/tahya/Data/local_EACSf_Extraction/Ben_Test/101247/101247_Seg.nrrd",
-		"CSF_Prop": "/work/tahya/Data/local_EACSf_Extraction/Ben_Test/101247/101247_CSF_Prop.nrrd",
+		"Tissu_Segmentation": "/work/tahya/Data/local_EACSf_Extraction/Ben_Test/101247/101247_Seg.nrrd",
+		"CSF_Probability_Map": "/work/tahya/Data/local_EACSf_Extraction/Ben_Test/101247/101247_CSF_Prop.nrrd",
 		"LH_MID_surface": "/work/tahya/Data/local_EACSf_Extraction/Ben_Test/101247/101247_LH_MID.vtk",
 		"LH_GM_surface": "/work/tahya/Data/local_EACSf_Extraction/Ben_Test/101247/101247_LH_GM.vtk",
 		"RH_MID_surface": "/work/tahya/Data/local_EACSf_Extraction/Ben_Test/101247/101247_RH_MID.vtk",

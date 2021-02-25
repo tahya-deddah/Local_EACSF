@@ -11,7 +11,6 @@
 #include <QJsonDocument>
 #include <QMap>
 #include <QTextStream>
-#include <QRegularExpressionMatch>
 
 using namespace std;
 

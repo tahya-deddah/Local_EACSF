@@ -1,20 +1,12 @@
 #include "csfwindow.h"
-#include <iostream>
+
 #include<stdlib.h>
 #include <string>
 #include <iostream>
-#include <QPixmap>
-#include <QPainter>
 #include <QtGui>
-#include <QImage>
-#include <QMessageBox>
 #include <QFileDialog>
-#include <QtCore>
 #include <QBoxLayout>
 #include <QTextStream>
-#include "ui_csfwindow.h"
-
-
 
 #ifndef Local_EACSF_TITLE
 #define Local_EACSF_TITLE "Local_EACSF"
@@ -32,10 +24,8 @@ CSFWindow::CSFWindow(QWidget *m_parent)
     :QMainWindow(m_parent)
 {
     
-    //Setup the graphical layout on this current Widget
     this->setupUi(this);
     prc = new QProcess;
-    visualization = new QProcess;
     QJsonObject root_obj = readConfig(QString(":/config/default_config.json"));
 
 
@@ -61,8 +51,7 @@ CSFWindow::CSFWindow(QWidget *m_parent)
 
 }
 
-CSFWindow::~CSFWindow()
-{}
+CSFWindow::~CSFWindow(){}
 
 
 QJsonObject CSFWindow::readConfig(QString filename)
@@ -99,8 +88,8 @@ void CSFWindow::setConfig(QJsonObject root_obj)
 {
     QJsonObject data_obj = root_obj["data"].toObject();
     lineEdit_T1img->setText(data_obj["T1"].toString()); 
-    lineEdit_Segmentation->setText(data_obj["Seg"].toString());
-    lineEdit_CSF_Probability_Map->setText(data_obj["CSF_Prop"].toString());
+    lineEdit_Segmentation->setText(data_obj["Tissu_Segmentation"].toString());
+    lineEdit_CSF_Probability_Map->setText(data_obj["CSF_Probability_Map"].toString());
     lineEdit_LH_MID_Surface->setText(data_obj["LH_MID_surface"].toString());
     lineEdit_LH_GM_Surface->setText(data_obj["LH_GM_surface"].toString());
     lineEdit_RH_MID_Surface->setText(data_obj["RH_MID_surface"].toString());
@@ -113,8 +102,8 @@ QJsonObject CSFWindow::getConfig(){
 
     QJsonObject data_obj; 
     data_obj["T1"]=lineEdit_T1img->text();
-    data_obj["Seg"]=lineEdit_Segmentation->text();
-    data_obj["CSF_Prop"]=lineEdit_CSF_Probability_Map->text();
+    data_obj["Tissu_Segmentation"]=lineEdit_Segmentation->text();
+    data_obj["CSF_Probability_Map"]=lineEdit_CSF_Probability_Map->text();
     data_obj["LH_MID_surface"]=lineEdit_LH_MID_Surface->text();
     data_obj["LH_GM_surface"]=lineEdit_LH_GM_Surface->text();
     data_obj["RH_MID_surface"]=lineEdit_RH_MID_Surface->text();
@@ -214,6 +203,18 @@ void CSFWindow::on_actionSave_Config_File_triggered()
             }
         }
 
+}
+
+//Help menu
+
+
+void CSFWindow::on_actionAbout_triggered()
+{
+    QString messageBoxTitle = "About " + QString( Local_EACSF_TITLE );
+           QString aboutFADTTS;
+           aboutFADTTS = "<b>Contributors:</b> " + QString( Local_EACSF_CONTRIBUTORS ) + "<br>"
+                  "<b>Github:</b> <a href=" + m_github_url + ">Click here</a><br>";
+       QMessageBox::information( this, tr( qPrintable( messageBoxTitle ) ), tr( qPrintable( aboutFADTTS ) ), QMessageBox::Ok );
 }
 
 
@@ -401,18 +402,6 @@ void CSFWindow::on_Execute_clicked()
 }
 
 
-// 4th Tab - Visualization
-
-void CSFWindow::on_Visualize_clicked()
-{
-      display();
-}
-void CSFWindow::display()
-{
-    visualization->start(QString("itksnap"));
-    visualization->waitForFinished(-1);
-
-}
 
 
 

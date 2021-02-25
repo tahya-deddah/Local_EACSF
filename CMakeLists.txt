@@ -7,14 +7,14 @@ set(CMAKE_AUTOMOC ON)
 
 # find Qt5 headers
 if(UNIX AND NOT APPLE)
-  find_package(Qt5 COMPONENTS Widgets Gui X11Extras DBus REQUIRED)
+  find_package(Qt5 COMPONENTS Widgets Gui X11Extras Core DBus REQUIRED)
 else(UNIX AND NOT APPLE)
   find_package(Qt5 COMPONENTS Widgets REQUIRED)
 endif(UNIX AND NOT APPLE)
 
+
 include_directories(${Qt5Widgets_INCLUDE_DIRS})
 add_definitions(${Qt5Widgets_DEFINITIONS})
-
 set(QT_LIBRARIES ${Qt5Widgets_LIBRARIES})
 
 

@@ -25,9 +25,9 @@ def call_and_print(args):
 
 	print("status code is:",status_code)
 	if err!="":
-		print("error: ",err)
+		print(err)
 	if out!="":
-		print("output message :",out)
+		print(out)
 	if status_code != 0:
 	   	print("return code:",check_returncode)
 
@@ -54,8 +54,8 @@ def process_LH(args):
 	if Data_existence_test==False:
 		print("Copying Data")
 		copyfile(args.T1, os.path.join(LH_Directory,"T1.nrrd"))
-		copyfile(args.Seg, os.path.join(LH_Directory,"Seg.nrrd"))
-		copyfile(args.CSF_Prop, os.path.join(LH_Directory,"CSF_Prop.nrrd"))
+		copyfile(args.Tissu_Segmentation, os.path.join(LH_Directory,"Tissu_Segmentation.nrrd"))
+		copyfile(args.CSF_Probability_Map, os.path.join(LH_Directory,"CSF_Probability_Map.nrrd"))
 		copyfile(args.LH_MID_surface, os.path.join(LH_Directory,"LH_MID.vtk"))
 		copyfile(args.LH_GM_surface, os.path.join(LH_Directory,"LH_GM.vtk"))
 		print("Copying Done")
@@ -80,7 +80,7 @@ def process_LH(args):
 	else:
 		print('Creating Outer LH Convex Hull Surface')
 		print('Creating LH Outer Image')
-		call_and_print([CreateOuterImage,"--InputImg", "Seg.nrrd", "--OutputImg", "LH_GM_Dilated.nrrd", "--closingradius", '15', "--dilationradius", '2', "--Reverse", '0'])
+		call_and_print([CreateOuterImage,"--InputImg", "Tissu_Segmentation.nrrd", "--OutputImg", "LH_GM_Dilated.nrrd", "--closingradius", '15', "--dilationradius", '2', "--Reverse", '0'])
 		print('Creating LH Outer Surface')
 		call_and_print([CreateOuterSurface,"--InputBinaryImg","LH_GM_Dilated.nrrd", "--OutputSurface","LH_GM_Outer_MC.vtk", "--NumberIterations",'1'])
 		call_and_print([EditPolyData, "--InputSurface","LH_GM_Outer_MC.vtk", "--OutputSurface","LH_GM_Outer_MC.vtk", "--flipx", ' -1', "--flipy", ' -1', "--flipz", '1'])
@@ -105,7 +105,7 @@ def process_LH(args):
 	else :
 		print('Computing LH EACSF  ')
 		call_and_print([EstimateCortexStreamlinesDensity, "--InputSurface" ,"LH_MID.vtk", "--InputOuterStreamlines",  "LH_Outer_streamlines.vtk",\
-			"--InputSegmentation", "CSF_Prop.nrrd", "--InputMask", "LH_GM_Dilated.nrrd", "--OutputSurface", "LH_CSF_Density.vtk", "--VistitingMap",\
+			"--InputSegmentation", "CSF_Probability_Map.nrrd", "--InputMask", "LH_GM_Dilated.nrrd", "--OutputSurface", "LH_CSF_Density.vtk", "--VistitingMap",\
 			"LH__Visitation.nrrd", "--SmoothingIter", '0',"--MaxVertexSmoothingDist", '0'])
 		call_and_print([AddScalarstoPolyData, "--InputFile", "LH_GM.vtk", "--OutputFile", "LH_GM.vtk", "--ScalarsFile", "LH_MID.CSFDensity.txt", "--Scalars_Name", 'EACSF'])
 
@@ -113,8 +113,8 @@ def process_LH(args):
 
 parser = argparse.ArgumentParser(description='Calculates CSF Density')
 parser.add_argument("--T1",type=str, help='T1 Image', default="@T1_IMAGE@")
-parser.add_argument("--Seg",type=str, help='Tissu Segmentation for Outer CSF Hull Creation', default="@Seg@")
-parser.add_argument("--CSF_Prop",type=str, help='CSF Probality Map', default="@CSF_Prop@")
+parser.add_argument("--Tissu_Segmentation",type=str, help='Tissu Segmentation for Outer CSF Hull Creation', default="@Tissu_Segmentation@")
+parser.add_argument("--CSF_Probability_Map",type=str, help='CSF Probality Map', default="@CSF_Probability_Map@")
 parser.add_argument("--LH_MID_surface",type=str, help='Left Hemisphere MID Surface', default="@LH_MID_surface@")
 parser.add_argument("--LH_GM_surface",type=str, help='Left Hemisphere GM Surface', default="@LH_GM_surface@")
 parser.add_argument("--Output_Directory",type=str, help='Output Directory', default="@Output_Directory@")

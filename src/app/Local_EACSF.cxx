@@ -1,17 +1,17 @@
 #include "Local_EACSFCLP.h"
+#include "csfwindow.h"
 
-#include <stdio.h>
-#include <stdlib.h>
 #include <QApplication>
 #include <QFile>
 #include <QJsonObject>
 #include <QString>
 #include <QFileInfo>
 #include <QObject>
-#include "csfwindow.h"
-#include "ui_csfwindow.h"
+
 #include <string>
 #include <iostream>
+#include <stdio.h>
+#include <stdlib.h>
 
 QJsonObject readConfig(QString filename)
 {
@@ -38,9 +38,10 @@ int  main(int argc, char** argv)
 	QApplication app(argc,argv);
     Q_INIT_RESOURCE(Local_EACSF_Resources);
 	CSFWindow csfw;
-    if(parameters.compare("") != 0){
-            csfw.setConfig(root_obj);    
-        }
+    if(parameters.compare("") != 0)
+    {
+        csfw.setConfig(root_obj);    
+    }
 	csfw.show();
 	return app.exec();
     

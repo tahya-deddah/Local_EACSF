@@ -24,11 +24,11 @@ def call_and_print(args):
 
 	print("status code is:",status_code)
 	if err!="":
-		print("error: ",err)
+		print(err)
 	if out!="":
 		print("output message :",out)
 	if status_code != 0:
-	   	print("return code:",check_returncode)
+	   	print(check_returncode)
 
 
 
@@ -54,8 +54,8 @@ def process_RH(args):
 	if Data_existence_test==False:
 		print("Copying Data")
 		copyfile(args.T1, os.path.join(RH_Directory,"T1.nrrd"))
-		copyfile(args.Seg, os.path.join(RH_Directory,"Seg.nrrd"))
-		copyfile(args.CSF_Prop, os.path.join(RH_Directory,"CSF_Prop.nrrd"))
+		copyfile(args.Tissu_Segmentation, os.path.join(RH_Directory,"Tissu_Segmentation.nrrd"))
+		copyfile(args.CSF_Probability_Map, os.path.join(RH_Directory,"CSF_Probability_Map.nrrd"))
 		copyfile(args.RH_MID_surface, os.path.join(RH_Directory,"RH_MID.vtk"))
 		copyfile(args.RH_GM_surface, os.path.join(RH_Directory,"RH_GM.vtk"))
 		print("Copying Done")
@@ -80,7 +80,7 @@ def process_RH(args):
 	else:
 		print('Creating Outer RH Convex Hull Surface')
 		print('Creating RH Outer Image')
-		call_and_print([CreateOuterImage,"--InputImg", "Seg.nrrd", "--OutputImg","RH_GM_Dilated.nrrd", "--closingradius",'15', "--dilationradius",'2', "--Reverse",'1'])
+		call_and_print([CreateOuterImage,"--InputImg", "Tissu_Segmentation.nrrd", "--OutputImg","RH_GM_Dilated.nrrd", "--closingradius",'15', "--dilationradius",'2', "--Reverse",'1'])
 		print('Creating RH Outer Surface')
 		call_and_print([CreateOuterSurface, "--InputBinaryImg", "RH_GM_Dilated.nrrd", "--OutputSurface", "RH_GM_Outer_MC.vtk", "--NumberIterations", '1'])
 		call_and_print([EditPolyData, "--InputSurface", "RH_GM_Outer_MC.vtk", "--OutputSurface", "RH_GM_Outer_MC.vtk", "--flipx", ' -1', "--flipy", ' -1', "--flipz", '1'])
@@ -104,7 +104,7 @@ def process_RH(args):
 	else :
 		print('Computing RH EACSF  ')
 		call_and_print([EstimateCortexStreamlinesDensity, "--InputSurface" ,"RH_MID.vtk", "--InputOuterStreamlines",  "RH_Outer_streamlines.vtk",\
-			"--InputSegmentation", "CSF_Prop.nrrd", "--InputMask", "RH_GM_Dilated.nrrd", "--OutputSurface", "RH_CSF_Density.vtk", "--VistitingMap",\
+			"--InputSegmentation", "CSF_Probability_Map.nrrd", "--InputMask", "RH_GM_Dilated.nrrd", "--OutputSurface", "RH_CSF_Density.vtk", "--VistitingMap",\
 			"RH__Visitation.nrrd", "--SmoothingIter", '0', "--MaxVertexSmoothingDist", '0'])
 		call_and_print([AddScalarstoPolyData, "--InputFile", "RH_GM.vtk", "--OutputFile", "RH_GM.vtk", "--ScalarsFile", "RH_MID.CSFDensity.txt", "--Scalars_Name", 'EACSF'])
 
@@ -113,8 +113,8 @@ def process_RH(args):
 
 parser = argparse.ArgumentParser(description='Calculates CSF Density')
 parser.add_argument("--T1",type=str, help='T1 Image', default="@T1_IMAGE@")
-parser.add_argument("--Seg",type=str, help='Tissu Segmentation for Outer CSF Hull Creation', default="@Seg@")
-parser.add_argument("--CSF_Prop",type=str, help='CSF Probality Map', default="@CSF_Prop@")
+parser.add_argument("--Tissu_Segmentation",type=str, help='Tissu Segmentation for Outer CSF Hull Creation', default="@Tissu_Segmentation@")
+parser.add_argument("--CSF_Probability_Map",type=str, help='CSF Probality Map', default="@CSF_Probability_Map@")
 parser.add_argument("--RH_MID_surface",type=str, help='Right Hemisphere MID Surface',default="@RH_MID_surface@")
 parser.add_argument("--RH_GM_surface",type=str, help='Right Hemisphere GM Surface', default="@RH_GM_surface@")
 parser.add_argument("--Output_Directory",type=str, help='Output Directory', default="@Output_Directory@")

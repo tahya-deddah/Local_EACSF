@@ -9,30 +9,17 @@
 #include <QMap>
 #include <QProcess>
 #include <QMessageBox>
-#include <QTranslator>
-#include <iostream>
 #include <QFile>
 #include <QString>
 #include <QDir>
 #include <QJsonArray>
 #include <QJsonDocument>
 #include <QTextStream>
-#include <QPixmap>
-#include <QRegularExpressionMatch>
+
+
 #include "ui_csfwindow.h"
 #include "csfscripts.h"
 #include "extexecutableswidget.h"
-
-
-#include <QMainWindow>
-#include <QWidget>
-#include <QJsonObject>
-#include <QJsonDocument>
-#include <QtCore>
-#include <QMap>
-#include <QProcess>
-#include <QMessageBox>
-
 
 namespace Ui{
 class CSFWindow;
@@ -69,11 +56,13 @@ private slots:
     void disp_output(QString output_dir);
     void disp_err(QString output_dir);
 
+    //File
     void on_actionSave_Config_File_triggered();
     void on_actionLoad_Config_File_triggered();
-
-    void updateExecutables(QString exeName, QString path);
-
+    //About
+    void on_actionAbout_triggered();
+    
+    //1st tab
     void on_T1_clicked();
     void on_Segmentation_clicked();
     void on_CSF_Probability_Map_clicked();
@@ -82,19 +71,19 @@ private slots:
     void on_RH_MID_Surface_clicked();
     void on_RH_GM_Surface_clicked();
     void on_output_directory_clicked();
-    void on_Execute_clicked();
-    void on_Visualize_clicked();
-    void display();
 
+    //2nd tab
+    void updateExecutables(QString exeName, QString path);
+
+    //3rd tab
+    void on_Execute_clicked();
     
 private:
 
-   
     QProcess *prc;
-    QProcess *visualization;
     QJsonObject root_obj ;
     ExtExecutablesWidget* m_exeWidget;
-static const QString m_github_url;
+    static const QString m_github_url;
 
     
 };

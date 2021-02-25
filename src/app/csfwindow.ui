@@ -30,7 +30,7 @@
      <string/>
     </property>
     <property name="currentIndex">
-     <number>2</number>
+     <number>0</number>
     </property>
     <widget class="QWidget" name="tab_input">
      <attribute name="title">
@@ -329,24 +329,6 @@
       </property>
      </widget>
     </widget>
-    <widget class="QWidget" name="tab_visualization">
-     <attribute name="title">
-      <string>Visualization</string>
-     </attribute>
-     <widget class="QPushButton" name="Visualize">
-      <property name="geometry">
-       <rect>
-        <x>390</x>
-        <y>50</y>
-        <width>101</width>
-        <height>31</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>Visualize</string>
-      </property>
-     </widget>
-    </widget>
    </widget>
   </widget>
   <widget class="QMenuBar" name="menuBar">
@@ -366,18 +348,14 @@
     <addaction name="actionLoad_Config_File"/>
     <addaction name="actionSave_Config_File"/>
    </widget>
-   <widget class="QMenu" name="menuEdit">
-    <property name="title">
-     <string>Edit</string>
-    </property>
-   </widget>
    <widget class="QMenu" name="menuHelp">
     <property name="title">
      <string>Help</string>
     </property>
+    <addaction name="separator"/>
+    <addaction name="actionAbout"/>
    </widget>
    <addaction name="menuFile"/>
-   <addaction name="menuEdit"/>
    <addaction name="menuHelp"/>
   </widget>
   <action name="actionLoad_Config_File">
@@ -391,6 +369,11 @@
   <action name="actionSave_Config_File">
    <property name="text">
     <string>Save Config File</string>
+   </property>
+  </action>
+  <action name="actionAbout">
+   <property name="text">
+    <string>About</string>
    </property>
   </action>
  </widget>

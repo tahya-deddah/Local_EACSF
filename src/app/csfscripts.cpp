@@ -1,16 +1,16 @@
 #include "csfscripts.h"
 
+
 CSFScripts::CSFScripts(){
     m_PythonScripts = QString("/PythonScripts");
 }
 
-CSFScripts::~CSFScripts(){
+CSFScripts::~CSFScripts(){}
 
-}
 
 void CSFScripts::run_EACSF()
 {
-    //0. WRITE MAIN_SCRIPT
+   
     QJsonObject data_obj = m_Root_obj["data"].toObject();
 
     QDir out_dir = QDir();
@@ -18,11 +18,11 @@ void CSFScripts::run_EACSF()
     out_dir.mkdir(QDir::cleanPath(checkStringValue(data_obj["Output_Directory"]) + m_PythonScripts));
 
     
-    //QFile saveFile(QDir::cleanPath(checkStringValue(data_obj["Output_Directory"]) + "/ExtracrCSF_config.json"));
-    //saveFile.open(QIODevice::WriteOnly);
-    //QJsonDocument saveDoc(m_Root_obj);
-    //saveFile.write(saveDoc.toJson());
-    //saveFile.close();
+    QFile saveFile(QDir::cleanPath(checkStringValue(data_obj["Output_Directory"]) + "/Local_EACSF_config.json"));
+    saveFile.open(QIODevice::WriteOnly);
+    QJsonDocument saveDoc(m_Root_obj);
+    saveFile.write(saveDoc.toJson());
+    saveFile.close();
 
 
     //0. WRITE MAIN_SCRIPT
@@ -33,9 +33,6 @@ void CSFScripts::run_EACSF()
 
     //2. WRITE PROCESS_RIGHT_HEMISPHERE
      write_process_right_hemisphere();
-
-   
-
     
 }
 
@@ -89,8 +86,8 @@ void CSFScripts::write_process_left_hemisphere()
     file_left_hemisphere.close();
 
     script_left_hemisphere.replace("@T1_IMAGE@", checkStringValue(data_obj["T1"]));
-    script_left_hemisphere.replace("@Seg@", checkStringValue(data_obj["Seg"]));
-    script_left_hemisphere.replace("@CSF_Prop@", checkStringValue(data_obj["CSF_Prop"]));
+    script_left_hemisphere.replace("@Tissu_Segmentation@", checkStringValue(data_obj["Tissu_Segmentation"]));
+    script_left_hemisphere.replace("@CSF_Probability_Map@", checkStringValue(data_obj["CSF_Probability_Map"]));
     script_left_hemisphere.replace("@LH_MID_surface@", checkStringValue(data_obj["LH_MID_surface"]));
     script_left_hemisphere.replace("@LH_GM_surface@", checkStringValue(data_obj["LH_GM_surface"]));
     script_left_hemisphere.replace("@Output_Directory@", checkStringValue(data_obj["Output_Directory"]));
@@ -135,8 +132,8 @@ void CSFScripts::write_process_right_hemisphere()
     file_right_hemisphere.close();
 
     script_right_hemisphere.replace("@T1_IMAGE@", checkStringValue(data_obj["T1"]));
-    script_right_hemisphere.replace("@Seg@", checkStringValue(data_obj["Seg"]));
-    script_right_hemisphere.replace("@CSF_Prop@", checkStringValue(data_obj["CSF_Prop"]));
+    script_right_hemisphere.replace("@Tissu_Segmentation@", checkStringValue(data_obj["Tissu_Segmentation"]));
+    script_right_hemisphere.replace("@CSF_Probability_Map@", checkStringValue(data_obj["CSF_Probability_Map"]));
     script_right_hemisphere.replace("@RH_MID_surface@", checkStringValue(data_obj["RH_MID_surface"]));
     script_right_hemisphere.replace("@RH_GM_surface@", checkStringValue(data_obj["RH_GM_surface"]));
     script_right_hemisphere.replace("@Output_Directory@", checkStringValue(data_obj["Output_Directory"]));
