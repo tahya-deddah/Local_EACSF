@@ -2,10 +2,10 @@
 <executable>
   <category>PROJECT</category>
   <title>Local_EACSF</title>
-  <description>local csf extraction </description>
-  <version></version>
-  <contributor> </contributor>
-   <parameters>
+  <version>1.0.0</version>
+  <contributor>Martin Styner, Juan Prieto, Tahya Deddah</contributor>
+  <description>local csf extraction</description>
+  <parameters>
       <file>
           <name>parameters</name>
           <longflag>param</longflag>
