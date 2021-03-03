@@ -2,7 +2,7 @@
 <executable>
   <category></category>
   <title>EditPolyData</title>
-  <description></description>
+  <description>Flip the input Surface</description>
   <version></version>
    <parameters>
       <file>

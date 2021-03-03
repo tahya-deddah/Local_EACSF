@@ -23,19 +23,21 @@ vector<QString> ExtExecutablesWidget::buildInterface(QMap<QString,QString> exeMa
     foreach (const QString exeName, exeMap.keys()) //create the buttons/lineEdit for each executable
     {
         QWidget *containerWidget = new QWidget();
-        containerWidget->setFixedSize(800, 40);
-        containerWidget->move(10, 10);
+        //containerWidget->setFixedSize(800, 40);
+        //containerWidget->move(10, 10);
         QLayout *horizontalLayout = new QHBoxLayout();
         verticalLayout->addWidget(containerWidget);
         QPushButton *qpb =  new QPushButton();
         qpb->setText(exeName);
-        qpb->setMinimumWidth(181);
+        //qpb->setMinimumWidth(181);
+        qpb->setMinimumWidth(230);
         qpb->setMinimumHeight(31);
         qpb->setMaximumHeight(31);
         qpb->setSizePolicy(QSizePolicy::Preferred,QSizePolicy::Fixed);
         QObject::connect(qpb,SIGNAL(clicked()),this,SLOT(exeQpbTriggered()));
         QLineEdit *lined = new QLineEdit();
-        lined->setMinimumWidth(521);
+        //lined->setMinimumWidth(521);
+        lined->setMinimumWidth(570);
         lined->setMinimumHeight(31);
         lined->setMaximumHeight(31);
         lined->setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Fixed);

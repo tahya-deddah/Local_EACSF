@@ -371,34 +371,59 @@ void CSFWindow::on_Execute_clicked()
     csfscripts.run_EACSF();
 
     QJsonObject data_obj = root_obj["data"].toObject();
-
     QString output_dir = data_obj["Output_Directory"].toString();
-    QString scripts_dir = QDir::cleanPath(output_dir + QString("/PythonScripts"));
-    QString main_script = QDir::cleanPath(scripts_dir + QString("/main_script.py"));
-    QStringList params = QStringList() << main_script;
 
-    prc->setStandardOutputFile(QDir::cleanPath(output_dir + QString("/Output_filename.txt")));
-    prc->setStandardErrorFile(QDir::cleanPath(output_dir + QString("/Errors_filename.txt")));
+    if (local->isChecked())
+    {
+        QString scripts_dir = QDir::cleanPath(output_dir + QString("/PythonScripts"));
+        QString main_script = QDir::cleanPath(scripts_dir + QString("/main_script.py"));
+        QStringList params = QStringList() << main_script;
 
-    connect(prc, SIGNAL(finished(int,QProcess::ExitStatus)), this, SLOT(prc_finished(int, QProcess::ExitStatus)));
-   
-    prc->setWorkingDirectory(output_dir);
+        prc->setStandardOutputFile(QDir::cleanPath(output_dir + QString("/Output_filename.txt")));
+        prc->setStandardErrorFile(QDir::cleanPath(output_dir + QString("/Errors_filename.txt")));
+        connect(prc, SIGNAL(finished(int,QProcess::ExitStatus)), this, SLOT(prc_finished(int, QProcess::ExitStatus)));
+        prc->setWorkingDirectory(output_dir);
+        
+        QMap<QString, QString> executables = m_exeWidget->GetExeMap();
+        
+        prc->start(executables[QString("python3")], params);
+      
+        QMessageBox::information(
+            this,
+            tr("Auto EACSF"),
+            tr("Is running.")
+        );
+        prc->waitForFinished();
+        disp_output(output_dir);
+        disp_err(output_dir);
+    }
     
-    QMap<QString, QString> executables = m_exeWidget->GetExeMap();
+    if (longleaf->isChecked())
+    {
+        QString scripts_dir = QDir::cleanPath(output_dir + QString("/PythonScripts"));
+        QString slurm_script = QDir::cleanPath(scripts_dir + QString("/slurm-job"));
+        QStringList params = QStringList() << slurm_script;
+
+        prc->setStandardOutputFile(QDir::cleanPath(output_dir + QString("/Output_filename.txt")));
+        prc->setStandardErrorFile(QDir::cleanPath(output_dir + QString("/Errors_filename.txt")));
+        connect(prc, SIGNAL(finished(int,QProcess::ExitStatus)), this, SLOT(prc_finished(int, QProcess::ExitStatus)));
+        prc->setWorkingDirectory(output_dir);
+        
+        QMap<QString, QString> executables = m_exeWidget->GetExeMap();
+        
+        prc->start(QString("sbatch"), params);
+      
+        QMessageBox::information(
+            this,
+            tr("Auto EACSF"),
+            tr("Is running.")
+        );
+        // Display the output and errors in the interface
+        prc->waitForFinished();
+        disp_output(output_dir);
+        disp_err(output_dir);
+    }
     
-    prc->start(executables[QString("python3")], params);
-  
-    QMessageBox::information(
-        this,
-        tr("Auto EACSF"),
-        tr("Is running.")
-    );
-
-// Display the output and errors in the interface
-    prc->waitForFinished();
-    disp_output(output_dir);
-    disp_err(output_dir);
-
 }
 
 

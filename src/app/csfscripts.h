@@ -63,6 +63,7 @@ class CSFScripts
 		void write_main_script();
 		void write_process_left_hemisphere();
 		void write_process_right_hemisphere();
+		void write_slurm_job();
 
 	    
 

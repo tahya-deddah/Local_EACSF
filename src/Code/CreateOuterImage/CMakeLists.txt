@@ -16,14 +16,12 @@ include(${SlicerExecutionModel_USE_FILE})
 
 find_package(ITK REQUIRED)
 include(${ITK_USE_FILE})
-SET(${APP_NAME}_LIBRARIES ${ITK_LIBRARIES})
-
 
 find_package(VTK REQUIRED)
 include(${VTK_USE_FILE})
-SET(${APP_NAME}_LIBRARIES ${VTK_LIBRARIES})
 
 
+SET(${APP_NAME}_LIBRARIES ${ITK_LIBRARIES} ${VTK_LIBRARIES})
 
 
 SEMMacroBuildCLI(

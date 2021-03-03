@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1020</width>
-    <height>667</height>
+    <height>709</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -18,9 +18,9 @@
     <property name="geometry">
      <rect>
       <x>20</x>
-      <y>0</y>
+      <y>10</y>
       <width>971</width>
-      <height>631</height>
+      <height>671</height>
      </rect>
     </property>
     <property name="toolTip">
@@ -30,7 +30,7 @@
      <string/>
     </property>
     <property name="currentIndex">
-     <number>0</number>
+     <number>2</number>
     </property>
     <widget class="QWidget" name="tab_input">
      <attribute name="title">
@@ -46,7 +46,7 @@
        </rect>
       </property>
       <property name="text">
-       <string>Tissu Segmentation/ </string>
+       <string>Tissu Segmentation </string>
       </property>
      </widget>
      <widget class="QPushButton" name="CSF_Probability_Map">
@@ -65,9 +65,9 @@
      <widget class="QLineEdit" name="lineEdit_T1img">
       <property name="geometry">
        <rect>
-        <x>370</x>
+        <x>319</x>
         <y>20</y>
-        <width>441</width>
+        <width>531</width>
         <height>31</height>
        </rect>
       </property>
@@ -75,9 +75,9 @@
      <widget class="QLineEdit" name="lineEdit_Segmentation">
       <property name="geometry">
        <rect>
-        <x>370</x>
+        <x>319</x>
         <y>70</y>
-        <width>441</width>
+        <width>531</width>
         <height>31</height>
        </rect>
       </property>
@@ -85,9 +85,9 @@
      <widget class="QLineEdit" name="lineEdit_CSF_Probability_Map">
       <property name="geometry">
        <rect>
-        <x>370</x>
+        <x>319</x>
         <y>120</y>
-        <width>441</width>
+        <width>531</width>
         <height>31</height>
        </rect>
       </property>
@@ -121,9 +121,9 @@
      <widget class="QLineEdit" name="lineEdit_LH_MID_Surface">
       <property name="geometry">
        <rect>
-        <x>370</x>
+        <x>319</x>
         <y>200</y>
-        <width>441</width>
+        <width>531</width>
         <height>31</height>
        </rect>
       </property>
@@ -144,9 +144,9 @@
      <widget class="QLineEdit" name="lineEdit_LH_GM_Surface">
       <property name="geometry">
        <rect>
-        <x>370</x>
+        <x>319</x>
         <y>250</y>
-        <width>441</width>
+        <width>531</width>
         <height>31</height>
        </rect>
       </property>
@@ -180,9 +180,9 @@
      <widget class="QLineEdit" name="lineEdit_RH_MID_Surface">
       <property name="geometry">
        <rect>
-        <x>370</x>
+        <x>319</x>
         <y>330</y>
-        <width>441</width>
+        <width>531</width>
         <height>31</height>
        </rect>
       </property>
@@ -203,9 +203,9 @@
      <widget class="QLineEdit" name="lineEdit_RH_GM_Surface">
       <property name="geometry">
        <rect>
-        <x>370</x>
+        <x>319</x>
         <y>380</y>
-        <width>441</width>
+        <width>531</width>
         <height>31</height>
        </rect>
       </property>
@@ -239,9 +239,9 @@
      <widget class="QLineEdit" name="lineEdit_Output_Directory">
       <property name="geometry">
        <rect>
-        <x>370</x>
+        <x>319</x>
         <y>470</y>
-        <width>441</width>
+        <width>531</width>
         <height>31</height>
        </rect>
       </property>
@@ -272,8 +272,8 @@
      <widget class="QPushButton" name="Execute">
       <property name="geometry">
        <rect>
-        <x>420</x>
-        <y>30</y>
+        <x>360</x>
+        <y>70</y>
         <width>141</width>
         <height>31</height>
        </rect>
@@ -285,8 +285,8 @@
      <widget class="QTextBrowser" name="output">
       <property name="geometry">
        <rect>
-        <x>70</x>
-        <y>110</y>
+        <x>60</x>
+        <y>150</y>
         <width>351</width>
         <height>471</height>
        </rect>
@@ -295,8 +295,8 @@
      <widget class="QTextBrowser" name="error">
       <property name="geometry">
        <rect>
-        <x>540</x>
-        <y>110</y>
+        <x>550</x>
+        <y>150</y>
         <width>361</width>
         <height>471</height>
        </rect>
@@ -305,8 +305,8 @@
      <widget class="QLabel" name="label">
       <property name="geometry">
        <rect>
-        <x>80</x>
-        <y>80</y>
+        <x>70</x>
+        <y>120</y>
         <width>121</width>
         <height>20</height>
        </rect>
@@ -319,13 +319,39 @@
       <property name="geometry">
        <rect>
         <x>560</x>
-        <y>80</y>
+        <y>120</y>
         <width>121</width>
         <height>20</height>
        </rect>
       </property>
       <property name="text">
        <string>Errors</string>
+      </property>
+     </widget>
+     <widget class="QRadioButton" name="local">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>10</y>
+        <width>141</width>
+        <height>21</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Option 1: Local</string>
+      </property>
+     </widget>
+     <widget class="QRadioButton" name="longleaf">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>40</y>
+        <width>151</width>
+        <height>21</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Option 2: Longleaf</string>
       </property>
      </widget>
     </widget>
@@ -337,7 +363,7 @@
      <x>0</x>
      <y>0</y>
      <width>1020</width>
-     <height>20</height>
+     <height>28</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">

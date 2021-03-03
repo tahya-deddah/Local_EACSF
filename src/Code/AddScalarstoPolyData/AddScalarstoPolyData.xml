@@ -2,7 +2,7 @@
 <executable>
   <category></category>
   <title>AddScalarstoPolyData</title>
-  <description></description>
+  <description>Add a scalar's array to a polydata</description>
   <version></version>
    <parameters>
 	   	<file>

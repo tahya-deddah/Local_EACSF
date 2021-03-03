@@ -2,7 +2,7 @@
 <executable>
   <category></category>
   <title>EstimateCortexStreamlinesDensity</title>
-  <description></description>
+  <description>Estiamte the CSF density in the streamlines</description>
   <version></version>
   <parameters advanced="false">
  	  <file>

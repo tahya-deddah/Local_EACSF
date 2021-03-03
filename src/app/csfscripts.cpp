@@ -32,7 +32,11 @@ void CSFScripts::run_EACSF()
     write_process_left_hemisphere();
 
     //2. WRITE PROCESS_RIGHT_HEMISPHERE
-     write_process_right_hemisphere();
+    write_process_right_hemisphere();
+
+    //3. WRITE SLURM_JOB
+    write_slurm_job();
+
     
 }
 
@@ -165,6 +169,37 @@ void CSFScripts::write_process_right_hemisphere()
 }
 
 
+void CSFScripts::write_slurm_job()
+{
+
+    QJsonObject data_obj = m_Root_obj["data"].toObject();
+    QJsonObject param_obj = m_Root_obj["parameters"].toObject();
+
+    QFile file_slurm_job(QString(":/PythonScripts/slurm-job"));
+    file_slurm_job.open(QIODevice::ReadOnly);
+    QString script_slurm_job = file_slurm_job.readAll();
+    file_slurm_job.close();
+
+    
+
+    QJsonArray exe_array = m_Root_obj["executables"].toArray();
+    foreach (const QJsonValue exe_val, exe_array)
+    {
+        QJsonObject exe_obj = exe_val.toObject();
+        m_Executables[exe_obj["name"].toString()] = exe_obj["path"].toString();
+    }
+    script_slurm_job.replace("@python3_PATH@", checkStringValue(m_Executables["python3"]));
+
+    QString scripts_dir = QDir::cleanPath(checkStringValue(data_obj["Output_Directory"]) + m_PythonScripts);
+
+    
+    QString slurm_job_script = QDir::cleanPath(scripts_dir + QString("/slurm-job"));
+    QFile outfile_slurm_job(slurm_job_script);
+    outfile_slurm_job.open(QIODevice::WriteOnly);
+    QTextStream outstream_slurm_job(&outfile_slurm_job);
+    outstream_slurm_job << script_slurm_job;
+    outfile_slurm_job.close();
+}
 
 
 

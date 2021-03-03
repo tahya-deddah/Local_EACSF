@@ -2,7 +2,7 @@
 <executable>
   <category></category>
   <title>Create Outer Surface</title>
-  <description></description>
+  <description>Create a surface from dilated image</description>
   <version></version>
    <parameters>
      	<file>

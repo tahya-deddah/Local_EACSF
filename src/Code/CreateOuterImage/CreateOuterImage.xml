@@ -2,7 +2,7 @@
 <executable>
   <category></category>
   <title>CreateOuterImage</title>
-  <description></description>
+  <description>Dilate an image </description>
   <version></version>
    <parameters advanced="false">
 	   	<file>

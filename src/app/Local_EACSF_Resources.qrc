@@ -3,6 +3,7 @@
         <file>main_script.py</file>
         <file>process_left_hemisphere.py</file>
         <file>process_right_hemisphere.py</file>
+        <file>slurm-job</file>
     </qresource>
     <qresource prefix="/config">
         <file>default_config.json</file>
