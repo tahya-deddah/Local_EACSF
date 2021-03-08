@@ -112,6 +112,14 @@ void CSFScripts::write_process_left_hemisphere()
     script_left_hemisphere.replace("@EstimateCortexStreamlinesDensity_PATH@", checkStringValue(m_Executables["EstimateCortexStreamlinesDensity"]));
     script_left_hemisphere.replace("@AddScalarstoPolyData_PATH@", checkStringValue(m_Executables["AddScalarstoPolyData"]));
 
+
+    script_left_hemisphere.replace("@closingradius@", QString::number(param_obj["Closing_radius"].toInt()));
+    script_left_hemisphere.replace("@dilationradius@", QString::number(param_obj["Dilation_radius"].toInt()));
+    script_left_hemisphere.replace("@NumberIterations@", QString::number(param_obj["Iterations_number"].toInt()));
+    script_left_hemisphere.replace("@imagedimension@", checkStringValue(param_obj["Image_dimension"]));
+
+    
+
     
     QString scripts_dir = QDir::cleanPath(checkStringValue(data_obj["Output_Directory"]) + m_PythonScripts);
     
@@ -157,6 +165,12 @@ void CSFScripts::write_process_right_hemisphere()
     script_right_hemisphere.replace("@EstimateCortexStreamlinesDensity_PATH@", checkStringValue(m_Executables["EstimateCortexStreamlinesDensity"]));
     script_right_hemisphere.replace("@AddScalarstoPolyData_PATH@", checkStringValue(m_Executables["AddScalarstoPolyData"]));
 
+
+    script_right_hemisphere.replace("@closingradius@", QString::number(param_obj["Closing_radius"].toInt()));
+    script_right_hemisphere.replace("@dilationradius@", QString::number(param_obj["Dilation_radius"].toInt()));
+    script_right_hemisphere.replace("@NumberIterations@", QString::number(param_obj["Iterations_number"].toInt()));
+    script_right_hemisphere.replace("@imagedimension@", checkStringValue(param_obj["Image_dimension"]));
+
     
     QString scripts_dir = QDir::cleanPath(checkStringValue(data_obj["Output_Directory"]) + m_PythonScripts);
     
@@ -190,7 +204,19 @@ void CSFScripts::write_slurm_job()
     }
     script_slurm_job.replace("@python3_PATH@", checkStringValue(m_Executables["python3"]));
 
+
+    script_slurm_job.replace("@cores@", checkStringValue(param_obj["Slurm_cores"]));
+    script_slurm_job.replace("@nodes@", checkStringValue(param_obj["Slurm_nodes"]));
+    script_slurm_job.replace("@time@", checkStringValue(param_obj["Slurm_time"]));
+    script_slurm_job.replace("@memory@", checkStringValue(param_obj["Slurm_memory"]));
+
+
     QString scripts_dir = QDir::cleanPath(checkStringValue(data_obj["Output_Directory"]) + m_PythonScripts);
+    QString outlog_filename = QDir::cleanPath(checkStringValue(data_obj["Output_Directory"]) + QString("/output_log.txt"));
+    QString errlog_filename = QDir::cleanPath(checkStringValue(data_obj["Output_Directory"]) + QString("/errors_log.txt"));
+    script_slurm_job.replace("@script_PATH@", scripts_dir);
+    script_slurm_job.replace("@ouput_PATH@", outlog_filename);
+    script_slurm_job.replace("@error_PATH@", errlog_filename);
 
     
     QString slurm_job_script = QDir::cleanPath(scripts_dir + QString("/slurm-job"));

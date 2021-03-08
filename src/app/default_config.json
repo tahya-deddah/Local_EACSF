@@ -9,7 +9,27 @@
         "RH_GM_surface": "/work/tahya/Data/local_EACSf_Extraction/Ben_Test/101247/101247_RH_GM.vtk",
 		"Output_Directory": "/work/tahya/Test/101247"
 	},
-	
+
+
+
+
+
+
+"parameters": {
+
+        "Slurm_nodes": "1",
+        "Slurm_cores": "2",
+        "Slurm_time": "8:00:00",
+        "Slurm_memory":"32G",
+
+        "Closing_radius": 15,
+        "Dilation_radius": 2,
+
+        "Iterations_number": 1,
+        "Image_dimension": "300"
+    },
+
+
 
  "executables": [
         {

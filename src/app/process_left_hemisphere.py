@@ -4,8 +4,6 @@ import sys
 import os
 import shutil 
 from shutil import copyfile
-import itk
-import vtk
 import subprocess
 from subprocess import Popen
 
@@ -80,16 +78,15 @@ def process_LH(args):
 	else:
 		print('Creating Outer LH Convex Hull Surface')
 		print('Creating LH Outer Image')
-		call_and_print([CreateOuterImage,"--InputImg", "Tissu_Segmentation.nrrd", "--OutputImg", "LH_GM_Dilated.nrrd", "--closingradius", '15', "--dilationradius", '2', "--Reverse", '0'])
+		call_and_print([CreateOuterImage,"--InputImg", "Tissu_Segmentation.nrrd", "--OutputImg", "LH_GM_Dilated.nrrd", "--closingradius", "@closingradius@", "--dilationradius", "@dilationradius@", "--Reverse", '0'])
 		print('Creating LH Outer Surface')
-		call_and_print([CreateOuterSurface,"--InputBinaryImg","LH_GM_Dilated.nrrd", "--OutputSurface","LH_GM_Outer_MC.vtk", "--NumberIterations",'1'])
+		call_and_print([CreateOuterSurface,"--InputBinaryImg","LH_GM_Dilated.nrrd", "--OutputSurface","LH_GM_Outer_MC.vtk", "--NumberIterations", "@NumberIterations@"])
 		call_and_print([EditPolyData, "--InputSurface","LH_GM_Outer_MC.vtk", "--OutputSurface","LH_GM_Outer_MC.vtk", "--flipx", ' -1', "--flipy", ' -1', "--flipz", '1'])
 		print('Creating Outer LH Convex Hull Surface Done!')
-
-
+'''
 		print('Creating LH streamlines')
 		print('CEstablishing Surface Correspondance')
-		call_and_print([klaplace,'-dims','300',"LH_MID.vtk", "LH_GM_Outer_MC.vtk",'-surfaceCorrespondence',"LH_Outer.corr"])
+		call_and_print([klaplace,'-dims', "@imagedimension@","LH_MID.vtk", "LH_GM_Outer_MC.vtk",'-surfaceCorrespondence',"LH_Outer.corr"])
 
 		print('CEstablishing Streamlines')
 		call_and_print([klaplace, '-traceStream',"LH_Outer.corr_field.vts","LH_MID.vtk", "LH_GM_Outer_MC.vtk", "LH_Outer_streamlines.vtp", \
@@ -108,7 +105,7 @@ def process_LH(args):
 			"--InputSegmentation", "CSF_Probability_Map.nrrd", "--InputMask", "LH_GM_Dilated.nrrd", "--OutputSurface", "LH_CSF_Density.vtk", "--VistitingMap",\
 			"LH__Visitation.nrrd", "--SmoothingIter", '0',"--MaxVertexSmoothingDist", '0'])
 		call_and_print([AddScalarstoPolyData, "--InputFile", "LH_GM.vtk", "--OutputFile", "LH_GM.vtk", "--ScalarsFile", "LH_MID.CSFDensity.txt", "--Scalars_Name", 'EACSF'])
-
+'''
 
 
 parser = argparse.ArgumentParser(description='Calculates CSF Density')

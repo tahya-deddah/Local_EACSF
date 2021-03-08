@@ -4,8 +4,6 @@ import sys
 import os
 import shutil 
 from shutil import copyfile
-import itk
-import vtk
 import subprocess
 from subprocess import Popen
 
@@ -80,15 +78,15 @@ def process_RH(args):
 	else:
 		print('Creating Outer RH Convex Hull Surface')
 		print('Creating RH Outer Image')
-		call_and_print([CreateOuterImage,"--InputImg", "Tissu_Segmentation.nrrd", "--OutputImg","RH_GM_Dilated.nrrd", "--closingradius",'15', "--dilationradius",'2', "--Reverse",'1'])
+		call_and_print([CreateOuterImage,"--InputImg", "Tissu_Segmentation.nrrd", "--OutputImg","RH_GM_Dilated.nrrd", "--closingradius", "@closingradius@", "--dilationradius", "@dilationradius@", "--Reverse",'1'])
 		print('Creating RH Outer Surface')
-		call_and_print([CreateOuterSurface, "--InputBinaryImg", "RH_GM_Dilated.nrrd", "--OutputSurface", "RH_GM_Outer_MC.vtk", "--NumberIterations", '1'])
+		call_and_print([CreateOuterSurface, "--InputBinaryImg", "RH_GM_Dilated.nrrd", "--OutputSurface", "RH_GM_Outer_MC.vtk", "--NumberIterations", "@NumberIterations@"])
 		call_and_print([EditPolyData, "--InputSurface", "RH_GM_Outer_MC.vtk", "--OutputSurface", "RH_GM_Outer_MC.vtk", "--flipx", ' -1', "--flipy", ' -1', "--flipz", '1'])
 		print('Creating Outer RH Convex Hull Surface Done!')
 
 		print('Creating RH streamlines')
 		print('CEstablishing Surface Correspondance')
-		call_and_print([klaplace,'-dims','300',"RH_MID.vtk", "RH_GM_Outer_MC.vtk",'-surfaceCorrespondence',"RH_Outer.corr"])
+		call_and_print([klaplace,'-dims', "@imagedimension@","RH_MID.vtk", "RH_GM_Outer_MC.vtk",'-surfaceCorrespondence',"RH_Outer.corr"])
 
 		print('CEstablishing Streamlines')
 		call_and_print([klaplace, '-traceStream',"RH_Outer.corr_field.vts","RH_MID.vtk", "RH_GM_Outer_MC.vtk", "RH_Outer_streamlines.vtp", \
