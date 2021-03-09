@@ -44,6 +44,7 @@ private:
     QString SaveFile();
     QString OpenDir();
     void infoMsgBox(QString message, QMessageBox::Icon type);
+    int questionMsgBox();
     QJsonObject readConfig(QString filename);
     bool writeConfig(QString filename);
     QString checkStringValue(QJsonValue str_value);
@@ -84,7 +85,7 @@ private slots:
     
 private:
 
-    QProcess *prc;
+    
     QJsonObject root_obj ;
     ExtExecutablesWidget* m_exeWidget;
     static const QString m_github_url;
