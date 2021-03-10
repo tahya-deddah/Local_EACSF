@@ -36,7 +36,7 @@
      <string/>
     </property>
     <property name="currentIndex">
-     <number>3</number>
+     <number>2</number>
     </property>
     <widget class="QWidget" name="tab_input">
      <attribute name="title">
@@ -305,7 +305,7 @@
       <property name="geometry">
        <rect>
         <x>10</x>
-        <y>310</y>
+        <y>330</y>
         <width>351</width>
         <height>31</height>
        </rect>
@@ -318,7 +318,7 @@
       <property name="geometry">
        <rect>
         <x>10</x>
-        <y>420</y>
+        <y>450</y>
         <width>321</width>
         <height>31</height>
        </rect>
@@ -330,34 +330,34 @@
      <widget class="QLabel" name="closing_radius">
       <property name="geometry">
        <rect>
-        <x>20</x>
+        <x>30</x>
         <y>190</y>
-        <width>91</width>
-        <height>31</height>
+        <width>441</width>
+        <height>51</height>
        </rect>
       </property>
       <property name="text">
-       <string>Closing radius</string>
+       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Closing Radius&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;structuring element radius for closing the tissu segmentation image&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
       </property>
      </widget>
      <widget class="QLabel" name="Dilation_radius">
       <property name="geometry">
        <rect>
-        <x>20</x>
-        <y>250</y>
-        <width>101</width>
-        <height>31</height>
+        <x>30</x>
+        <y>260</y>
+        <width>441</width>
+        <height>51</height>
        </rect>
       </property>
       <property name="text">
-       <string>Dilation radius</string>
+       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Dilation Radius&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;structuring element radius for dilating the tissu segmentation image&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
       </property>
      </widget>
      <widget class="QSpinBox" name="ClosingRadius">
       <property name="geometry">
        <rect>
-        <x>220</x>
-        <y>190</y>
+        <x>540</x>
+        <y>200</y>
         <width>71</width>
         <height>31</height>
        </rect>
@@ -366,8 +366,8 @@
      <widget class="QSpinBox" name="DilationRadius">
       <property name="geometry">
        <rect>
-        <x>220</x>
-        <y>250</y>
+        <x>540</x>
+        <y>280</y>
         <width>71</width>
         <height>31</height>
        </rect>
@@ -376,21 +376,21 @@
      <widget class="QLabel" name="Number_iterations">
       <property name="geometry">
        <rect>
-        <x>20</x>
-        <y>350</y>
-        <width>151</width>
-        <height>31</height>
+        <x>30</x>
+        <y>370</y>
+        <width>411</width>
+        <height>61</height>
        </rect>
       </property>
       <property name="text">
-       <string>Number of Iterartions</string>
+       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Number of Iterartions&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;the number of iterations for smoothing the Outer CSF Hull&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
       </property>
      </widget>
      <widget class="QSpinBox" name="IterationsNumber">
       <property name="geometry">
        <rect>
-        <x>210</x>
-        <y>350</y>
+        <x>540</x>
+        <y>380</y>
         <width>71</width>
         <height>31</height>
        </rect>
@@ -399,24 +399,42 @@
      <widget class="QLabel" name="image_dimension">
       <property name="geometry">
        <rect>
-        <x>20</x>
-        <y>460</y>
-        <width>151</width>
-        <height>31</height>
+        <x>30</x>
+        <y>480</y>
+        <width>491</width>
+        <height>121</height>
        </rect>
       </property>
       <property name="text">
-       <string>Image Dimension</string>
+       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Image Size&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;the size of the images used to solve the LPE equation &lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;the more you increase it, you get a better result but it will take you longer.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
       </property>
      </widget>
      <widget class="QLineEdit" name="ImageDimension">
       <property name="geometry">
        <rect>
-        <x>200</x>
-        <y>460</y>
+        <x>540</x>
+        <y>520</y>
         <width>113</width>
         <height>32</height>
        </rect>
+      </property>
+     </widget>
+     <widget class="QTextBrowser" name="textBrowser">
+      <property name="geometry">
+       <rect>
+        <x>300</x>
+        <y>20</y>
+        <width>351</width>
+        <height>71</height>
+       </rect>
+      </property>
+      <property name="html">
+       <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Cantarell'; font-size:11pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p align=&quot;center&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:12pt; font-weight:600;&quot;&gt;Please don't change the following parametres &lt;/span&gt;&lt;/p&gt;
+&lt;p align=&quot;center&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:12pt; font-weight:600;&quot;&gt;if you don't konw what you are doing&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
       </property>
      </widget>
     </widget>
@@ -626,8 +644,8 @@
     <addaction name="actionToggle_advanced_mode"/>
    </widget>
    <addaction name="menuFile"/>
-   <addaction name="menuHelp"/>
    <addaction name="menuWindows"/>
+   <addaction name="menuHelp"/>
   </widget>
   <action name="actionLoad_Config_File">
    <property name="checkable">

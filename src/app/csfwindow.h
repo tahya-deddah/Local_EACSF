@@ -54,8 +54,8 @@ private:
 private slots:
 
     void prc_finished(int exitCode, QProcess::ExitStatus exitStatus);
-    void disp_output();
-    void disp_err();
+    void disp_output(QProcess *prc);
+    void disp_err(QProcess *prc);
 
     //File
     void on_actionSave_Config_File_triggered();
@@ -78,8 +78,8 @@ private slots:
     void updateExecutables(QString exeName, QString path);
 
     //3rd tab
-    void on_slurm_clicked(bool checkState);
-    void on_local_clicked(bool checkState);
+    void on_slurm_clicked();
+    void on_local_clicked();
     void on_slurm_stateChanged(int state);
     void on_Execute_clicked();
     
