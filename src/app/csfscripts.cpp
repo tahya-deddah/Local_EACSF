@@ -187,8 +187,7 @@ void CSFScripts::write_slurm_job()
 {
 
     QJsonObject data_obj = m_Root_obj["data"].toObject();
-    //QJsonObject param_obj = m_Root_obj["parameters"].toObject();
-
+   
     QFile file_slurm_job(QString(":/PythonScripts/slurm-job"));
     file_slurm_job.open(QIODevice::ReadOnly);
     QString script_slurm_job = file_slurm_job.readAll();
@@ -208,7 +207,7 @@ void CSFScripts::write_slurm_job()
     QString outlog_filename = QDir::cleanPath(checkStringValue(data_obj["Output_Directory"]) + QString("/output_log.txt"));
     QString errlog_filename = QDir::cleanPath(checkStringValue(data_obj["Output_Directory"]) + QString("/errors_log.txt"));
     script_slurm_job.replace("@script_PATH@", scripts_dir);
-    script_slurm_job.replace("@ouput_PATH@", outlog_filename);
+    script_slurm_job.replace("@output_PATH@", outlog_filename);
     script_slurm_job.replace("@error_PATH@", errlog_filename);
 
     

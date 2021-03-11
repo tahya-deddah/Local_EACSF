@@ -227,19 +227,6 @@ void CSFWindow::infoMsgBox(QString message, QMessageBox::Icon type)
     mb.exec();
 }
 
-int CSFWindow::questionMsgBox()
-{
-   
-    QMessageBox msgBox;
-    msgBox.setIcon(QMessageBox::Question);
-    msgBox.setGeometry(500, 400, 100, 100);
-    msgBox.setWindowOpacity(1.0);
-    msgBox.setInformativeText(QString("Do you want to run the tool for another Data"));
-    msgBox.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
-    return msgBox.exec();
-}
-
-
 
 //File menu
 
@@ -408,18 +395,21 @@ void CSFWindow::prc_finished(int exitCode, QProcess::ExitStatus exitStatus){
 
     if (local->isChecked())
     {
-        exit_message = QString("Local_EACSF pipeline ") + ((exitStatus == QProcess::NormalExit) ? QString("exited with code ") + QString::number(exitCode) : QString("crashed"));
+       /* exit_message = QString("Local_EACSF pipeline ") + ((exitStatus == QProcess::NormalExit) ? QString("exited with code ") + QString::number(exitCode) : QString("crashed"));
         if (exitCode==0)
         {
+            QString succes = QString("Your python script is now running in the background ");
             exit_message="<font color=\"green\"><b>"+exit_message+"</b></font>";
+            output->append(exit_message);
+            output->append(succes);
+            cout<<exit_message.toStdString()<<endl;
         }
         else
         {
             exit_message="<font color=\"red\"><b>"+exit_message+"</b></font>";
+            error->append(exit_message);
+            cout<<exit_message.toStdString()<<endl;
         }
-
-        output->append(exit_message);
-        cout<<exit_message.toStdString()<<endl;
 
         QString outlog_filename = QDir::cleanPath(data_obj["Output_Directory"].toString() + QString("/output_log.txt"));
         QFile outlog_file(outlog_filename);
@@ -433,44 +423,31 @@ void CSFWindow::prc_finished(int exitCode, QProcess::ExitStatus exitStatus){
         errlog_file.open(QIODevice::WriteOnly);
         QTextStream errlog_stream(&errlog_file);
         errlog_stream << error->toPlainText();
-        errlog_file.close();  
+        errlog_file.close();  */
     }
 
    
 
     if (slurm->isChecked())
     {
-    //     QFile Output_filename(QDir::cleanPath(data_obj["Output_Directory"].toString() + QString("/output_log.txt"))); 
-    //     Output_filename.open(QIODevice::ReadOnly);
-    //     QTextStream out(&Output_filename); 
-    //     while (!out.atEnd())
-    //         {  
-    //             QString line = out.readLine(); 
-    //             output->append(line); 
-    //             qDebug()<<line ;
-    //         }   
-    //     QFile Error_filename(QDir::cleanPath(data_obj["Output_Directory"].toString() + QString("/errors_log.txt"))); 
-    //     Error_filename.open(QIODevice::ReadOnly);
-    //     QTextStream Error(&Error_filename); 
-    //     while (!Error.atEnd())
-    //         {  
-    //             QString line = Error.readLine(); 
-    //             error->append(line); 
-    //             qDebug()<<line ;
-    //         }   
+    
+        exit_message = QString("Local_EACSF pipeline ") + ((exitStatus == QProcess::NormalExit) ? QString("exited with code ") + QString::number(exitCode) : QString("crashed")) ;
+        if (exitCode==0)
+        {
+            QString succes = QString("Your python script is now running in the background ");
+            exit_message="<font color=\"green\"><b>"+exit_message+"</b></font>";
+            output->append(exit_message);
+            output->append(succes);
+            cout<<exit_message.toStdString()<<endl;
+        }
+        else
+        {
+            exit_message="<font color=\"red\"><b>"+exit_message+"</b></font>";
+            error->append(exit_message);
+            cout<<exit_message.toStdString()<<endl;
+        }
 
-    //     exit_message = QString("Local_EACSF pipeline ") + ((exitStatus == QProcess::NormalExit) ? QString("exited with code ") + QString::number(exitCode) : QString("crashed"));
-    //     if (exitCode==0)
-    //     {
-    //         exit_message="<font color=\"green\"><b>"+exit_message+"</b></font>";
-    //     }
-    //     else
-    //     {
-    //         exit_message="<font color=\"red\"><b>"+exit_message+"</b></font>";
-    //     }
-
-    //     output->append(exit_message);
-    //     cout<<exit_message.toStdString()<<endl;
+        
      }
 
    
@@ -545,13 +522,15 @@ void CSFWindow::on_Execute_clicked()
         QString main_script = QDir::cleanPath(scripts_dir + QString("/main_script.py"));
         QStringList params = QStringList() << main_script;
 
-        connect(prc, &QProcess::readyReadStandardOutput, [prc, this](){
-           disp_output(prc);
-        });
-        connect(prc, &QProcess::readyReadStandardError, [prc, this](){
-           disp_err(prc);
-        });
-        connect(prc, SIGNAL(finished(int,QProcess::ExitStatus)), this, SLOT(prc_finished(int, QProcess::ExitStatus)));
+        // connect(prc, &QProcess::readyReadStandardOutput, [prc, this](){
+        //    disp_output(prc);
+        // });
+        // connect(prc, &QProcess::readyReadStandardError, [prc, this](){
+        //    disp_err(prc);
+        // });
+        
+        prc->setStandardOutputFile(QDir::cleanPath(output_dir + QString("/output.txt")));
+        prc->setStandardErrorFile(QDir::cleanPath(output_dir + QString("/errors.txt")));
         prc->setWorkingDirectory(output_dir);
         
         QMap<QString, QString> executables = m_exeWidget->GetExeMap();
@@ -574,8 +553,8 @@ void CSFWindow::on_Execute_clicked()
         QString node = QString("--nodes=") + param_obj["Slurm_nodes"].toString();
 
         QStringList params = QStringList() << time << memory << core << node << slurm_script;
-        //cout<<memory.toStdString()<<endl;
         prc->setWorkingDirectory(output_dir);
+        connect(prc, SIGNAL(finished(int,QProcess::ExitStatus)), this, SLOT(prc_finished(int, QProcess::ExitStatus)));
         prc->start(QString("sbatch"), params);
       
         QMessageBox::information(

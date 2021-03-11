@@ -5,20 +5,74 @@
   <version>1.0.0</version>
   <contributor>Martin Styner, Juan Prieto, Tahya Deddah</contributor>
   <description>local csf extraction</description>
-  <parameters>
-      <file>
-          <name>parameters</name>
-          <longflag>param</longflag>
-          <flag>p</flag>
-          <description>Input parameters in a json file</description>
-          <channel>input</channel>
-      </file>
-      <boolean>
-          <name>noGUI</name>
-          <longflag>noGUI</longflag>
-          <flag>n</flag>
-          <description>Use AutoEACSF without the GUI</description>
-          <default>true</default>
-      </boolean>
-    </parameters>
+  <parameters advanced="false">
+    <file>
+      <name>parameters</name>
+      <longflag>param</longflag>
+      <flag>p</flag>
+      <description>Input parameters in a json file</description>
+      <channel>input</channel>
+    </file>
+    <boolean>
+      <name>noGUI</name>
+      <longflag>noGUI</longflag>
+      <flag>n</flag>
+      <description>Use Local EACSF without the GUI</description>
+      <default>true</default>
+    </boolean>
+    <file>
+      <name>csv_file</name>
+      <longflag>csv</longflag>
+      <description>a csv file containing all the inputs paths</description>
+      <channel>input</channel>
+    </file>
+    <file>
+      <name>T1</name>
+      <longflag>T1</longflag>
+      <description>T1 Path</description>
+      <channel>input</channel>
+    </file>
+    <file>
+      <name>Tissu_Segmentation</name>
+      <longflag>Seg</longflag>
+      <description>Tissu Segmentation Path</description>
+      <channel>input</channel>
+    </file>
+    <file>
+      <name>CSF_Probability_Map</name>
+      <longflag>CSF_Prob</longflag>
+      <description>CSF Probability Map Path</description>
+      <channel>input</channel>
+    </file>
+    <file>
+      <name>LH_MID_surface</name>
+      <longflag>LH_MID</longflag>
+      <description>Left Hemisphere MID Surface Path</description>
+      <channel>input</channel>
+    </file>
+    <file>
+      <name>LH_GM_surface</name>
+      <longflag>LH_GM</longflag>
+      <description>Left Hemisphere GM Surface Path</description>
+      <channel>input</channel>
+    </file>
+    <file>
+      <name>RH_MID_surface</name>
+      <longflag>RH_MID</longflag>
+      <description>Right Hemisphere MID Surface Path</description>
+      <channel>input</channel>
+    </file>
+    <file>
+      <name>RH_GM_surface</name>
+      <longflag>RH_GM</longflag>
+      <description>Right Hemisphere GM Surface Path</description>
+      <channel>input</channel>
+    </file>
+    <boolean>
+      <name>slrum</name>
+      <longflag>slurm</longflag>
+      <flag>s</flag>
+      <description>execute Local EACSF in slurm</description>
+    </boolean>
+  </parameters>
 </executable>

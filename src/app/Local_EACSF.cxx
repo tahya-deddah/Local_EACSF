@@ -42,6 +42,8 @@ int  main(int argc, char** argv)
     {
         csfw.setConfig(root_obj);    
     }
+
+    
 	csfw.show();
 	return app.exec();
     

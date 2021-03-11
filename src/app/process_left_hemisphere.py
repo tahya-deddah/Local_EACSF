@@ -12,7 +12,7 @@ def call_and_print(args):
     #external process calling function with output and errors printing
 
 	exe_path = args[0]
-	print(" ".join(args))
+	print(" ".join(args), flush=True)
 	    
 	completed_process = subprocess.run(args, capture_output=True, text=True)
 	   
@@ -21,44 +21,44 @@ def call_and_print(args):
 	err = completed_process.stderr
 	check_returncode = completed_process.check_returncode()
 
-	print("status code is:",status_code)
+	print("status code is:",status_code, flush=True)
 	if err!="":
-		print(err)
+		print(err, flush=True)
 	if out!="":
-		print(out)
+		print(out, flush=True)
 	if status_code != 0:
-	   	print("return code:",check_returncode)
+	   	print("return code:",check_returncode, flush=True)
 
 	
 
 def main_loop(args):
 	start = time.time()
-	print ("Processing Left Side")
+	print ("Processing Left Side", flush=True)
 	process_LH(args) 
 	end = time.time()
-	print("time for LH:",end - start)
+	print("time for LH:",end - start, flush=True)
 
 def process_LH(args):
 	LH_Directory = os.path.join(args.Output_Directory,"LH_Directory") 
 	isDir = os.path.isdir(LH_Directory)
 	if isDir==False :
 		os.mkdir(LH_Directory) 
-		print("LH Directory created") 
+		print("LH Directory created", flush=True) 
 	else :
-		print ("Dirctory exist")
+		print ("Dirctory exist", flush=True)
 
 	T1 = os.path.join(LH_Directory, "T1.nrrd")
 	Data_existence_test =os.path.isfile(T1) 
 	if Data_existence_test==False:
-		print("Copying Data")
+		print("Copying Data", flush=True)
 		copyfile(args.T1, os.path.join(LH_Directory,"T1.nrrd"))
 		copyfile(args.Tissu_Segmentation, os.path.join(LH_Directory,"Tissu_Segmentation.nrrd"))
 		copyfile(args.CSF_Probability_Map, os.path.join(LH_Directory,"CSF_Probability_Map.nrrd"))
 		copyfile(args.LH_MID_surface, os.path.join(LH_Directory,"LH_MID.vtk"))
 		copyfile(args.LH_GM_surface, os.path.join(LH_Directory,"LH_GM.vtk"))
-		print("Copying Done")
+		print("Copying Done", flush=True)
 	else :
-		print("Data Exists")	
+		print("Data Exists", flush=True)	
 
 
 	#Executables:
@@ -74,38 +74,38 @@ def process_LH(args):
 	Streamline_Path = os.path.join(LH_Directory,"LH_Outer_streamlines.vtk")
 	StreamlinesExistenceTest = os.path.isfile(Streamline_Path)
 	if StreamlinesExistenceTest ==True :
-		print('LH streamline computation Done!')
+		print('LH streamline computation Done!', flush=True)
 	else:
-		print('Creating Outer LH Convex Hull Surface')
+		print('Creating Outer LH Convex Hull Surface', flush=True)
 		print('Creating LH Outer Image')
 		call_and_print([CreateOuterImage,"--InputImg", "Tissu_Segmentation.nrrd", "--OutputImg", "LH_GM_Dilated.nrrd", "--closingradius", "@closingradius@", "--dilationradius", "@dilationradius@", "--Reverse", '0'])
-		print('Creating LH Outer Surface')
+		print('Creating LH Outer Surface', flush=True)
 		call_and_print([CreateOuterSurface,"--InputBinaryImg","LH_GM_Dilated.nrrd", "--OutputSurface","LH_GM_Outer_MC.vtk", "--NumberIterations", "@NumberIterations@"])
 		call_and_print([EditPolyData, "--InputSurface","LH_GM_Outer_MC.vtk", "--OutputSurface","LH_GM_Outer_MC.vtk", "--flipx", ' -1', "--flipy", ' -1', "--flipz", '1'])
-		print('Creating Outer LH Convex Hull Surface Done!')
-	'''
-		print('Creating LH streamlines')
-		print('CEstablishing Surface Correspondance')
+		print('Creating Outer LH Convex Hull Surface Done!', flush=True)
+	
+		print('Creating LH streamlines', flush=True)
+		print('CEstablishing Surface Correspondance', flush=True)
 		call_and_print([klaplace,'-dims', "@imagedimension@","LH_MID.vtk", "LH_GM_Outer_MC.vtk",'-surfaceCorrespondence',"LH_Outer.corr"])
 
-		print('CEstablishing Streamlines')
+		print('CEstablishing Streamlines', flush=True)
 		call_and_print([klaplace, '-traceStream',"LH_Outer.corr_field.vts","LH_MID.vtk", "LH_GM_Outer_MC.vtk", "LH_Outer_streamlines.vtp", \
 									"LH_Outer_points.vtp",'-traceDirection','forward'])
 		call_and_print([klaplace, '-conv',"LH_Outer_streamlines.vtp", "LH_Outer_streamlines.vtk"])
-		print('Creating LH streamlines Done!')
+		print('Creating LH streamlines Done!', flush=True)
 
 
 	CSFDensdity_Path=os.path.join(LH_Directory,"LH_MID.CSFDensity.txt")
 	CSFDensityExistenceTest = os.path.isfile(CSFDensdity_Path)
 	if CSFDensityExistenceTest==True :
-		print('Computing LH EACSF Done')
+		print('Computing LH EACSF Done', flush=True)
 	else :
-		print('Computing LH EACSF  ')
+		print('Computing LH EACSF  ', flush=True)
 		call_and_print([EstimateCortexStreamlinesDensity, "--InputSurface" ,"LH_MID.vtk", "--InputOuterStreamlines",  "LH_Outer_streamlines.vtk",\
 			"--InputSegmentation", "CSF_Probability_Map.nrrd", "--InputMask", "LH_GM_Dilated.nrrd", "--OutputSurface", "LH_CSF_Density.vtk", "--VistitingMap",\
 			"LH__Visitation.nrrd", "--SmoothingIter", '0',"--MaxVertexSmoothingDist", '0'])
 		call_and_print([AddScalarstoPolyData, "--InputFile", "LH_GM.vtk", "--OutputFile", "LH_GM.vtk", "--ScalarsFile", "LH_MID.CSFDensity.txt", "--Scalars_Name", 'EACSF'])
-'''
+
 
 
 parser = argparse.ArgumentParser(description='Calculates CSF Density')

@@ -1,0 +1,9 @@
+#! /usr/bin/env bash
+
+#SBATCH --job-name=Local_EACSF
+#SBATCH --partition=general
+#SBATCH --chdir="@script_PATH@"
+#SBATCH --output="@output_PATH@"
+#SBATCH --error="@error_PATH@"
+
+"@python3_PATH@" main_script.py
