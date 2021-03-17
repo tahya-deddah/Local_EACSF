@@ -103,9 +103,9 @@ def process_RH(args):
 		print('Computing RH EACSF  ')
 		call_and_print([EstimateCortexStreamlinesDensity, "--InputSurface" ,"RH_MID.vtk", "--InputOuterStreamlines",  "RH_Outer_streamlines.vtk",\
 			"--InputSegmentation", "CSF_Probability_Map.nrrd", "--InputMask", "RH_GM_Dilated.nrrd", "--OutputSurface", "RH_CSF_Density.vtk", "--VistitingMap",\
-			"RH__Visitation.nrrd", "--SmoothingIter", '0', "--MaxVertexSmoothingDist", '0'])
+			"RH__Visitation.nrrd"])
 		call_and_print([AddScalarstoPolyData, "--InputFile", "RH_GM.vtk", "--OutputFile", "RH_GM.vtk", "--ScalarsFile", "RH_MID.CSFDensity.txt", "--Scalars_Name", 'EACSF'])
-
+	
 	
 
 

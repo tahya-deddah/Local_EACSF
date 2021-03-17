@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<executable>
+  <category></category>
+  <title>HeatKernelSmoothing</title>
+  <description>Smooth the CSf Density</description>
+  <version></version>
+   <parameters>
+	   	<file>
+	   		<name>InputSurface</name>
+	   		<longflag>InputSurface</longflag>
+      		<flag>i</flag>
+      		<description>Input Surface Name </description>
+	    </file>
+		<integer>
+			<name>Numberofiterations</name>
+			<longflag>NumberIter</longflag>
+      		<flag>n</flag>
+      		<description>number of iterations</description>
+		</integer>
+		<double>
+			<name>sigma</name>
+			<longflag>sigma</longflag>
+      		<flag>s</flag>
+      		<description>The kernel bandwidth </description>
+		</double>
+		<file>
+	   		<name>OutputSurface</name>
+	   		<longflag>OutputSurface</longflag>
+      		<flag>o</flag>
+      		<description>Output Surface Name </description>
+	    </file>
+	</parameters>
+</executable>

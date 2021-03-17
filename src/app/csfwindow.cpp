@@ -281,7 +281,7 @@ void CSFWindow::on_actionToggle_advanced_mode_toggled(bool toggled)
 {
     if (toggled)
        {
-           tab->insertTab(2,tab_parametres,QString("Parametres"));
+           tab->insertTab(2,tab_parameters,QString("Parameters"));
 
        }
        else
@@ -519,6 +519,7 @@ void CSFWindow::on_Execute_clicked()
 
     if (local->isChecked())
     {
+        std::cout<<"hggggggggggggg"<<std::endl;
         QString main_script = QDir::cleanPath(scripts_dir + QString("/main_script.py"));
         QStringList params = QStringList() << main_script;
 

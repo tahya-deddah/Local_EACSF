@@ -10,4 +10,4 @@ add_subdirectory(EditPolyData)
 add_subdirectory(EstimateCortexStreamlinesDensity)
 #add_subdirectory(klaplace)
 add_subdirectory(AddScalarstoPolyData)
-
+add_subdirectory(HeatKernelSmoothing)

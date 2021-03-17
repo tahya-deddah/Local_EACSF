@@ -41,17 +41,5 @@
       <flag>v</flag>
       <description> Output Voxel Vistiting Map a nrrd file</description>
     </file>
-    <integer>
-      <name>SmoothingIter</name>
-      <longflag>SmoothingIter</longflag>
-      <flag>i</flag>
-      <description>Smoothing Iter</description>
-    </integer>
-    <double>
-      <name>MaxVertexSmoothingDist</name>
-      <longflag>MaxVertexSmoothingDist</longflag>
-      <flag>j</flag>
-      <description>Max Vertex Smoothing Dist</description>
-    </double>
   </parameters> 
 </executable>

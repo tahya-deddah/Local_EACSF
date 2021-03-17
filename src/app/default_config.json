@@ -57,6 +57,10 @@
             "path": ""
         },
         {
+            "name": "HeatKernelSmoothing",
+            "path": ""
+        },
+        {
             "name": "python3",
             "path": ""
         }
@@ -64,3 +68,5 @@
 
 
 }
+
+
