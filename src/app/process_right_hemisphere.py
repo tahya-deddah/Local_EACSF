@@ -28,6 +28,17 @@ def call_and_print(args):
 	if status_code != 0:
 	   	print(check_returncode, flush=True)
 
+def clean_up(RH_Directory):
+
+	print("Cleaning the right hemisphere output directory", flush=True)
+	for i in os.listdir(RH_Directory):
+		if i.endswith('.vtp') or i.endswith('.vts'):
+			os.remove(i)
+	print("Cleaning the right hemisphere output directory done", flush=True)
+
+
+
+
 
 
 def main_loop(args):
@@ -67,6 +78,7 @@ def process_RH(args):
 	klaplace = args.klaplace
 	EstimateCortexStreamlinesDensity = args.EstimateCortexStreamlinesDensity
 	AddScalarstoPolyData = args.AddScalarstoPolyData
+	HeatKernelSmoothing = args.HeatKernelSmoothing
 
 
 	###
@@ -104,8 +116,13 @@ def process_RH(args):
 		call_and_print([EstimateCortexStreamlinesDensity, "--InputSurface" ,"RH_MID.vtk", "--InputOuterStreamlines",  "RH_Outer_streamlines.vtk",\
 			"--InputSegmentation", "CSF_Probability_Map.nrrd", "--InputMask", "RH_GM_Dilated.nrrd", "--OutputSurface", "RH_CSF_Density.vtk", "--VistitingMap",\
 			"RH__Visitation.nrrd"])
-		call_and_print([AddScalarstoPolyData, "--InputFile", "RH_GM.vtk", "--OutputFile", "RH_GM.vtk", "--ScalarsFile", "RH_MID.CSFDensity.txt", "--Scalars_Name", 'EACSF'])
-	
+		if(args.Smooth) :
+			call_and_print([HeatKernelSmoothing , "--InputSurface", "RH_CSF_Density.vtk", "--NumberIter", "@NumberIter@", "--sigma", "@Bandwith@", "--OutputSurface", "RH_CSF_Density.vtk"])
+			call_and_print([AddScalarstoPolyData, "--InputFile", "RH_GM.vtk", "--OutputFile", "RH_GM.vtk", "--ScalarsFile", "RH_SmoothedCSFDensity.txt", "--Scalars_Name", 'EACSF'])
+		else :
+			call_and_print([AddScalarstoPolyData, "--InputFile", "RH_GM.vtk", "--OutputFile", "RH_GM.vtk", "--ScalarsFile", "RH_MID.CSFDensity.txt", "--Scalars_Name", 'EACSF'])
+	if(args.Clean_up) :
+		clean_up(RH_Directory)
 	
 
 
@@ -122,5 +139,8 @@ parser.add_argument('--EditPolyData', type=str, help='EditPolyData executable pa
 parser.add_argument('--klaplace', type=str, help='klaplace executable path', default='@klaplace_PATH@')
 parser.add_argument('--EstimateCortexStreamlinesDensity', type=str, help='EstimateCortexStreamlinesDensity executable path', default='@EstimateCortexStreamlinesDensity_PATH@')
 parser.add_argument('--AddScalarstoPolyData', type=str, help='AddScalarstoPolyData executable path', default='@AddScalarstoPolyData_PATH@')
+parser.add_argument('--HeatKernelSmoothing', type=str, help='HeatKernelSmoothing executable path', default='@HeatKernelSmoothing_PATH@')
+parser.add_argument('--Smooth', type=bool, help='Smooth the CSF Density with a heat kernel smoothing', default=@Smooth@)
+parser.add_argument('--Clean_up', type=bool, help='Clean the output directory of intermediate outputs', default=@Clean@)
 args = parser.parse_args()
 main_loop(args)

@@ -2,7 +2,7 @@
 <executable>
   <category></category>
   <title>HeatKernelSmoothing</title>
-  <description>Smooth the CSf Density</description>
+  <description>Smooth a surface</description>
   <version></version>
    <parameters>
 	   	<file>

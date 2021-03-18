@@ -47,16 +47,11 @@ CSFWindow::CSFWindow(QWidget *m_parent)
         exe_layout->addWidget(m_exeWidget,Qt::AlignCenter);
         connect(m_exeWidget, SIGNAL(newExePath(QString,QString)), this, SLOT(updateExecutables(QString,QString)));
     }
-    parametres->setEnabled(false);
-    Core->setEnabled(false);
-    Memory->setEnabled(false);
-    Node->setEnabled(false);
-    Time->setEnabled(false);
-    lineEdit_Core->setEnabled(false);
-    lineEdit_Memory->setEnabled(false);
-    lineEdit_Node->setEnabled(false);
-    lineEdit_Time->setEnabled(false);
 
+    slurm->setChecked(true);
+    slurm->setChecked(false);
+    smooth->setChecked(true);
+    smooth->setChecked(false);
 
     QJsonObject param_obj = root_obj["parameters"].toObject();
     lineEdit_Core->setText(param_obj["Slurm_cores"].toString());
@@ -121,10 +116,20 @@ void CSFWindow::setConfig(QJsonObject root_obj)
     lineEdit_Output_Directory->setText(data_obj["Output_Directory"].toString());
 
     QJsonObject param_obj = root_obj["parameters"].toObject();
+
+   /* local->setChecked(param_obj["Local"].toBool());
+    slurm->setChecked(param_obj["Slurm"].toBool());*/
     lineEdit_Core->setText(param_obj["Slurm_cores"].toString());
     lineEdit_Node->setText(param_obj["Slurm_nodes"].toString());
     lineEdit_Time->setText(param_obj["Slurm_time"].toString());
     lineEdit_Memory->setText(param_obj["Slurm_memory"].toString());
+
+    smooth->setChecked(param_obj["Smooth"].toBool());
+    NumberIter_lineEdit->setText(param_obj["Smoothing_numberIter"].toString());
+    Bandwith_lineEdit->setText(param_obj["Smoothing_bandwith"].toString());
+
+    clean->setChecked(param_obj["Clean"].toBool());
+
     ClosingRadius->setValue(param_obj["Closing_radius"].toInt());
     DilationRadius->setValue(param_obj["Dilation_radius"].toInt());
     IterationsNumber->setValue(param_obj["Iterations_number"].toInt());
@@ -154,7 +159,9 @@ QJsonObject CSFWindow::getConfig(){
     data_obj["Output_Directory"]=lineEdit_Output_Directory->text();
 
     QJsonObject param_obj;
-    
+
+   /* param_obj["Local"] = slurm->isChecked();
+    param_obj["Slurm"] = local->isChecked();*/
     if(slurm->isChecked())
     {
         param_obj["Slurm_nodes"] = lineEdit_Node->text();    
@@ -162,6 +169,13 @@ QJsonObject CSFWindow::getConfig(){
         param_obj["Slurm_time"] = lineEdit_Time->text();
         param_obj["Slurm_memory"] = lineEdit_Memory->text();
     }
+    param_obj["Smooth"] = smooth->isChecked();
+    if(smooth->isChecked())
+    {
+        param_obj["Smoothing_numberIter"] = NumberIter_lineEdit->text();    
+        param_obj["Smoothing_bandwith"] = Bandwith_lineEdit->text();
+    }
+    param_obj["Clean"] = clean->isChecked();
 
     param_obj["Closing_radius"] = ClosingRadius->value();    
     param_obj["Dilation_radius"] = DilationRadius->value();
@@ -282,12 +296,10 @@ void CSFWindow::on_actionToggle_advanced_mode_toggled(bool toggled)
     if (toggled)
        {
            tab->insertTab(2,tab_parameters,QString("Parameters"));
-
        }
        else
        {
            tab->removeTab(2);
-
        }
 }
 
@@ -381,18 +393,59 @@ void CSFWindow::updateExecutables(QString exeName, QString path)
 
 
 
-// 3rd Tab - Execution
+// 3rd Tab - Location + Smoothing + Cleaning
+
+void CSFWindow::on_local_clicked()
+{
+    if (local->isChecked()){slurm->setEnabled(false);}
+    else{slurm->setEnabled(true);}
+}
+
+void CSFWindow::on_slurm_clicked()
+{
+    if (slurm->isChecked()){local->setEnabled(false);}
+    else{local->setEnabled(true);}
+
+}
+
+void CSFWindow::on_slurm_stateChanged(int state)
+{
+    bool enab;
+        if (state==Qt::Checked){enab=true;}
+        else{enab=false;}
+
+        slurm_parameters->setEnabled(enab);
+        Core->setEnabled(enab);
+        Memory->setEnabled(enab);
+        Node->setEnabled(enab);
+        Time->setEnabled(enab);
+        lineEdit_Core->setEnabled(enab);
+        lineEdit_Memory->setEnabled(enab);
+        lineEdit_Node->setEnabled(enab);
+        lineEdit_Time->setEnabled(enab);
+}
+
+void CSFWindow::on_smooth_stateChanged(int state)
+{
+    bool enab;
+    if (state==Qt::Checked){enab=true;}
+    else{enab=false;}
+    smoothing_parameters_label->setEnabled(enab);
+    Smoothing_NumberIter->setEnabled(enab);
+    NumberIter_lineEdit->setEnabled(enab);
+    Smoothing_Bandwith->setEnabled(enab);
+    Bandwith_lineEdit->setEnabled(enab);
+
+}
+
+
+// 4th tab - Execution
 
 void CSFWindow::prc_finished(int exitCode, QProcess::ExitStatus exitStatus){
 
     QJsonObject root_obj = getConfig();
-
     QJsonObject data_obj = root_obj["data"].toObject();
-
-
     QString exit_message;
-    
-
     if (local->isChecked())
     {
        /* exit_message = QString("Local_EACSF pipeline ") + ((exitStatus == QProcess::NormalExit) ? QString("exited with code ") + QString::number(exitCode) : QString("crashed"));
@@ -425,9 +478,6 @@ void CSFWindow::prc_finished(int exitCode, QProcess::ExitStatus exitStatus){
         errlog_stream << error->toPlainText();
         errlog_file.close();  */
     }
-
-   
-
     if (slurm->isChecked())
     {
     
@@ -445,14 +495,8 @@ void CSFWindow::prc_finished(int exitCode, QProcess::ExitStatus exitStatus){
             exit_message="<font color=\"red\"><b>"+exit_message+"</b></font>";
             error->append(exit_message);
             cout<<exit_message.toStdString()<<endl;
-        }
-
-        
+        }       
      }
-
-   
-
-
 }
 
 
@@ -470,35 +514,7 @@ void CSFWindow::disp_err(QProcess *prc)
 }
 
 
-void CSFWindow::on_local_clicked()
-{
-    if (local->isChecked()){slurm->setEnabled(false);}
-    else{slurm->setEnabled(true);}
-}
 
-void CSFWindow::on_slurm_clicked()
-{
-    if (slurm->isChecked()){local->setEnabled(false);}
-    else{local->setEnabled(true);}
-
-}
-
-void CSFWindow::on_slurm_stateChanged(int state)
-{
-    bool enab;
-        if (state==Qt::Checked){enab=true;}
-        else{enab=false;}
-
-        parametres->setEnabled(enab);
-        Core->setEnabled(enab);
-        Memory->setEnabled(enab);
-        Node->setEnabled(enab);
-        Time->setEnabled(enab);
-        lineEdit_Core->setEnabled(enab);
-        lineEdit_Memory->setEnabled(enab);
-        lineEdit_Node->setEnabled(enab);
-        lineEdit_Time->setEnabled(enab);
-}
 
 
 void CSFWindow::on_Execute_clicked()
@@ -519,7 +535,7 @@ void CSFWindow::on_Execute_clicked()
 
     if (local->isChecked())
     {
-        std::cout<<"hggggggggggggg"<<std::endl;
+
         QString main_script = QDir::cleanPath(scripts_dir + QString("/main_script.py"));
         QStringList params = QStringList() << main_script;
 
@@ -568,3 +584,4 @@ void CSFWindow::on_Execute_clicked()
 
    
 }
+

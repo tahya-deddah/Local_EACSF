@@ -29,7 +29,6 @@ int  main(int argc, char** argv)
 	{	
 		
 		vtkSmartPointer<vtkDoubleArray> CurrentCSFDensity = vtkDoubleArray::SafeDownCast(inputPolyData->GetPointData()->GetArray("CSFDensity"));
-		//vtkSmartPointer<vtkFloatArray> CurrentCSFDensity = vtkFloatArray::SafeDownCast(inputPolyData->GetPointData()->GetArray("EACSF"));
 		vtkSmartPointer<vtkDoubleArray> SmoothedCSFDensity = vtkSmartPointer<vtkDoubleArray>::New();
 		SmoothedCSFDensity->SetNumberOfComponents(1);
 		SmoothedCSFDensity->SetName("CSFDensity");
@@ -92,6 +91,22 @@ int  main(int argc, char** argv)
 		}
 		inputPolyData->GetPointData()->AddArray(SmoothedCSFDensity);
 	}
+
+	vtkSmartPointer<vtkDoubleArray> array = vtkDoubleArray::SafeDownCast(inputPolyData->GetPointData()->GetArray("CSFDensity"));
+	std::string FileName = InputSurface;
+	std::string NewFileName = FileName.substr(0, 3);
+	std::string ResultFileName = NewFileName + "SmoothedCSFDensity.txt";
+	ofstream Result;
+	Result.open (ResultFileName.c_str());
+	Result << "NUMBER_OF_POINTS=" << inputPolyData->GetNumberOfPoints() << endl; 
+	Result << "DIMENSION=1" << endl;
+	Result << "TYPE=Scalar" << endl;
+	for(vtkIdType vertex = 0; vertex < inputPolyData->GetNumberOfPoints(); vertex++)
+	{
+		Result << array->GetValue(vertex) << endl;
+	}
+	Result.close();
+
 
 	vtkSmartPointer<vtkPolyDataWriter> SurfaceWriter = vtkSmartPointer<vtkPolyDataWriter>::New();
     SurfaceWriter->SetInputData(inputPolyData);

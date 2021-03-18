@@ -22,9 +22,14 @@
         "Slurm_time": "8:00:00",
         "Slurm_memory":"32G",
 
+        "Smooth" : false,
+        "Smoothing_numberIter" :"0",
+        "Smoothing_bandwith":"0",
+
+        "Clean" : false,
+        
         "Closing_radius": 15,
         "Dilation_radius": 2,
-
         "Iterations_number": 1,
         "Image_dimension": "300"
     },

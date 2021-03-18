@@ -59,6 +59,7 @@ private slots:
     //File
     void on_actionSave_Config_File_triggered();
     void on_actionLoad_Config_File_triggered();
+    //Window menu
     void on_actionToggle_advanced_mode_toggled(bool toggled);
     //About
     void on_actionAbout_triggered();
@@ -80,6 +81,9 @@ private slots:
     void on_slurm_clicked();
     void on_local_clicked();
     void on_slurm_stateChanged(int state);
+    void on_smooth_stateChanged(int state);
+
+    //4th tab
     void on_Execute_clicked();
     
 private:

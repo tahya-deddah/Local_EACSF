@@ -111,14 +111,18 @@ void CSFScripts::write_process_left_hemisphere()
     script_left_hemisphere.replace("@klaplace_PATH@", checkStringValue(m_Executables["klaplace"]));
     script_left_hemisphere.replace("@EstimateCortexStreamlinesDensity_PATH@", checkStringValue(m_Executables["EstimateCortexStreamlinesDensity"]));
     script_left_hemisphere.replace("@AddScalarstoPolyData_PATH@", checkStringValue(m_Executables["AddScalarstoPolyData"]));
+    script_left_hemisphere.replace("@HeatKernelSmoothing_PATH@", checkStringValue(m_Executables["HeatKernelSmoothing"]));
 
 
     script_left_hemisphere.replace("@closingradius@", QString::number(param_obj["Closing_radius"].toInt()));
     script_left_hemisphere.replace("@dilationradius@", QString::number(param_obj["Dilation_radius"].toInt()));
     script_left_hemisphere.replace("@NumberIterations@", QString::number(param_obj["Iterations_number"].toInt()));
     script_left_hemisphere.replace("@imagedimension@", checkStringValue(param_obj["Image_dimension"]));
+    script_left_hemisphere.replace("@NumberIter@", checkStringValue(param_obj["Smoothing_numberIter"]));
+    script_left_hemisphere.replace("@Bandwith@", checkStringValue(param_obj["Smoothing_bandwith"]));
 
-    
+    script_left_hemisphere.replace("@Clean@", checkBoolValue(param_obj["Clean"]));
+    script_left_hemisphere.replace("@Smooth@", checkBoolValue(param_obj["Smooth"]));
 
     
     QString scripts_dir = QDir::cleanPath(checkStringValue(data_obj["Output_Directory"]) + m_PythonScripts);
@@ -164,12 +168,20 @@ void CSFScripts::write_process_right_hemisphere()
     script_right_hemisphere.replace("@klaplace_PATH@", checkStringValue(m_Executables["klaplace"]));
     script_right_hemisphere.replace("@EstimateCortexStreamlinesDensity_PATH@", checkStringValue(m_Executables["EstimateCortexStreamlinesDensity"]));
     script_right_hemisphere.replace("@AddScalarstoPolyData_PATH@", checkStringValue(m_Executables["AddScalarstoPolyData"]));
+    script_right_hemisphere.replace("@HeatKernelSmoothing_PATH@", checkStringValue(m_Executables["HeatKernelSmoothing"]));
 
 
     script_right_hemisphere.replace("@closingradius@", QString::number(param_obj["Closing_radius"].toInt()));
     script_right_hemisphere.replace("@dilationradius@", QString::number(param_obj["Dilation_radius"].toInt()));
     script_right_hemisphere.replace("@NumberIterations@", QString::number(param_obj["Iterations_number"].toInt()));
     script_right_hemisphere.replace("@imagedimension@", checkStringValue(param_obj["Image_dimension"]));
+    script_right_hemisphere.replace("@NumberIter@", checkStringValue(param_obj["Smoothing_numberIter"]));
+    script_right_hemisphere.replace("@Bandwith@", checkStringValue(param_obj["Smoothing_bandwith"]));
+
+
+    script_right_hemisphere.replace("@Clean@", checkBoolValue(param_obj["Clean"]));
+    script_right_hemisphere.replace("@Smooth@", checkBoolValue(param_obj["Smooth"]));
+
 
     
     QString scripts_dir = QDir::cleanPath(checkStringValue(data_obj["Output_Directory"]) + m_PythonScripts);
