@@ -37,7 +37,6 @@ public:
     QJsonObject getConfig();
     void setConfig(QJsonObject root_obj);
 
-
 private:
 
     QString OpenFile();
@@ -53,8 +52,8 @@ private:
 private slots:
 
     void prc_finished(int exitCode, QProcess::ExitStatus exitStatus);
-    void disp_output(QProcess *prc);
-    void disp_err(QProcess *prc);
+    void disp_output(QProcess *prc, QString outlog_filename);
+    void disp_err(QProcess *prc, QString errlog_filename);
 
     //File
     void on_actionSave_Config_File_triggered();
@@ -65,6 +64,9 @@ private slots:
     void on_actionAbout_triggered();
     
     //1st tab
+    void on_Data_Directory_clicked();
+    QFileInfoList Find(QString data_directory, QString filter);
+    void on_Refresh_clicked();
     void on_T1_clicked();
     void on_Segmentation_clicked();
     void on_CSF_Probability_Map_clicked();
@@ -85,6 +87,12 @@ private slots:
 
     //4th tab
     void on_Execute_clicked();
+
+    //5th tab
+    void on_output_path_clicked();
+    void on_itksnap_clicked();
+    void on_shapepopoulationviewer_clicked();
+    void on_visualize_clicked();
     
 private:
 

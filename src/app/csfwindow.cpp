@@ -13,7 +13,7 @@
 #endif
 
 #ifndef Local_EACSF_CONTRIBUTORS
-#define Local_EACSF_CONTRIBUTORS "Martin Styner, Juan Prieto, Tahya Deddah"
+#define Local_EACSF_CONTRIBUTORS "Tahya Deddah, Martin Styner, Juan Prieto"
 #endif
 
 const QString CSFWindow::m_github_url = "https://github.com/tahya-deddah/Local_EACSF";
@@ -305,6 +305,81 @@ void CSFWindow::on_actionToggle_advanced_mode_toggled(bool toggled)
 
 
 // 1st Tab - Input
+void CSFWindow::on_Refresh_clicked()
+{
+        QString data_directory = lineEdit_Data_Directory->text();
+        if(data_directory==QString(""))
+        {
+            QMessageBox::information(
+                        this,
+                        tr("EACSF"),
+                        tr("Please choose a data directory")
+                    );
+        }
+        else
+        {
+           QFileInfoList hitList_T1 = Find(data_directory,lineEdit_T1_filter->text());
+           if(hitList_T1.size()==1){lineEdit_T1img->setText(hitList_T1[0].absoluteFilePath());}
+           if(hitList_T1.size()==0){lineEdit_T1img->setText(QString(""));}
+           else{}
+
+           QFileInfoList hitList_Seg = Find(data_directory,lineEdit_Seg_filter->text());
+           if(hitList_Seg.size()==1){lineEdit_Segmentation->setText(hitList_Seg[0].absoluteFilePath());}
+           if(hitList_Seg.size()==0){lineEdit_Segmentation->setText(QString(""));}
+           else{}
+
+           QFileInfoList hitList_CSF_Prob = Find(data_directory,lineEdit_CSF_Prob_filter->text());
+           if(hitList_CSF_Prob.size()==1){lineEdit_CSF_Probability_Map->setText(hitList_CSF_Prob[0].absoluteFilePath());}
+           if(hitList_CSF_Prob.size()==0){lineEdit_CSF_Probability_Map->setText(QString(""));}
+           else{}
+
+           QFileInfoList hitList_LH_MID = Find(data_directory,lineEdit_LH_MID_filter->text());
+           if(hitList_LH_MID.size()==1){lineEdit_LH_MID_Surface->setText(hitList_LH_MID[0].absoluteFilePath());}
+           if(hitList_LH_MID.size()==0){lineEdit_LH_MID_Surface->setText(QString(""));}
+           else{}
+
+           QFileInfoList hitList_LH_GM = Find(data_directory,lineEdit_LH_GM_filter->text());
+           if(hitList_LH_GM.size()==1){lineEdit_LH_GM_Surface->setText(hitList_LH_GM[0].absoluteFilePath());}
+           if(hitList_LH_GM.size()==0){lineEdit_LH_GM_Surface->setText(QString(""));}
+           else{}
+
+           QFileInfoList hitList_RH_MID = Find(data_directory,lineEdit_RH_MID_filter->text());
+           if(hitList_RH_MID.size()==1){lineEdit_RH_MID_Surface->setText(hitList_RH_MID[0].absoluteFilePath());}
+           if(hitList_RH_MID.size()==0){lineEdit_RH_MID_Surface->setText(QString(""));}
+           else{}
+         
+
+
+           QFileInfoList hitList_RH_GM = Find(data_directory,lineEdit_RH_GM_filter->text());
+           if(hitList_RH_GM.size()==1){lineEdit_RH_GM_Surface->setText(hitList_RH_GM[0].absoluteFilePath());}
+           if(hitList_RH_GM.size()==0){lineEdit_RH_GM_Surface->setText(QString(""));}
+           else{}
+        }
+}
+QFileInfoList CSFWindow::Find(QString data_directory, QString filter)
+{
+    QFileInfoList hitList;
+    QDirIterator it(data_directory, QDirIterator::Subdirectories);
+    while (it.hasNext())
+    {
+        QString filename = it.next();
+        QFileInfo file(filename);
+        if (file.isDir()) {  continue; }
+        if (filter != QString("") && file.fileName().contains(filter, Qt::CaseInsensitive))
+        {hitList.append(file);}
+    }
+    return hitList;
+}
+
+void CSFWindow::on_Data_Directory_clicked()
+{
+    QString path=OpenDir();
+     if (!path.isEmpty())
+     {
+         lineEdit_Data_Directory->setText(path);
+     }
+}
+
 
 void CSFWindow::on_T1_clicked()
 {
@@ -393,7 +468,7 @@ void CSFWindow::updateExecutables(QString exeName, QString path)
 
 
 
-// 3rd Tab - Location + Smoothing + Cleaning
+// 3rd Tab -  Smoothing + Cleaning + Location 
 
 void CSFWindow::on_local_clicked()
 {
@@ -448,13 +523,11 @@ void CSFWindow::prc_finished(int exitCode, QProcess::ExitStatus exitStatus){
     QString exit_message;
     if (local->isChecked())
     {
-       /* exit_message = QString("Local_EACSF pipeline ") + ((exitStatus == QProcess::NormalExit) ? QString("exited with code ") + QString::number(exitCode) : QString("crashed"));
+        exit_message = QString("Local_EACSF pipeline ") + ((exitStatus == QProcess::NormalExit) ? QString("exited with code ") + QString::number(exitCode) : QString("crashed"));
         if (exitCode==0)
         {
-            QString succes = QString("Your python script is now running in the background ");
             exit_message="<font color=\"green\"><b>"+exit_message+"</b></font>";
             output->append(exit_message);
-            output->append(succes);
             cout<<exit_message.toStdString()<<endl;
         }
         else
@@ -462,21 +535,7 @@ void CSFWindow::prc_finished(int exitCode, QProcess::ExitStatus exitStatus){
             exit_message="<font color=\"red\"><b>"+exit_message+"</b></font>";
             error->append(exit_message);
             cout<<exit_message.toStdString()<<endl;
-        }
-
-        QString outlog_filename = QDir::cleanPath(data_obj["Output_Directory"].toString() + QString("/output_log.txt"));
-        QFile outlog_file(outlog_filename);
-        outlog_file.open(QIODevice::WriteOnly);
-        QTextStream outlog_stream(&outlog_file);
-        outlog_stream << output->toPlainText();
-        outlog_file.close();
-
-        QString errlog_filename = QDir::cleanPath(data_obj["Output_Directory"].toString() + QString("/errors_log.txt"));
-        QFile errlog_file(errlog_filename);
-        errlog_file.open(QIODevice::WriteOnly);
-        QTextStream errlog_stream(&errlog_file);
-        errlog_stream << error->toPlainText();
-        errlog_file.close();  */
+        }  
     }
     if (slurm->isChecked())
     {
@@ -500,21 +559,37 @@ void CSFWindow::prc_finished(int exitCode, QProcess::ExitStatus exitStatus){
 }
 
 
-void CSFWindow::disp_output(QProcess *prc)
-{
+void CSFWindow::disp_output(QProcess *prc, QString outlog_filename)
+{   
+    //prc->setStandardOutputFile(QDir::cleanPath(output_dir + QString("/output.txt")));
     QString output_log(prc->readAllStandardOutput());
     output->append(output_log);
+
+    QFile outlog_file(outlog_filename);
+    outlog_file.open(QIODevice::WriteOnly);
+    QTextStream outlog_stream(&outlog_file);
+    outlog_stream << output->toPlainText();
+    outlog_file.close();
+
+   
+   
 }
 
-void CSFWindow::disp_err(QProcess *prc)
-{       
-
+void CSFWindow::disp_err(QProcess *prc, QString errlog_filename)
+{ 
+    
+    //prc->setStandardErrorFile(QDir::cleanPath(output_dir + QString("/errors.txt")));
     QString errors(prc->readAllStandardError());
     error->append(errors);
+
+    QFile errlog_file(errlog_filename);
+    errlog_file.open(QIODevice::WriteOnly);
+    QTextStream errlog_stream(&errlog_file);
+    errlog_stream << error->toPlainText();
+    errlog_file.close();
+
+
 }
-
-
-
 
 
 void CSFWindow::on_Execute_clicked()
@@ -533,21 +608,23 @@ void CSFWindow::on_Execute_clicked()
     QString output_dir = data_obj["Output_Directory"].toString();
     QString scripts_dir = QDir::cleanPath(output_dir + QString("/PythonScripts"));
 
+
     if (local->isChecked())
-    {
+    {   
+        QString outlog_filename = QDir::cleanPath(output_dir + QString("/output_log.txt"));
+        QString errlog_filename = QDir::cleanPath(output_dir + QString("/errors_log.txt"));
 
         QString main_script = QDir::cleanPath(scripts_dir + QString("/main_script.py"));
         QStringList params = QStringList() << main_script;
 
-        // connect(prc, &QProcess::readyReadStandardOutput, [prc, this](){
-        //    disp_output(prc);
-        // });
-        // connect(prc, &QProcess::readyReadStandardError, [prc, this](){
-        //    disp_err(prc);
-        // });
+        connect(prc, &QProcess::readyReadStandardOutput, [prc, outlog_filename, this](){
+           disp_output(prc, outlog_filename);
+        });
+        connect(prc, &QProcess::readyReadStandardError, [prc, errlog_filename, this](){
+           disp_err(prc, errlog_filename);
+        });
+        connect(prc, SIGNAL(finished(int,QProcess::ExitStatus)), this, SLOT(prc_finished(int, QProcess::ExitStatus)));
         
-        prc->setStandardOutputFile(QDir::cleanPath(output_dir + QString("/output.txt")));
-        prc->setStandardErrorFile(QDir::cleanPath(output_dir + QString("/errors.txt")));
         prc->setWorkingDirectory(output_dir);
         
         QMap<QString, QString> executables = m_exeWidget->GetExeMap();
@@ -579,9 +656,68 @@ void CSFWindow::on_Execute_clicked()
             tr("Local EACSF"),
             tr("Is running.")
         );
-    }
-   
+    }  
+}
 
-   
+//5th Visualization
+
+void CSFWindow::on_output_path_clicked()
+{
+    QString path=OpenDir();
+
+       if (!path.isEmpty())
+       {
+           lineEdit_output_path->setText(path);
+       }
+}
+
+void CSFWindow::on_shapepopoulationviewer_clicked()
+{
+    if (shapepopoulationviewer->isChecked()){itksnap->setEnabled(false);}
+        else {itksnap->setEnabled(true);}
+}
+
+void CSFWindow::on_itksnap_clicked()
+{
+    if (itksnap->isChecked()){shapepopoulationviewer->setEnabled(false);}
+        else {shapepopoulationviewer->setEnabled(true);}
+}
+
+void CSFWindow::on_visualize_clicked()
+{
+    QProcess *visualization;
+    visualization = new QProcess;
+    QString OutputDirectory =lineEdit_output_path->text();
+    QString LH_Directory = QDir::cleanPath(OutputDirectory + QString("/LH_Directory"));
+    QString RH_Directory = QDir::cleanPath(OutputDirectory + QString("/RH_Directory"));
+
+
+    if (itksnap->isChecked())
+    {
+        QString LH_visitation_map = LH_Directory + QString("/LH__Visitation.nrrd");
+        QString RH_visitation_map = RH_Directory + QString("/RH__Visitation.nrrd");
+        QStringList arguments = QStringList() << LH_visitation_map << RH_visitation_map;
+        visualization->setWorkingDirectory(OutputDirectory);
+        visualization->start(QString("itksnap"),arguments);
+        QMessageBox::information(
+            this,
+            tr("Visualization"),
+            tr("Is running.")
+        );
+    }
+    if (shapepopoulationviewer->isChecked())
+    {
+        QString LH_CSFDensity = LH_Directory + QString("/LH_CSF_Density.vtk");
+        QString RH_CSFDensity  = RH_Directory + QString("/RH_CSF_Density.vtk");
+        QStringList arguments = QStringList() << QString("-v") << LH_CSFDensity  << QString("-v")<< RH_CSFDensity ;
+        visualization->setWorkingDirectory(OutputDirectory);
+        visualization->start(QString("ShapePopulationViewer"),arguments);
+        QMessageBox::information(
+            this,
+            tr("Visualization"),
+            tr("Is running.")
+        );
+    }
+
 }
 
