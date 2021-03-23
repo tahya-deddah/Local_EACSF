@@ -17,7 +17,7 @@
    <widget class="QTabWidget" name="tab">
     <property name="geometry">
      <rect>
-      <x>50</x>
+      <x>30</x>
       <y>0</y>
       <width>951</width>
       <height>681</height>
@@ -36,248 +36,12 @@
      <string/>
     </property>
     <property name="currentIndex">
-     <number>4</number>
+     <number>1</number>
     </property>
     <widget class="QWidget" name="tab_input">
      <attribute name="title">
-      <string>Input</string>
+      <string>Set Inputs</string>
      </attribute>
-     <widget class="QPushButton" name="Segmentation">
-      <property name="geometry">
-       <rect>
-        <x>20</x>
-        <y>260</y>
-        <width>231</width>
-        <height>31</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>Tissu Segmentation </string>
-      </property>
-     </widget>
-     <widget class="QPushButton" name="CSF_Probability_Map">
-      <property name="geometry">
-       <rect>
-        <x>20</x>
-        <y>300</y>
-        <width>231</width>
-        <height>31</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>CSF Probability Map</string>
-      </property>
-     </widget>
-     <widget class="QLineEdit" name="lineEdit_T1img">
-      <property name="geometry">
-       <rect>
-        <x>270</x>
-        <y>220</y>
-        <width>531</width>
-        <height>31</height>
-       </rect>
-      </property>
-     </widget>
-     <widget class="QLineEdit" name="lineEdit_Segmentation">
-      <property name="geometry">
-       <rect>
-        <x>270</x>
-        <y>260</y>
-        <width>531</width>
-        <height>31</height>
-       </rect>
-      </property>
-     </widget>
-     <widget class="QLineEdit" name="lineEdit_CSF_Probability_Map">
-      <property name="geometry">
-       <rect>
-        <x>270</x>
-        <y>300</y>
-        <width>531</width>
-        <height>31</height>
-       </rect>
-      </property>
-     </widget>
-     <widget class="QLabel" name="left_hemisphere">
-      <property name="geometry">
-       <rect>
-        <x>10</x>
-        <y>340</y>
-        <width>301</width>
-        <height>31</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:12pt; font-weight:600;&quot;&gt;Left Hemisphere Surfaces&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-      </property>
-     </widget>
-     <widget class="QPushButton" name="LH_MID_Surface">
-      <property name="geometry">
-       <rect>
-        <x>20</x>
-        <y>370</y>
-        <width>231</width>
-        <height>31</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>LH MID Surface</string>
-      </property>
-     </widget>
-     <widget class="QLineEdit" name="lineEdit_LH_MID_Surface">
-      <property name="geometry">
-       <rect>
-        <x>270</x>
-        <y>370</y>
-        <width>531</width>
-        <height>31</height>
-       </rect>
-      </property>
-     </widget>
-     <widget class="QPushButton" name="LH_GM_Surface">
-      <property name="geometry">
-       <rect>
-        <x>20</x>
-        <y>410</y>
-        <width>231</width>
-        <height>31</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>LH GM Surface</string>
-      </property>
-     </widget>
-     <widget class="QLineEdit" name="lineEdit_LH_GM_Surface">
-      <property name="geometry">
-       <rect>
-        <x>270</x>
-        <y>410</y>
-        <width>531</width>
-        <height>31</height>
-       </rect>
-      </property>
-     </widget>
-     <widget class="QLabel" name="right_hemisphere">
-      <property name="geometry">
-       <rect>
-        <x>10</x>
-        <y>450</y>
-        <width>281</width>
-        <height>31</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:12pt; font-weight:600;&quot;&gt;Right Hemisphere Surfaces&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-      </property>
-     </widget>
-     <widget class="QPushButton" name="RH_MID_Surface">
-      <property name="geometry">
-       <rect>
-        <x>20</x>
-        <y>480</y>
-        <width>231</width>
-        <height>31</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>RH MID Surface</string>
-      </property>
-     </widget>
-     <widget class="QLineEdit" name="lineEdit_RH_MID_Surface">
-      <property name="geometry">
-       <rect>
-        <x>270</x>
-        <y>480</y>
-        <width>531</width>
-        <height>31</height>
-       </rect>
-      </property>
-     </widget>
-     <widget class="QPushButton" name="RH_GM_Surface">
-      <property name="geometry">
-       <rect>
-        <x>20</x>
-        <y>520</y>
-        <width>231</width>
-        <height>31</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>RH GM Surface</string>
-      </property>
-     </widget>
-     <widget class="QLineEdit" name="lineEdit_RH_GM_Surface">
-      <property name="geometry">
-       <rect>
-        <x>270</x>
-        <y>520</y>
-        <width>531</width>
-        <height>31</height>
-       </rect>
-      </property>
-     </widget>
-     <widget class="QLabel" name="outputdirectory">
-      <property name="geometry">
-       <rect>
-        <x>10</x>
-        <y>560</y>
-        <width>171</width>
-        <height>31</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:12pt; font-weight:600;&quot;&gt;Output Directory&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-      </property>
-     </widget>
-     <widget class="QPushButton" name="output_directory">
-      <property name="geometry">
-       <rect>
-        <x>20</x>
-        <y>590</y>
-        <width>231</width>
-        <height>31</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>Output Directory</string>
-      </property>
-     </widget>
-     <widget class="QLineEdit" name="lineEdit_Output_Directory">
-      <property name="geometry">
-       <rect>
-        <x>270</x>
-        <y>590</y>
-        <width>531</width>
-        <height>31</height>
-       </rect>
-      </property>
-     </widget>
-     <widget class="QPushButton" name="T1">
-      <property name="geometry">
-       <rect>
-        <x>20</x>
-        <y>220</y>
-        <width>231</width>
-        <height>31</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>T1 image</string>
-      </property>
-     </widget>
-     <widget class="QLabel" name="input_images">
-      <property name="geometry">
-       <rect>
-        <x>10</x>
-        <y>190</y>
-        <width>121</width>
-        <height>31</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:12pt; font-weight:600;&quot;&gt;Input Images&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-      </property>
-     </widget>
      <widget class="QPushButton" name="Data_Directory">
       <property name="geometry">
        <rect>
@@ -327,8 +91,8 @@
      <widget class="QPushButton" name="Refresh">
       <property name="geometry">
        <rect>
-        <x>300</x>
-        <y>140</y>
+        <x>370</x>
+        <y>610</y>
         <width>141</width>
         <height>31</height>
        </rect>
@@ -471,6 +235,283 @@
         <x>110</x>
         <y>140</y>
         <width>131</width>
+        <height>31</height>
+       </rect>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="Find">
+      <property name="geometry">
+       <rect>
+        <x>290</x>
+        <y>140</y>
+        <width>141</width>
+        <height>31</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Find </string>
+      </property>
+     </widget>
+     <widget class="QTextEdit" name="textEdit_Paths">
+      <property name="geometry">
+       <rect>
+        <x>30</x>
+        <y>270</y>
+        <width>791</width>
+        <height>331</height>
+       </rect>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label">
+      <property name="geometry">
+       <rect>
+        <x>30</x>
+        <y>220</y>
+        <width>751</width>
+        <height>41</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;If there are more than one path for an input, please delete the ones you do not want and keep only one &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+      </property>
+     </widget>
+    </widget>
+    <widget class="QWidget" name="tab_2">
+     <attribute name="title">
+      <string>Inputs</string>
+     </attribute>
+     <widget class="QLabel" name="input_images">
+      <property name="geometry">
+       <rect>
+        <x>20</x>
+        <y>30</y>
+        <width>121</width>
+        <height>31</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:12pt; font-weight:600;&quot;&gt;Input Images&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="T1">
+      <property name="geometry">
+       <rect>
+        <x>30</x>
+        <y>60</y>
+        <width>231</width>
+        <height>31</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>T1 image</string>
+      </property>
+     </widget>
+     <widget class="QLineEdit" name="lineEdit_T1img">
+      <property name="geometry">
+       <rect>
+        <x>290</x>
+        <y>60</y>
+        <width>531</width>
+        <height>31</height>
+       </rect>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="Segmentation">
+      <property name="geometry">
+       <rect>
+        <x>30</x>
+        <y>110</y>
+        <width>231</width>
+        <height>31</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Tissu Segmentation </string>
+      </property>
+     </widget>
+     <widget class="QLineEdit" name="lineEdit_Segmentation">
+      <property name="geometry">
+       <rect>
+        <x>290</x>
+        <y>110</y>
+        <width>531</width>
+        <height>31</height>
+       </rect>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="CSF_Probability_Map">
+      <property name="geometry">
+       <rect>
+        <x>30</x>
+        <y>160</y>
+        <width>231</width>
+        <height>31</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>CSF Probability Map</string>
+      </property>
+     </widget>
+     <widget class="QLineEdit" name="lineEdit_CSF_Probability_Map">
+      <property name="geometry">
+       <rect>
+        <x>290</x>
+        <y>160</y>
+        <width>531</width>
+        <height>31</height>
+       </rect>
+      </property>
+     </widget>
+     <widget class="QLabel" name="left_hemisphere">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>220</y>
+        <width>301</width>
+        <height>31</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:12pt; font-weight:600;&quot;&gt;Left Hemisphere Surfaces&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="LH_MID_Surface">
+      <property name="geometry">
+       <rect>
+        <x>30</x>
+        <y>250</y>
+        <width>231</width>
+        <height>31</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>LH MID Surface</string>
+      </property>
+     </widget>
+     <widget class="QLineEdit" name="lineEdit_LH_MID_Surface">
+      <property name="geometry">
+       <rect>
+        <x>290</x>
+        <y>250</y>
+        <width>531</width>
+        <height>31</height>
+       </rect>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="LH_GM_Surface">
+      <property name="geometry">
+       <rect>
+        <x>30</x>
+        <y>300</y>
+        <width>231</width>
+        <height>31</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>LH GM Surface</string>
+      </property>
+     </widget>
+     <widget class="QLineEdit" name="lineEdit_LH_GM_Surface">
+      <property name="geometry">
+       <rect>
+        <x>290</x>
+        <y>300</y>
+        <width>531</width>
+        <height>31</height>
+       </rect>
+      </property>
+     </widget>
+     <widget class="QLabel" name="right_hemisphere">
+      <property name="geometry">
+       <rect>
+        <x>20</x>
+        <y>360</y>
+        <width>281</width>
+        <height>31</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:12pt; font-weight:600;&quot;&gt;Right Hemisphere Surfaces&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="RH_MID_Surface">
+      <property name="geometry">
+       <rect>
+        <x>30</x>
+        <y>390</y>
+        <width>231</width>
+        <height>31</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>RH MID Surface</string>
+      </property>
+     </widget>
+     <widget class="QLineEdit" name="lineEdit_RH_MID_Surface">
+      <property name="geometry">
+       <rect>
+        <x>290</x>
+        <y>390</y>
+        <width>531</width>
+        <height>31</height>
+       </rect>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="RH_GM_Surface">
+      <property name="geometry">
+       <rect>
+        <x>30</x>
+        <y>440</y>
+        <width>231</width>
+        <height>31</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>RH GM Surface</string>
+      </property>
+     </widget>
+     <widget class="QLineEdit" name="lineEdit_RH_GM_Surface">
+      <property name="geometry">
+       <rect>
+        <x>290</x>
+        <y>440</y>
+        <width>531</width>
+        <height>31</height>
+       </rect>
+      </property>
+     </widget>
+     <widget class="QLabel" name="outputdirectory">
+      <property name="geometry">
+       <rect>
+        <x>20</x>
+        <y>490</y>
+        <width>171</width>
+        <height>31</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:12pt; font-weight:600;&quot;&gt;Output Directory&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="output_directory">
+      <property name="geometry">
+       <rect>
+        <x>30</x>
+        <y>530</y>
+        <width>231</width>
+        <height>31</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Output Directory</string>
+      </property>
+     </widget>
+     <widget class="QLineEdit" name="lineEdit_Output_Directory">
+      <property name="geometry">
+       <rect>
+        <x>290</x>
+        <y>530</y>
+        <width>531</width>
         <height>31</height>
        </rect>
       </property>

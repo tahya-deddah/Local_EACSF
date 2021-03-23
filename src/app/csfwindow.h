@@ -62,11 +62,15 @@ private slots:
     void on_actionToggle_advanced_mode_toggled(bool toggled);
     //About
     void on_actionAbout_triggered();
-    
+
     //1st tab
+    void on_Find_clicked();
     void on_Data_Directory_clicked();
-    QFileInfoList Find(QString data_directory, QString filter);
+    QFileInfoList Find_Paths(QString data_directory, QString filter);
     void on_Refresh_clicked();
+    
+    //2nd tab
+   
     void on_T1_clicked();
     void on_Segmentation_clicked();
     void on_CSF_Probability_Map_clicked();
@@ -76,19 +80,19 @@ private slots:
     void on_RH_GM_Surface_clicked();
     void on_output_directory_clicked();
 
-    //2nd tab
+    //3rd tab
     void updateExecutables(QString exeName, QString path);
 
-    //3rd tab
+    //4th tab
     void on_slurm_clicked();
     void on_local_clicked();
     void on_slurm_stateChanged(int state);
     void on_smooth_stateChanged(int state);
 
-    //4th tab
+    //5th tab
     void on_Execute_clicked();
 
-    //5th tab
+    //6th tab
     void on_output_path_clicked();
     void on_itksnap_clicked();
     void on_shapepopoulationviewer_clicked();
