@@ -1,3 +1,0 @@
-/work/tahya/src/EACSF/src/Code/klaplace/build/CMakeFiles/rebuild_cache.dir
-/work/tahya/src/EACSF/src/Code/klaplace/build/CMakeFiles/klaplace.dir
-/work/tahya/src/EACSF/src/Code/klaplace/build/CMakeFiles/edit_cache.dir

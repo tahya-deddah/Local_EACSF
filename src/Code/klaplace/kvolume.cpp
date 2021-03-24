@@ -909,8 +909,13 @@ void computeLaplacePDE(vtkDataSet* data, const double low, const double high, co
 					vtkNew<vtkGenericCell> closestCell;
 					cloc->FindClosestPointWithinRadius(x, radius, closestPoint, cellId, subId, dist2);
 					
-					float cellNormal[3];
-					cellNormals->GetTupleValue(cellId, cellNormal);
+					/*float cellNormal[3];
+					cellNormals->GetTupleValue(cellId, cellNormal);*/
+
+					double cellNormal[3];
+					cellNormals->GetTuple1(cellId);
+
+
 					cellNormal[0] = 0;
 					vtkMath::Normalize(cellNormal);
 					

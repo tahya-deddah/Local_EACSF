@@ -199,13 +199,12 @@ void CSFScripts::write_slurm_job()
 {
 
     QJsonObject data_obj = m_Root_obj["data"].toObject();
+    QString scripts_dir = QDir::cleanPath(checkStringValue(data_obj["Output_Directory"]) + m_PythonScripts);
    
     QFile file_slurm_job(QString(":/PythonScripts/slurm-job"));
     file_slurm_job.open(QIODevice::ReadOnly);
     QString script_slurm_job = file_slurm_job.readAll();
     file_slurm_job.close();
-
-    
 
     QJsonArray exe_array = m_Root_obj["executables"].toArray();
     foreach (const QJsonValue exe_val, exe_array)
@@ -213,16 +212,9 @@ void CSFScripts::write_slurm_job()
         QJsonObject exe_obj = exe_val.toObject();
         m_Executables[exe_obj["name"].toString()] = exe_obj["path"].toString();
     }
-    script_slurm_job.replace("@python3_PATH@", checkStringValue(m_Executables["python3"]));
-
-    QString scripts_dir = QDir::cleanPath(checkStringValue(data_obj["Output_Directory"]) + m_PythonScripts);
-    QString outlog_filename = QDir::cleanPath(checkStringValue(data_obj["Output_Directory"]) + QString("/output_log.txt"));
-    QString errlog_filename = QDir::cleanPath(checkStringValue(data_obj["Output_Directory"]) + QString("/errors_log.txt"));
+    script_slurm_job.replace("@python3_PATH@", checkStringValue(m_Executables["python3"]));  
     script_slurm_job.replace("@script_PATH@", scripts_dir);
-    script_slurm_job.replace("@output_PATH@", outlog_filename);
-    script_slurm_job.replace("@error_PATH@", errlog_filename);
-
-    
+   
     QString slurm_job_script = QDir::cleanPath(scripts_dir + QString("/slurm-job"));
     QFile outfile_slurm_job(slurm_job_script);
     outfile_slurm_job.open(QIODevice::WriteOnly);

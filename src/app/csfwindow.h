@@ -46,12 +46,13 @@ private:
     QJsonObject readConfig(QString filename);
     bool writeConfig(QString filename);
     QString checkStringValue(QJsonValue str_value);
+    void CleanFile(QString filename);
    
 
 
 private slots:
 
-    void prc_finished(int exitCode, QProcess::ExitStatus exitStatus);
+    void prc_finished(QProcess *prc, QString outlog_filename, QString errlog_filename);
     void disp_output(QProcess *prc, QString outlog_filename);
     void disp_err(QProcess *prc, QString errlog_filename);
 

@@ -56,23 +56,14 @@ CSFWindow::CSFWindow(QWidget *m_parent)
     slurm->setChecked(true);
     slurm->setChecked(false);
     smooth->setChecked(true);
-    smooth->setChecked(false);
-
+    smooth->setChecked(false);      
+   
     QJsonObject param_obj = root_obj["parameters"].toObject();
-    lineEdit_Core->setText(param_obj["Slurm_cores"].toString());
-    lineEdit_Node->setText(param_obj["Slurm_nodes"].toString());
-    lineEdit_Time->setText(param_obj["Slurm_time"].toString());
-    lineEdit_Memory->setText(param_obj["Slurm_memory"].toString());
-
     ClosingRadius->setValue(param_obj["Closing_radius"].toInt());
     DilationRadius->setValue(param_obj["Dilation_radius"].toInt());
     IterationsNumber->setValue(param_obj["Iterations_number"].toInt());
     ImageDimension->setText(param_obj["Image_dimension"].toString());
-    tab->removeTab(3);
-    //tab->removeTab(2);
-
-    
-   
+    tab->removeTab(3); 
 }
 
 CSFWindow::~CSFWindow(){}
@@ -123,8 +114,6 @@ void CSFWindow::setConfig(QJsonObject root_obj)
 
     QJsonObject param_obj = root_obj["parameters"].toObject();
 
-   /* local->setChecked(param_obj["Local"].toBool());
-    slurm->setChecked(param_obj["Slurm"].toBool());*/
     lineEdit_Core->setText(param_obj["Slurm_cores"].toString());
     lineEdit_Node->setText(param_obj["Slurm_nodes"].toString());
     lineEdit_Time->setText(param_obj["Slurm_time"].toString());
@@ -165,9 +154,6 @@ QJsonObject CSFWindow::getConfig(){
     data_obj["Output_Directory"]=lineEdit_Output_Directory->text();
 
     QJsonObject param_obj;
-
-   /* param_obj["Local"] = slurm->isChecked();
-    param_obj["Slurm"] = local->isChecked();*/
     if(slurm->isChecked())
     {
         param_obj["Slurm_nodes"] = lineEdit_Node->text();    
@@ -225,10 +211,7 @@ QString CSFWindow::OpenDir(){
     return dirname;
 }
 
-
-
-
-  QString CSFWindow::checkStringValue(QJsonValue str_value)
+QString CSFWindow::checkStringValue(QJsonValue str_value)
 {
             if(str_value.isUndefined()){
                 return QString("");
@@ -236,7 +219,6 @@ QString CSFWindow::OpenDir(){
                 return str_value.toString();
             }
 }
-
 
 void CSFWindow::infoMsgBox(QString message, QMessageBox::Icon type)
 {
@@ -530,11 +512,11 @@ void CSFWindow::on_smooth_stateChanged(int state)
 
 // 5th tab - Execution
 
-void CSFWindow::prc_finished(int exitCode, QProcess::ExitStatus exitStatus){
+void CSFWindow::prc_finished(QProcess *prc, QString outlog_filename, QString errlog_filename){
 
-    QJsonObject root_obj = getConfig();
-    QJsonObject data_obj = root_obj["data"].toObject();
     QString exit_message;
+    int exitCode =  prc->exitCode();
+    QProcess::ExitStatus exitStatus = prc->exitStatus();
     if (local->isChecked())
     {
         exit_message = QString("Local_EACSF pipeline ") + ((exitStatus == QProcess::NormalExit) ? QString("exited with code ") + QString::number(exitCode) : QString("crashed"));
@@ -543,95 +525,53 @@ void CSFWindow::prc_finished(int exitCode, QProcess::ExitStatus exitStatus){
             exit_message="<font color=\"green\"><b>"+exit_message+"</b></font>";
             output->append(exit_message);
             cout<<exit_message.toStdString()<<endl;
+            QFile file(outlog_filename);
+            file.open(QIODevice::WriteOnly | QIODevice::Append);
+            QTextStream out(&file); out <<exit_message;
+            file.close();
         }
         else
         {
             exit_message="<font color=\"red\"><b>"+exit_message+"</b></font>";
             error->append(exit_message);
             cout<<exit_message.toStdString()<<endl;
+            QFile file(errlog_filename);
+            file.open(QIODevice::WriteOnly | QIODevice::Append);
+            QTextStream out(&file); out <<exit_message;
+            file.close();
         }  
     }
     if (slurm->isChecked())
-    {
-    
-        exit_message = QString("Local_EACSF pipeline ") + ((exitStatus == QProcess::NormalExit) ? QString("exited with code ") + QString::number(exitCode) : QString("crashed")) ;
-        if (exitCode==0)
-        {
-            QString succes = QString("Your python script is now running in the background ");
-            exit_message="<font color=\"green\"><b>"+exit_message+"</b></font>";
-            output->append(exit_message);
-            output->append(succes);
-            cout<<exit_message.toStdString()<<endl;
-        }
-        else
-        {
-            exit_message="<font color=\"red\"><b>"+exit_message+"</b></font>";
-            error->append(exit_message);
-            cout<<exit_message.toStdString()<<endl;
-        }       
-     }
+    {}
 }
 
+void CSFWindow::CleanFile(QString filename)
+{ 
+    QFile file(filename);
+    file.open(QIODevice::ReadWrite | QIODevice::Truncate | QIODevice::Text);
+    file.close();
+}
 
 void CSFWindow::disp_output(QProcess *prc, QString outlog_filename)
 {   
-   
-    //prc->setStandardOutputFile(outlog_filename);
-   
     QString output_log(prc->readAllStandardOutput()); 
     QFile file(outlog_filename);
-    
+
     if (file.open(QIODevice::WriteOnly | QIODevice::Append)) {
     QTextStream out(&file); out <<output_log;
     output->append(output_log);
-    file.close();}
-
-    //}
-    
-   /* file.open(QIODevice::ReadOnly);
-    QString output_log = file.readAll();
-    file.close();*/
-    
-       
-   
-    
-
-   /* QFile outlog_file(outlog_filename);
-    outlog_file.open(QIODevice::WriteOnly);
-    QTextStream outlog_stream(&outlog_file);
-    outlog_stream << output->toPlainText();
-    outlog_file.close();
-    output->append(output_log);
-*/
-   
-   
+    file.close();}  
 }
 
 void CSFWindow::disp_err(QProcess *prc, QString errlog_filename)
 { 
-    
-   
-    prc->setStandardErrorFile(errlog_filename);
-    //QString errors(prc->readAllStandardError());
-  
-
+    QString error_log(prc->readAllStandardError());
     QFile file(errlog_filename);
-    file.open(QIODevice::ReadOnly);
-    QString error_log = file.readAll();
-    file.close();
+
+    if (file.open(QIODevice::WriteOnly | QIODevice::Append)) {
+    QTextStream out(&file); out <<error_log;
     error->append(error_log);
-
-
-
-
-    /*QFile errlog_file(errlog_filename);
-    errlog_file.open(QIODevice::WriteOnly);
-    QTextStream errlog_stream(&errlog_file);
-    errlog_stream << error->toPlainText();
-    errlog_file.close();
-    error->append(errors);
-*/
-
+    file.close();}  
 }
 
 
@@ -650,18 +590,18 @@ void CSFWindow::on_Execute_clicked()
     QJsonObject param_obj = root_obj["parameters"].toObject();
     QString output_dir = data_obj["Output_Directory"].toString();
     QString scripts_dir = QDir::cleanPath(output_dir + QString("/PythonScripts"));
+    QString outlog_filename = QDir::cleanPath(output_dir + QString("/output_log.txt"));
+    QString errlog_filename = QDir::cleanPath(output_dir + QString("/errors_log.txt"));
 
 
     if (local->isChecked())
     {   
-        QString outlog_filename = QDir::cleanPath(output_dir + QString("/output_log.txt"));
-        QString errlog_filename = QDir::cleanPath(output_dir + QString("/errors_log.txt"));
+       
+        CleanFile(outlog_filename);
+        CleanFile(errlog_filename);
 
         QString main_script = QDir::cleanPath(scripts_dir + QString("/main_script.py"));
         QStringList params = QStringList() << main_script;
-
-        
-      
 
         connect(prc, &QProcess::readyReadStandardOutput, [prc, outlog_filename, this](){
            disp_output(prc, outlog_filename);
@@ -669,19 +609,17 @@ void CSFWindow::on_Execute_clicked()
         connect(prc, &QProcess::readyReadStandardError, [prc, errlog_filename, this](){
            disp_err(prc, errlog_filename);
         });
-        connect(prc, SIGNAL(finished(int,QProcess::ExitStatus)), this, SLOT(prc_finished(int, QProcess::ExitStatus)));
-        
+        connect(prc, static_cast<void(QProcess::*)(int, QProcess::ExitStatus)>(&QProcess::finished), [prc, outlog_filename, errlog_filename, this ](){
+            prc_finished(prc, outlog_filename, errlog_filename);  
+        });
         prc->setWorkingDirectory(output_dir); 
         QMap<QString, QString> executables = m_exeWidget->GetExeMap();
-        prc->start(executables[QString("python3")], params);
-      
+        prc->start(executables[QString("python3")], params);  
         QMessageBox::information(
             this,
             tr("Local EACSF"),
             tr("Is running.")
-        ); 
-
-        
+        );         
     }
     
     if (slurm->isChecked())
@@ -691,10 +629,19 @@ void CSFWindow::on_Execute_clicked()
         QString memory = QString("--mem=") + param_obj["Slurm_memory"].toString();
         QString core = QString("--ntasks=") + param_obj["Slurm_cores"].toString();
         QString node = QString("--nodes=") + param_obj["Slurm_nodes"].toString();
+        QString output_file = QString("--output=") + outlog_filename ;
+        QString error_file = QString("--error=") + errlog_filename ;
 
-        QStringList params = QStringList() << time << memory << core << node << slurm_script;
+        QStringList params = QStringList() << time << memory << core << node << output_file << error_file << slurm_script;
         prc->setWorkingDirectory(output_dir);
-        connect(prc, SIGNAL(finished(int,QProcess::ExitStatus)), this, SLOT(prc_finished(int, QProcess::ExitStatus)));
+        connect(prc, &QProcess::readyReadStandardOutput, [prc, outlog_filename, this](){
+            QString output_log(prc->readAllStandardOutput()); 
+            output->append(output_log);
+        });
+        connect(prc, &QProcess::readyReadStandardError, [prc, errlog_filename, this](){
+            QString error_log(prc->readAllStandardError());
+            error->append(error_log);
+        });
         prc->start(QString("sbatch"), params);
       
         QMessageBox::information(

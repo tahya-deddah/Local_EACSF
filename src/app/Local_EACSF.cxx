@@ -104,33 +104,37 @@ int  main(int argc, char** argv)
         CSFScripts csfscripts;
         csfscripts.setConfig(root_obj);
         csfscripts.run_EACSF();
+
+        QString scripts_dir = QDir::cleanPath(output_dir + QString("/PythonScripts"));
+        QString outlog_filename = QDir::cleanPath(output_dir + QString("/output_log.txt"));
+        QString errlog_filename = QDir::cleanPath(output_dir + QString("/errors_log.txt"));
+
         QProcess* prc =  new QProcess;
         prc->setWorkingDirectory(output_dir);
 
         if(slrum)
         {
-            QString scripts_dir = QDir::cleanPath(output_dir + QString("/PythonScripts"));
             QString slurm_script = QDir::cleanPath(scripts_dir + QString("/slurm-job"));
-
             QJsonObject param_obj = root_obj["parameters"].toObject();
             QString time = QString("--time=") + param_obj["Slurm_time"].toString();
             QString memory = QString("--mem=") + param_obj["Slurm_memory"].toString();
             QString core = QString("--ntasks=") + param_obj["Slurm_cores"].toString();
             QString node = QString("--nodes=") + param_obj["Slurm_nodes"].toString();
+            QString output_file = QString("--output=") + outlog_filename ;
+            QString error_file = QString("--error=") + errlog_filename ;
 
-            QStringList params = QStringList() << time << memory << core << node << slurm_script;
+            QStringList params = QStringList() << time << memory << core << node << output_file << error_file << slurm_script;
             prc->start(QString("sbatch"), params);
             return EXIT_SUCCESS;
         }
 
         else
         {
-            QString scripts_dir = QDir::cleanPath(output_dir + QString("/PythonScripts"));
             QString main_script = QDir::cleanPath(scripts_dir + QString("/main_script.py"));
             QStringList params = QStringList() << main_script;
 
-            prc->setStandardOutputFile(QDir::cleanPath(output_dir + QString("/output.txt")));
-            prc->setStandardErrorFile(QDir::cleanPath(output_dir + QString("/errors.txt")));
+            prc->setStandardOutputFile(outlog_filename);
+            prc->setStandardErrorFile(errlog_filename);
 
             QMap<QString, QString> executables = csfscripts.GetExecutablesMap();
             cout<<executables["python3"].toStdString()<<" "<<params.join(" ").toStdString()<<endl;
