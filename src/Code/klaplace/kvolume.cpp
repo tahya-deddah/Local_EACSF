@@ -912,8 +912,13 @@ void computeLaplacePDE(vtkDataSet* data, const double low, const double high, co
 					/*float cellNormal[3];
 					cellNormals->GetTupleValue(cellId, cellNormal);*/
 
-					double cellNormal[3];
-					cellNormals->GetTuple1(cellId);
+					float cellNormal[3];
+					cellNormals->GetTypedTuple(cellId, cellNormal);
+
+					
+
+					/*double cellNormal[3];
+					cellNormals->GetTuple1(cellId);*/
 
 
 					cellNormal[0] = 0;

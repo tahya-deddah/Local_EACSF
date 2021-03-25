@@ -31,7 +31,7 @@ QJsonObject readConfig(QString filename)
     return root_obj;
 }
 
-std::vector<std::pair<std::string, std::string>> read_csv(std::string filename)
+/*std::vector<std::pair<std::string, std::string>> read_csv(std::string filename)
 {
     std::vector<std::pair<std::string, std::string>> result;
     std::string line, colname;
@@ -59,7 +59,7 @@ std::vector<std::pair<std::string, std::string>> read_csv(std::string filename)
     }
     myFile.close();
     return result;
-}
+}*/
 
 QString checkStringValue(string str_value, QJsonValue str_default){
     if(str_value.compare("") == 0){
@@ -72,6 +72,30 @@ QString checkStringValue(string str_value, QJsonValue str_default){
     }
 }
 
+std::string read_path_from_csv(std::string filename, std::string search_term)
+{
+    std::string input_path;
+    std::string name;
+    std::string path;
+    bool name_found = false;
+
+    std::ifstream myFile(filename);
+    if(!myFile.is_open()) throw std::runtime_error("Could not open file");
+    if(myFile.good())
+    {
+        while(std::getline(myFile, name, ',') && name_found ==false)
+        {
+            std::getline(myFile, path, '\n');
+            if(name == search_term)
+            {
+                name_found = true;
+                input_path = path;
+            }
+        }
+    } 
+    std::cout<< input_path << std::endl;  
+    return input_path ;
+}
 
 
 int  main(int argc, char** argv) 
@@ -82,7 +106,9 @@ int  main(int argc, char** argv)
    
     if (noGUI)
     {
-        std::vector<std::pair<std::string, std::string>> csv = read_csv(csv_file);
+
+
+       /* std::vector<std::pair<std::string, std::string>> csv = read_csv(csv_file);
         QJsonObject data_obj = root_obj["data"].toObject();
         data_obj["T1"] = checkStringValue(csv[0].second, data_obj["T1"]);
         data_obj["Tissu_Segmentation"] = checkStringValue(csv[1].second, data_obj["Tissu_Segmentation"]);
@@ -92,6 +118,20 @@ int  main(int argc, char** argv)
         data_obj["RH_MID_surface"] = checkStringValue(csv[5].second, data_obj["RH_MID_surface"]);
         data_obj["RH_GM_surface"] = checkStringValue(csv[6].second,  data_obj["RH_GM_surface"]);
         data_obj["Output_Directory"] = checkStringValue(csv[7].second,  data_obj["Output_Directory"]);
+        root_obj["data"]=data_obj;*/
+
+
+
+
+        QJsonObject data_obj = root_obj["data"].toObject();
+        data_obj["T1"] = checkStringValue( read_path_from_csv(csv_file, "T1"),  data_obj["T1"]);
+        data_obj["Tissu_Segmentation"] = checkStringValue( read_path_from_csv(csv_file, "Tissu_Segmentation"),  data_obj["Tissu_Segmentation"]);
+        data_obj["CSF_Probability_Map"] = checkStringValue( read_path_from_csv(csv_file, "CSF_Probability_Map"),  data_obj["CSF_Probability_Map"]);
+        data_obj["LH_MID_surface"] = checkStringValue( read_path_from_csv(csv_file, "LH_MID_surface"),  data_obj["LH_MID_surface"]);
+        data_obj["LH_GM_surface"] = checkStringValue( read_path_from_csv(csv_file, "LH_GM_surface"),  data_obj["LH_GM_surface"]);
+        data_obj["RH_MID_surface"] = checkStringValue( read_path_from_csv(csv_file, "RH_GM_surface"),  data_obj["RH_MID_surface"]);
+        data_obj["RH_GM_surface"] = checkStringValue( read_path_from_csv(csv_file, "RH_MID_surface"),   data_obj["RH_GM_surface"]);
+        data_obj["Output_Directory"] = checkStringValue( read_path_from_csv(csv_file, "Output_Directory"),   data_obj["Output_Directory"]);
         root_obj["data"]=data_obj;
 
         QString output_dir = QDir::cleanPath(data_obj["Output_Directory"].toString());

@@ -11,7 +11,7 @@
       <longflag>csv</longflag>
       <flag>c</flag>
       <description>
-        a CSV file containing all the inputs paths in the following order : T1, Seg, CSF_Prob, LH_MID_Surface, LH_GM_Surface, LH_MID_Surface, LH_GM_Surface, Output Directory
+        a CSV file containing all the inputs paths and the output directory path
       </description>
       <channel>input</channel>
     </file>

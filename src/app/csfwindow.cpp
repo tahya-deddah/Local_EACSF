@@ -22,9 +22,6 @@
 
 const QString CSFWindow::m_github_url = "https://github.com/tahya-deddah/Local_EACSF";
 
-using namespace std::this_thread; // sleep_for, sleep_until
-using namespace std::chrono; // nanoseconds, system_clock, seconds
-
 CSFWindow::CSFWindow(QWidget *m_parent)
     :QMainWindow(m_parent)
 {
@@ -240,7 +237,6 @@ void CSFWindow::on_actionLoad_Config_File_triggered()
         {
             setConfig(readConfig(filename));
         }
-
 }
 
 void CSFWindow::on_actionSave_Config_File_triggered()
@@ -541,8 +537,6 @@ void CSFWindow::prc_finished(QProcess *prc, QString outlog_filename, QString err
             file.close();
         }  
     }
-    if (slurm->isChecked())
-    {}
 }
 
 void CSFWindow::CleanFile(QString filename)
@@ -595,8 +589,7 @@ void CSFWindow::on_Execute_clicked()
 
 
     if (local->isChecked())
-    {   
-       
+    {      
         CleanFile(outlog_filename);
         CleanFile(errlog_filename);
 
@@ -649,6 +642,12 @@ void CSFWindow::on_Execute_clicked()
             tr("Local EACSF"),
             tr("Is running.")
         );
+
+        QFile file(outlog_filename);
+        file.open(QIODevice::ReadOnly);
+        QString outputs = file.readAll();
+        file.close();
+        output->append(outputs);
     }  
 }
 
