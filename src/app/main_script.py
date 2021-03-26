@@ -16,7 +16,7 @@ def main(args):
 	process_left_hemisphere = os.path.join(scripts_prefix,"process_left_hemisphere.py")
 	process_right_hemisphere = os.path.join(scripts_prefix,"process_right_hemisphere.py")
 	####
-	#Process_Left_Side = subprocess.call([python, process_left_hemisphere])
+	Process_Left_Side = subprocess.call([python, process_left_hemisphere])
 	Process_Right_Side = subprocess.call([python, process_right_hemisphere])
 
 

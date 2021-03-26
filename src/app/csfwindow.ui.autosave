@@ -36,11 +36,11 @@
      <string/>
     </property>
     <property name="currentIndex">
-     <number>0</number>
+     <number>7</number>
     </property>
-    <widget class="QWidget" name="tab_input">
+    <widget class="QWidget" name="tab_batch">
      <attribute name="title">
-      <string>Set Inputs</string>
+      <string>Batch Processing</string>
      </attribute>
      <widget class="QPushButton" name="Data_Directory">
       <property name="geometry">
@@ -276,7 +276,7 @@
       </property>
      </widget>
     </widget>
-    <widget class="QWidget" name="tab_2">
+    <widget class="QWidget" name="tab_inputs">
      <attribute name="title">
       <string>Inputs</string>
      </attribute>
@@ -671,7 +671,7 @@ p, li { white-space: pre-wrap; }
       <bool>true</bool>
      </property>
      <attribute name="title">
-      <string>Smoothing +Cleaning+Location</string>
+      <string>Smoothing +Cleaning+Server</string>
      </attribute>
      <widget class="QCheckBox" name="smooth">
       <property name="geometry">
@@ -1034,6 +1034,31 @@ p, li { white-space: pre-wrap; }
       </property>
       <property name="text">
        <string>Visualize the visitation map for both hemispheres in itksnap</string>
+      </property>
+     </widget>
+    </widget>
+    <widget class="QWidget" name="tab_2">
+     <attribute name="title">
+      <string>Page</string>
+     </attribute>
+     <widget class="QListView" name="listView">
+      <property name="geometry">
+       <rect>
+        <x>120</x>
+        <y>170</y>
+        <width>591</width>
+        <height>192</height>
+       </rect>
+      </property>
+     </widget>
+     <widget class="QTableView" name="tableView">
+      <property name="geometry">
+       <rect>
+        <x>270</x>
+        <y>390</y>
+        <width>256</width>
+        <height>192</height>
+       </rect>
       </property>
      </widget>
     </widget>

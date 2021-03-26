@@ -67,7 +67,7 @@ private slots:
     //1st tab
     void on_Find_clicked();
     void on_Data_Directory_clicked();
-    QFileInfoList Find_Paths(QString data_directory, QString filter);
+    QStringList Find_Paths(QString data_directory, QString filter);
     void on_Refresh_clicked();
     
     //2nd tab
@@ -106,6 +106,8 @@ private:
     ExtExecutablesWidget* m_exeWidget;
     static const QString m_github_url;
 
+    ///////////
+    
     
 };
 

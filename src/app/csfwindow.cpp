@@ -61,6 +61,9 @@ CSFWindow::CSFWindow(QWidget *m_parent)
     IterationsNumber->setValue(param_obj["Iterations_number"].toInt());
     ImageDimension->setText(param_obj["Image_dimension"].toString());
     tab->removeTab(3); 
+
+   
+   
 }
 
 CSFWindow::~CSFWindow(){}
@@ -311,39 +314,45 @@ void CSFWindow::on_Find_clicked()
                        );
            }
            else
-           {    
-
-              textEdit_Paths->clear();
-              QFileInfoList hitList_T1 = Find_Paths(data_directory,lineEdit_T1_filter->text());
-              QFileInfoList hitList_Seg = Find_Paths(data_directory,lineEdit_Seg_filter->text());
-              QFileInfoList hitList_CSF_Prob = Find_Paths(data_directory,lineEdit_CSF_Prob_filter->text());
-              QFileInfoList hitList_LH_MID = Find_Paths(data_directory,lineEdit_LH_MID_filter->text());
-              QFileInfoList hitList_LH_GM = Find_Paths(data_directory,lineEdit_LH_GM_filter->text());
-              QFileInfoList hitList_RH_MID = Find_Paths(data_directory,lineEdit_RH_MID_filter->text());
-              QFileInfoList hitList_RH_GM = Find_Paths(data_directory,lineEdit_RH_GM_filter->text());
+           {
+            Find_Paths(data_directory,lineEdit_T1_filter->text());    
            }
-
 }
-QFileInfoList CSFWindow::Find_Paths(QString data_directory, QString filter)
+
+QStringList CSFWindow::Find_Paths(QString data_directory, QString filter)
 {
-    QFileInfoList hitList;
+    QStringList path_list;
     QDirIterator it(data_directory, QDirIterator::Subdirectories);
     while (it.hasNext())
     {
         QString filename = it.next();
         QFileInfo file(filename);
-        if (file.isDir()) {  continue; }
-        if (filter != QString("") && file.fileName().contains(filter, Qt::CaseInsensitive))
-        {hitList.append(file);}
-    }
-    textEdit_Paths->append(filter);
-    foreach (QFileInfo hit, hitList) {
-        textEdit_Paths->append(hit.absoluteFilePath());
-    }
-    textEdit_Paths->append(QString(" "));
-    return hitList;
+        QRegularExpression re(filter);
+        QRegularExpressionMatch match = re.match(file.fileName());
+        if (file.isDir()) {  continue; }   
+        if (filter != QString("") && match.hasMatch())
+        {
+            path_list << file.absoluteFilePath() << \n;
+            textEdit_Paths->append(file.absoluteFilePath());
+        }
+         qDebug() << path_list;
+    }   
+    return path_list;
 }
 
+/*QString CSFWindow::match(QString filname, QString filter)
+{
+    QRegularExpression re(filter);
+    QRegularExpressionMatch match = re.match(filename);
+    bool hasMatch = match.hasMatch();
+    if (match.hasMatch()) {
+        QString number = match.captured(0); // first == "23"
+        QString name = match.captured("name"); // name == "Jordan"
+        qDebug() << hasMatch() ;
+        qDebug() << name ;
+    }
+}
+*/
 void CSFWindow::on_Refresh_clicked()
 {
     for (auto line : textEdit_Paths->toPlainText().split('\n'))
@@ -642,12 +651,6 @@ void CSFWindow::on_Execute_clicked()
             tr("Local EACSF"),
             tr("Is running.")
         );
-
-        QFile file(outlog_filename);
-        file.open(QIODevice::ReadOnly);
-        QString outputs = file.readAll();
-        file.close();
-        output->append(outputs);
     }  
 }
 
@@ -688,7 +691,7 @@ void CSFWindow::on_visualize_clicked()
     {
         QString LH_visitation_map = LH_Directory + QString("/LH__Visitation.nrrd");
         QString RH_visitation_map = RH_Directory + QString("/RH__Visitation.nrrd");
-        QStringList arguments = QStringList() << LH_visitation_map << RH_visitation_map;
+        QStringList arguments = QStringList()<< QString("-g") << LH_visitation_map << QString("-s") << RH_visitation_map;
         visualization->setWorkingDirectory(OutputDirectory);
         visualization->start(QString("itksnap"),arguments);
         QMessageBox::information(
