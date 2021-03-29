@@ -315,47 +315,103 @@ void CSFWindow::on_Find_clicked()
            }
            else
            {
-            Find_Paths(data_directory,lineEdit_T1_filter->text());    
-           }
+                QVector <QString> T1_vect;
+                QVector <QString> Seg_vect;
+                QVector <QString> CSF_Prob_vect;
+                QVector <QString> LH_MID_vect;
+                QVector <QString> LH_GM_vect;
+                QVector <QString> RH_MID_vect;
+                QVector <QString> RH_GM_vect;
+                QDirIterator it(data_directory, QDir::Dirs | QDir::NoSymLinks | QDir::NoDotAndDotDot, QDirIterator::Subdirectories);        
+                while(it.hasNext())
+                {  
+                    QString subdirectory = it.next();
+                    QFileInfo file(subdirectory);
+                    if (file.isDir()) 
+                    { 
+                        QDir oDir(file.absoluteFilePath()); 
+                        Find_Paths(oDir, lineEdit_T1_filter->text(), T1_vect); 
+                        Find_Paths(oDir, lineEdit_Seg_filter->text(), Seg_vect);
+                        Find_Paths(oDir, lineEdit_CSF_Prob_filter->text(), CSF_Prob_vect);   
+                        Find_Paths(oDir, lineEdit_LH_MID_filter->text(), LH_MID_vect);
+                        Find_Paths(oDir, lineEdit_LH_GM_filter->text(), LH_GM_vect);
+                        Find_Paths(oDir, lineEdit_RH_MID_filter->text(), RH_MID_vect);
+                        Find_Paths(oDir, lineEdit_RH_GM_filter->text(), RH_GM_vect);                      
+                    } 
+                }
+                Create_CSV_file(T1_vect, Seg_vect, CSF_Prob_vect, LH_MID_vect, LH_GM_vect, RH_MID_vect , RH_GM_vect );
+                Importe_CSV_file_to_tablewidget(QString("csv_file.csv"));
+            }
 }
-
-QStringList CSFWindow::Find_Paths(QString data_directory, QString filter)
+void CSFWindow::Create_CSV_file(QVector<QString> &v1, QVector<QString>  &v2, QVector<QString>  &v3, QVector<QString> &v4, QVector<QString> &v5,
+ QVector<QString>  &v6, QVector<QString>  &v7)
 {
-    QStringList path_list;
-    QDirIterator it(data_directory, QDirIterator::Subdirectories);
-    while (it.hasNext())
-    {
-        QString filename = it.next();
-        QFileInfo file(filename);
-        QRegularExpression re(filter);
-        QRegularExpressionMatch match = re.match(file.fileName());
-        if (file.isDir()) {  continue; }   
-        if (filter != QString("") && match.hasMatch())
-        {
-            path_list << file.absoluteFilePath() << \n;
-            textEdit_Paths->append(file.absoluteFilePath());
-        }
-         qDebug() << path_list;
-    }   
-    return path_list;
-}
-
-/*QString CSFWindow::match(QString filname, QString filter)
-{
-    QRegularExpression re(filter);
-    QRegularExpressionMatch match = re.match(filename);
-    bool hasMatch = match.hasMatch();
-    if (match.hasMatch()) {
-        QString number = match.captured(0); // first == "23"
-        QString name = match.captured("name"); // name == "Jordan"
-        qDebug() << hasMatch() ;
-        qDebug() << name ;
+    QString filename = "csv_file.csv";
+    CleanFile( filename );
+    QFile file(filename);
+    if (file.open(QIODevice::ReadWrite)) {
+        QTextStream stream(&file);
+        stream << "T1" << "," << "Tissu segmenatation" << "," << "CSF probability map" << "," <<"LH MID" << "," << "LH GM" << "," << "RH MID" <<"," << "RH GM" << "\n";
+       for (int c=0; c < v1.size(); c++ ) //  same size
+       {
+        stream << v1[c] << "," << v2[c] << "," << v3[c]  << "," << v4[c] << "," << v5[c] << "," << v6[c] << "," << v7[c] << "\n";
+       }
     }
 }
-*/
+void CSFWindow::Importe_CSV_file_to_tablewidget(QString CSV_file)
+{
+
+    QFile file(CSV_file);
+    QStringList listA;
+    int row = 0;
+    if (file.open(QIODevice::ReadOnly)){
+
+        while (!file.atEnd()){
+            QString line = file.readLine();
+            listA = line.split(",");
+            tableWidget->setColumnCount(listA.size());
+            tableWidget->insertRow(row);
+
+            for (int x = 0; x < listA.size(); x++)
+            {
+                QTableWidgetItem *test = new QTableWidgetItem(listA.at(x));
+                tableWidget->setItem(row, x, test);
+            }
+            row++;
+        }
+    }
+    file.close();
+    QHeaderView* header = tableWidget ->horizontalHeader();
+    header->setSectionResizeMode(QHeaderView::Stretch);
+
+}
+
+void CSFWindow::Find_Paths(QDir oDir, QString filter, QVector<QString> &vect)
+{ 
+
+    QStringList oDirList = oDir.entryList(QDir::Files);
+
+    int count =0;
+
+    for (int i = 0; i < oDirList.size(); ++i)
+    {
+        QString filename = oDirList.at(i);
+        QFileInfo( oDir, filename).absoluteFilePath();    
+        QRegularExpression re(filter);
+        QRegularExpressionMatch match = re.match(QFileInfo( oDir, filename).fileName());
+        if (filter != QString("") && match.hasMatch())
+        {   
+            count = count + 1; 
+            qDebug() << QFileInfo( oDir, filename).absoluteFilePath(); 
+            vect.append( QFileInfo( oDir, filename).absoluteFilePath());
+            
+        }
+    }
+}
+
 void CSFWindow::on_Refresh_clicked()
 {
-    for (auto line : textEdit_Paths->toPlainText().split('\n'))
+   /* for (auto line : textEdit_Paths->toPlainText().split('\n'))
     {
         if(line.contains(lineEdit_T1_filter->text()))
         {lineEdit_T1img->setText(line);}
@@ -377,7 +433,7 @@ void CSFWindow::on_Refresh_clicked()
 
         if(line.contains(lineEdit_RH_GM_filter->text()))
         {lineEdit_RH_GM_Surface->setText(line);}
-    }
+    }*/
 }
 
 //2nd tab

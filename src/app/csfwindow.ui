@@ -36,7 +36,7 @@
      <string/>
     </property>
     <property name="currentIndex">
-     <number>7</number>
+     <number>0</number>
     </property>
     <widget class="QWidget" name="tab_batch">
      <attribute name="title">
@@ -252,27 +252,14 @@
        <string>Find </string>
       </property>
      </widget>
-     <widget class="QTextEdit" name="textEdit_Paths">
+     <widget class="QTableWidget" name="tableWidget">
       <property name="geometry">
        <rect>
         <x>30</x>
         <y>240</y>
-        <width>791</width>
-        <height>331</height>
+        <width>901</width>
+        <height>301</height>
        </rect>
-      </property>
-     </widget>
-     <widget class="QLabel" name="label">
-      <property name="geometry">
-       <rect>
-        <x>30</x>
-        <y>190</y>
-        <width>751</width>
-        <height>41</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;If there are more than one path for an input, please delete the ones you do not want and keep only one &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
       </property>
      </widget>
     </widget>
@@ -1041,16 +1028,6 @@ p, li { white-space: pre-wrap; }
      <attribute name="title">
       <string>Page</string>
      </attribute>
-     <widget class="QListView" name="listView">
-      <property name="geometry">
-       <rect>
-        <x>120</x>
-        <y>170</y>
-        <width>591</width>
-        <height>192</height>
-       </rect>
-      </property>
-     </widget>
     </widget>
    </widget>
   </widget>

@@ -67,7 +67,9 @@ private slots:
     //1st tab
     void on_Find_clicked();
     void on_Data_Directory_clicked();
-    QStringList Find_Paths(QString data_directory, QString filter);
+    void Find_Paths(QDir odir, QString filter, QVector <QString> &vect);
+    void Create_CSV_file(QVector<QString> &v1, QVector<QString>  &v2, QVector<QString>  &v3, QVector<QString> &v4, QVector<QString> &v5, QVector<QString>  &v6, QVector<QString>  &v7);
+    void Importe_CSV_file_to_tablewidget(QString csv_file);
     void on_Refresh_clicked();
     
     //2nd tab
@@ -105,9 +107,16 @@ private:
     QJsonObject root_obj ;
     ExtExecutablesWidget* m_exeWidget;
     static const QString m_github_url;
-
-    ///////////
     
+    /*std::vector<std::string> T1_vect;
+    std::vector<std::string> Seg_vect;
+    std::vector<std::string> CSF_Prob_vect;*/
+
+    /*QVector T1_vect;
+    QVector Seg_vect;
+    QVector CSF_Prob_vect;*/
+    ///////////
+
     
 };
 
