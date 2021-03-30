@@ -28,8 +28,7 @@ CSFWindow::CSFWindow(QWidget *m_parent)
     
     this->setupUi(this);
     QJsonObject root_obj = readConfig(QString(":/config/default_config.json"));
-
-
+    
     QJsonArray exe_array = root_obj["executables"].toArray();
     QMap<QString, QString> executables;
 
@@ -50,6 +49,7 @@ CSFWindow::CSFWindow(QWidget *m_parent)
         connect(m_exeWidget, SIGNAL(newExePath(QString,QString)), this, SLOT(updateExecutables(QString,QString)));
     }
 
+
     slurm->setChecked(true);
     slurm->setChecked(false);
     smooth->setChecked(true);
@@ -61,6 +61,9 @@ CSFWindow::CSFWindow(QWidget *m_parent)
     IterationsNumber->setValue(param_obj["Iterations_number"].toInt());
     ImageDimension->setText(param_obj["Image_dimension"].toString());
     tab->removeTab(3); 
+
+    connect(tableView, SIGNAL(cellClicked(int,int)), this, SLOT(cellDoubleClicked(int , int )));
+    connect(tableView, SIGNAL(cellDoubleClicked(int,int)), this, SLOT(cellDoubleClicked(int , int )));
 
    
    
@@ -315,13 +318,8 @@ void CSFWindow::on_Find_clicked()
            }
            else
            {
-                QVector <QString> T1_vect;
-                QVector <QString> Seg_vect;
-                QVector <QString> CSF_Prob_vect;
-                QVector <QString> LH_MID_vect;
-                QVector <QString> LH_GM_vect;
-                QVector <QString> RH_MID_vect;
-                QVector <QString> RH_GM_vect;
+              
+                QList<QStringList> data;
                 QDirIterator it(data_directory, QDir::Dirs | QDir::NoSymLinks | QDir::NoDotAndDotDot, QDirIterator::Subdirectories);        
                 while(it.hasNext())
                 {  
@@ -330,68 +328,32 @@ void CSFWindow::on_Find_clicked()
                     if (file.isDir()) 
                     { 
                         QDir oDir(file.absoluteFilePath()); 
-                        Find_Paths(oDir, lineEdit_T1_filter->text(), T1_vect); 
-                        Find_Paths(oDir, lineEdit_Seg_filter->text(), Seg_vect);
-                        Find_Paths(oDir, lineEdit_CSF_Prob_filter->text(), CSF_Prob_vect);   
-                        Find_Paths(oDir, lineEdit_LH_MID_filter->text(), LH_MID_vect);
-                        Find_Paths(oDir, lineEdit_LH_GM_filter->text(), LH_GM_vect);
-                        Find_Paths(oDir, lineEdit_RH_MID_filter->text(), RH_MID_vect);
-                        Find_Paths(oDir, lineEdit_RH_GM_filter->text(), RH_GM_vect);                      
+                        QStringList line = {};
+                        Find_Paths(oDir, lineEdit_T1_filter->text(), line); 
+                        Find_Paths(oDir, lineEdit_Seg_filter->text(), line);
+                        Find_Paths(oDir, lineEdit_CSF_Prob_filter->text(), line);   
+                        Find_Paths(oDir, lineEdit_LH_MID_filter->text(), line);
+                        Find_Paths(oDir, lineEdit_LH_GM_filter->text(), line);
+                        Find_Paths(oDir, lineEdit_RH_MID_filter->text(), line);
+                        Find_Paths(oDir, lineEdit_RH_GM_filter->text(), line);  
+                        data.append(line);                  
                     } 
                 }
-                Create_CSV_file(T1_vect, Seg_vect, CSF_Prob_vect, LH_MID_vect, LH_GM_vect, RH_MID_vect , RH_GM_vect );
-                Importe_CSV_file_to_tablewidget(QString("csv_file.csv"));
+                CsvTableModel *model = new CsvTableModel(data,this);
+                tableView->setModel(model);
+                tableView->resizeColumnsToContents();
+                tableView->resizeRowsToContents();
             }
 }
-void CSFWindow::Create_CSV_file(QVector<QString> &v1, QVector<QString>  &v2, QVector<QString>  &v3, QVector<QString> &v4, QVector<QString> &v5,
- QVector<QString>  &v6, QVector<QString>  &v7)
-{
-    QString filename = "csv_file.csv";
-    CleanFile( filename );
-    QFile file(filename);
-    if (file.open(QIODevice::ReadWrite)) {
-        QTextStream stream(&file);
-        stream << "T1" << "," << "Tissu segmenatation" << "," << "CSF probability map" << "," <<"LH MID" << "," << "LH GM" << "," << "RH MID" <<"," << "RH GM" << "\n";
-       for (int c=0; c < v1.size(); c++ ) //  same size
-       {
-        stream << v1[c] << "," << v2[c] << "," << v3[c]  << "," << v4[c] << "," << v5[c] << "," << v6[c] << "," << v7[c] << "\n";
-       }
-    }
-}
-void CSFWindow::Importe_CSV_file_to_tablewidget(QString CSV_file)
-{
+void CSFWindow::cellDoubleClicked(int iRow, int iColumn){}
 
-    QFile file(CSV_file);
-    QStringList listA;
-    int row = 0;
-    if (file.open(QIODevice::ReadOnly)){
-
-        while (!file.atEnd()){
-            QString line = file.readLine();
-            listA = line.split(",");
-            tableWidget->setColumnCount(listA.size());
-            tableWidget->insertRow(row);
-
-            for (int x = 0; x < listA.size(); x++)
-            {
-                QTableWidgetItem *test = new QTableWidgetItem(listA.at(x));
-                tableWidget->setItem(row, x, test);
-            }
-            row++;
-        }
-    }
-    file.close();
-    QHeaderView* header = tableWidget ->horizontalHeader();
-    header->setSectionResizeMode(QHeaderView::Stretch);
-
-}
-
-void CSFWindow::Find_Paths(QDir oDir, QString filter, QVector<QString> &vect)
+void CSFWindow::Find_Paths(QDir oDir, QString filter,  QStringList &vect)
 { 
 
     QStringList oDirList = oDir.entryList(QDir::Files);
 
-    int count =0;
+    int count =0;;
+
 
     for (int i = 0; i < oDirList.size(); ++i)
     {
@@ -400,10 +362,10 @@ void CSFWindow::Find_Paths(QDir oDir, QString filter, QVector<QString> &vect)
         QRegularExpression re(filter);
         QRegularExpressionMatch match = re.match(QFileInfo( oDir, filename).fileName());
         if (filter != QString("") && match.hasMatch())
-        {   
+        {        
             count = count + 1; 
-            qDebug() << QFileInfo( oDir, filename).absoluteFilePath(); 
-            vect.append( QFileInfo( oDir, filename).absoluteFilePath());
+            //qDebug() << QFileInfo( oDir, filename).absoluteFilePath(); 
+            vect.append(QFileInfo( oDir, filename).absoluteFilePath());
             
         }
     }

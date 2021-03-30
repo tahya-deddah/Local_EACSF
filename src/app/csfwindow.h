@@ -20,6 +20,8 @@
 #include "ui_csfwindow.h"
 #include "csfscripts.h"
 #include "extexecutableswidget.h"
+#include "model.h"
+
 
 namespace Ui{
 class CSFWindow;
@@ -67,9 +69,8 @@ private slots:
     //1st tab
     void on_Find_clicked();
     void on_Data_Directory_clicked();
-    void Find_Paths(QDir odir, QString filter, QVector <QString> &vect);
-    void Create_CSV_file(QVector<QString> &v1, QVector<QString>  &v2, QVector<QString>  &v3, QVector<QString> &v4, QVector<QString> &v5, QVector<QString>  &v6, QVector<QString>  &v7);
-    void Importe_CSV_file_to_tablewidget(QString csv_file);
+    void Find_Paths(QDir odir, QString filter, QStringList &vect);
+    void cellDoubleClicked(int iRow, int iColumn);
     void on_Refresh_clicked();
     
     //2nd tab
