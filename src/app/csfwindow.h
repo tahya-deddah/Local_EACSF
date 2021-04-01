@@ -39,6 +39,9 @@ public:
     QJsonObject getConfig();
     void setConfig(QJsonObject root_obj);
 
+private slots:
+    void on_Run_Batch_Process_clicked();
+
 private:
 
     QString OpenFile();
@@ -67,11 +70,11 @@ private slots:
     void on_actionAbout_triggered();
 
     //1st tab
-    void on_Find_clicked();
     void on_Data_Directory_clicked();
-    void Find_Paths(QDir odir, QString filter, QStringList &vect);
-    void cellDoubleClicked(int iRow, int iColumn);
-    void on_Refresh_clicked();
+    void on_Find_clicked();   
+    bool Find_Paths(QDir odir, QString filter, QStringList &vect);
+    void on_Remove_clicked();
+    
     
     //2nd tab
    
@@ -95,6 +98,7 @@ private slots:
 
     //5th tab
     void on_Execute_clicked();
+    void run_Local_EACSF();
 
     //6th tab
     void on_output_path_clicked();
@@ -108,16 +112,7 @@ private:
     QJsonObject root_obj ;
     ExtExecutablesWidget* m_exeWidget;
     static const QString m_github_url;
-    
-    /*std::vector<std::string> T1_vect;
-    std::vector<std::string> Seg_vect;
-    std::vector<std::string> CSF_Prob_vect;*/
-
-    /*QVector T1_vect;
-    QVector Seg_vect;
-    QVector CSF_Prob_vect;*/
-    ///////////
-
+    CsvTableModel *model ;
     
 };
 

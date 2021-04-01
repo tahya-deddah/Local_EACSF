@@ -88,7 +88,7 @@
        </rect>
       </property>
      </widget>
-     <widget class="QPushButton" name="Refresh">
+     <widget class="QPushButton" name="Run_Batch_Process">
       <property name="geometry">
        <rect>
         <x>740</x>
@@ -262,10 +262,10 @@
        </rect>
       </property>
      </widget>
-     <widget class="QPushButton" name="pushButton">
+     <widget class="QPushButton" name="Remove">
       <property name="geometry">
        <rect>
-        <x>60</x>
+        <x>160</x>
         <y>560</y>
         <width>92</width>
         <height>28</height>
@@ -275,10 +275,10 @@
        <string>Remove</string>
       </property>
      </widget>
-     <widget class="QPushButton" name="pushButton_2">
+     <widget class="QPushButton" name="Add">
       <property name="geometry">
        <rect>
-        <x>190</x>
+        <x>50</x>
         <y>560</y>
         <width>92</width>
         <height>28</height>
@@ -288,11 +288,11 @@
        <string>Add</string>
       </property>
      </widget>
-     <widget class="QCheckBox" name="checkBox">
+     <widget class="QCheckBox" name="checkBox_slurm">
       <property name="geometry">
        <rect>
-        <x>80</x>
-        <y>600</y>
+        <x>60</x>
+        <y>640</y>
         <width>181</width>
         <height>25</height>
        </rect>
@@ -301,11 +301,11 @@
        <string>slurm parallelement</string>
       </property>
      </widget>
-     <widget class="QCheckBox" name="checkBox_2">
+     <widget class="QCheckBox" name="checkBox_local">
       <property name="geometry">
        <rect>
-        <x>80</x>
-        <y>630</y>
+        <x>60</x>
+        <y>610</y>
         <width>171</width>
         <height>25</height>
        </rect>

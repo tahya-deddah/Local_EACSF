@@ -62,11 +62,6 @@ CSFWindow::CSFWindow(QWidget *m_parent)
     ImageDimension->setText(param_obj["Image_dimension"].toString());
     tab->removeTab(3); 
 
-    connect(tableView, SIGNAL(cellClicked(int,int)), this, SLOT(cellDoubleClicked(int , int )));
-    connect(tableView, SIGNAL(cellDoubleClicked(int,int)), this, SLOT(cellDoubleClicked(int , int )));
-
-   
-   
 }
 
 CSFWindow::~CSFWindow(){}
@@ -329,32 +324,35 @@ void CSFWindow::on_Find_clicked()
                     { 
                         QDir oDir(file.absoluteFilePath()); 
                         QStringList line = {};
-                        Find_Paths(oDir, lineEdit_T1_filter->text(), line); 
-                        Find_Paths(oDir, lineEdit_Seg_filter->text(), line);
-                        Find_Paths(oDir, lineEdit_CSF_Prob_filter->text(), line);   
-                        Find_Paths(oDir, lineEdit_LH_MID_filter->text(), line);
-                        Find_Paths(oDir, lineEdit_LH_GM_filter->text(), line);
-                        Find_Paths(oDir, lineEdit_RH_MID_filter->text(), line);
-                        Find_Paths(oDir, lineEdit_RH_GM_filter->text(), line);  
-                        data.append(line);                  
+                        bool found = Find_Paths(oDir, lineEdit_T1_filter->text(), line); 
+                        if (found)
+                        {
+                            Find_Paths(oDir, lineEdit_Seg_filter->text(), line);
+                            Find_Paths(oDir, lineEdit_CSF_Prob_filter->text(), line);   
+                            Find_Paths(oDir, lineEdit_LH_MID_filter->text(), line);
+                            Find_Paths(oDir, lineEdit_LH_GM_filter->text(), line);
+                            Find_Paths(oDir, lineEdit_RH_MID_filter->text(), line);
+                            Find_Paths(oDir, lineEdit_RH_GM_filter->text(), line);
+                            line.append(file.absoluteFilePath()); 
+                            data.append(line);       
+                        }
+                                   
                     } 
                 }
-                CsvTableModel *model = new CsvTableModel(data,this);
+                model = new CsvTableModel(data,this);
                 tableView->setModel(model);
                 tableView->resizeColumnsToContents();
                 tableView->resizeRowsToContents();
             }
 }
-void CSFWindow::cellDoubleClicked(int iRow, int iColumn){}
 
-void CSFWindow::Find_Paths(QDir oDir, QString filter,  QStringList &vect)
+bool CSFWindow::Find_Paths(QDir oDir, QString filter,  QStringList &vect)
 { 
 
     QStringList oDirList = oDir.entryList(QDir::Files);
+    bool found = false;
 
     int count =0;;
-
-
     for (int i = 0; i < oDirList.size(); ++i)
     {
         QString filename = oDirList.at(i);
@@ -364,39 +362,13 @@ void CSFWindow::Find_Paths(QDir oDir, QString filter,  QStringList &vect)
         if (filter != QString("") && match.hasMatch())
         {        
             count = count + 1; 
-            //qDebug() << QFileInfo( oDir, filename).absoluteFilePath(); 
-            vect.append(QFileInfo( oDir, filename).absoluteFilePath());
-            
+            found = true;
+            vect.append(QFileInfo( oDir, filename).absoluteFilePath());        
         }
     }
+    return found; 
 }
 
-void CSFWindow::on_Refresh_clicked()
-{
-   /* for (auto line : textEdit_Paths->toPlainText().split('\n'))
-    {
-        if(line.contains(lineEdit_T1_filter->text()))
-        {lineEdit_T1img->setText(line);}
-
-        if(line.contains(lineEdit_Seg_filter->text()))
-        {lineEdit_Segmentation->setText(line);}
-
-        if(line.contains(lineEdit_CSF_Prob_filter->text()))
-        {lineEdit_CSF_Probability_Map->setText(line);}
-
-        if(line.contains(lineEdit_LH_MID_filter->text()))
-        { lineEdit_LH_MID_Surface->setText(line);}  
-
-        if(line.contains(lineEdit_LH_GM_filter->text()))
-        {lineEdit_LH_GM_Surface->setText(line);}
-
-        if(line.contains(lineEdit_RH_MID_filter->text()))
-        { lineEdit_RH_MID_Surface->setText(line);}
-
-        if(line.contains(lineEdit_RH_GM_filter->text()))
-        {lineEdit_RH_GM_Surface->setText(line);}
-    }*/
-}
 
 //2nd tab
 
@@ -598,6 +570,11 @@ void CSFWindow::disp_err(QProcess *prc, QString errlog_filename)
 
 void CSFWindow::on_Execute_clicked()
 {  
+    run_Local_EACSF();   
+}
+
+void CSFWindow::run_Local_EACSF()
+{
     QProcess *prc; 
     prc = new QProcess;
 
@@ -635,11 +612,9 @@ void CSFWindow::on_Execute_clicked()
         prc->setWorkingDirectory(output_dir); 
         QMap<QString, QString> executables = m_exeWidget->GetExeMap();
         prc->start(executables[QString("python3")], params);  
-        QMessageBox::information(
-            this,
-            tr("Local EACSF"),
-            tr("Is running.")
-        );         
+        prc->waitForFinished(-1); 
+       
+
     }
     
     if (slurm->isChecked())
@@ -664,12 +639,13 @@ void CSFWindow::on_Execute_clicked()
         });
         prc->start(QString("sbatch"), params);
       
-        QMessageBox::information(
+        /*QMessageBox::information(
             this,
             tr("Local EACSF"),
             tr("Is running.")
-        );
+        );*/
     }  
+
 }
 
 //6th Visualization
@@ -735,3 +711,58 @@ void CSFWindow::on_visualize_clicked()
 }
 
 
+
+void CSFWindow::on_Remove_clicked()
+{
+    QModelIndexList indexes = tableView->selectionModel()->selectedRows();
+
+    while (!indexes.isEmpty()) {
+        model->removeRows(indexes.last().row(), 1);
+        indexes.removeLast();
+    }
+}
+
+void CSFWindow::on_Run_Batch_Process_clicked()
+{
+       QList<QStringList> data = model->getdata();
+       for (int j=0;j<model->rowCount();j++)
+        {
+            lineEdit_T1img->setText(data[j].at(0));
+            lineEdit_Segmentation->setText(data[j].at(1));
+            lineEdit_CSF_Probability_Map->setText(data[j].at(2));
+            lineEdit_LH_MID_Surface->setText(data[j].at(3)); 
+            lineEdit_LH_GM_Surface->setText(data[j].at(4));
+            lineEdit_RH_MID_Surface->setText(data[j].at(5));
+            lineEdit_RH_GM_Surface->setText(data[j].at(6));
+            lineEdit_Output_Directory->setText(data[j].at(7));
+            //run_Local_EACSF();
+
+            QProcess *prc; 
+            prc = new QProcess;
+
+            QJsonObject root_obj = getConfig();
+
+            CSFScripts csfscripts;
+            csfscripts.setConfig(root_obj);
+            csfscripts.run_EACSF();
+            QJsonObject data_obj = root_obj["data"].toObject();
+            QJsonObject param_obj = root_obj["parameters"].toObject();
+            QString output_dir = data_obj["Output_Directory"].toString();
+            QString scripts_dir = QDir::cleanPath(output_dir + QString("/PythonScripts"));
+            QString outlog_filename = QDir::cleanPath(output_dir + QString("/output_log.txt"));
+            QString errlog_filename = QDir::cleanPath(output_dir + QString("/errors_log.txt"));
+
+            CleanFile(outlog_filename);
+            CleanFile(errlog_filename);
+
+            QString main_script = QDir::cleanPath(scripts_dir + QString("/main_script.py"));
+            QStringList params = QStringList() << main_script;
+
+
+
+
+        }
+
+
+
+}
