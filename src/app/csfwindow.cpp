@@ -27,6 +27,13 @@ CSFWindow::CSFWindow(QWidget *m_parent)
 {
     
     this->setupUi(this);
+
+    batch_processing = false ;
+   /* model = new CsvTableModel(model_data,this);
+    tableView->setModel(model);
+    tableView->resizeColumnsToContents();
+    tableView->resizeRowsToContents();*/
+   
     QJsonObject root_obj = readConfig(QString(":/config/default_config.json"));
     
     QJsonArray exe_array = root_obj["executables"].toArray();
@@ -312,9 +319,7 @@ void CSFWindow::on_Find_clicked()
                        );
            }
            else
-           {
-              
-                QList<QStringList> data;
+           {  
                 QDirIterator it(data_directory, QDir::Dirs | QDir::NoSymLinks | QDir::NoDotAndDotDot, QDirIterator::Subdirectories);        
                 while(it.hasNext())
                 {  
@@ -324,25 +329,28 @@ void CSFWindow::on_Find_clicked()
                     { 
                         QDir oDir(file.absoluteFilePath()); 
                         QStringList line = {};
-                        bool found = Find_Paths(oDir, lineEdit_T1_filter->text(), line); 
-                        if (found)
+                        bool T1_found = Find_Paths(oDir, lineEdit_T1_filter->text(), line); 
+                        bool Seg_found = Find_Paths(oDir, lineEdit_Seg_filter->text(), line);
+                        bool CSF_found = Find_Paths(oDir, lineEdit_CSF_Prob_filter->text(), line);   
+                        bool LH_MID_found = Find_Paths(oDir, lineEdit_LH_MID_filter->text(), line);
+                        bool LH_GM_found = Find_Paths(oDir, lineEdit_LH_GM_filter->text(), line);
+                        bool RH_MID_found = Find_Paths(oDir, lineEdit_RH_MID_filter->text(), line);
+                        bool RH_GM_found = Find_Paths(oDir, lineEdit_RH_GM_filter->text(), line);
+
+                        if(T1_found &&  Seg_found  && CSF_found &&  LH_MID_found && LH_GM_found &&  RH_MID_found && RH_GM_found)
                         {
-                            Find_Paths(oDir, lineEdit_Seg_filter->text(), line);
-                            Find_Paths(oDir, lineEdit_CSF_Prob_filter->text(), line);   
-                            Find_Paths(oDir, lineEdit_LH_MID_filter->text(), line);
-                            Find_Paths(oDir, lineEdit_LH_GM_filter->text(), line);
-                            Find_Paths(oDir, lineEdit_RH_MID_filter->text(), line);
-                            Find_Paths(oDir, lineEdit_RH_GM_filter->text(), line);
                             line.append(file.absoluteFilePath()); 
-                            data.append(line);       
-                        }
-                                   
+                            model_data.append(line);     
+                        }     
                     } 
                 }
-                model = new CsvTableModel(data,this);
-                tableView->setModel(model);
-                tableView->resizeColumnsToContents();
-                tableView->resizeRowsToContents();
+                if(!model_data.isEmpty())
+                {
+                    model = new CsvTableModel(model_data,this);
+                    tableView->setModel(model);
+                    tableView->resizeColumnsToContents();
+                    tableView->resizeRowsToContents();
+                }              
             }
 }
 
@@ -351,12 +359,11 @@ bool CSFWindow::Find_Paths(QDir oDir, QString filter,  QStringList &vect)
 
     QStringList oDirList = oDir.entryList(QDir::Files);
     bool found = false;
+    int count = 0;
 
-    int count =0;;
     for (int i = 0; i < oDirList.size(); ++i)
     {
-        QString filename = oDirList.at(i);
-        QFileInfo( oDir, filename).absoluteFilePath();    
+        QString filename = oDirList.at(i); 
         QRegularExpression re(filter);
         QRegularExpressionMatch match = re.match(QFileInfo( oDir, filename).fileName());
         if (filter != QString("") && match.hasMatch())
@@ -366,7 +373,105 @@ bool CSFWindow::Find_Paths(QDir oDir, QString filter,  QStringList &vect)
             vect.append(QFileInfo( oDir, filename).absoluteFilePath());        
         }
     }
+    if (count > 1)
+        {
+            found = false; 
+            infoMsgBox(QString("The Directory :") + oDir.path() + QString(" contains more than one file matching with ") + filter , QMessageBox::Warning);
+        }
     return found; 
+}
+bool CSFWindow::ModelIsEmpty()
+{
+    bool state =true;
+    if (!model_data.isEmpty()) {state =false;} 
+    return (state);
+}
+
+void CSFWindow::on_Remove_clicked()
+{
+    bool model_empty = ModelIsEmpty();
+    if (model_empty)
+    {
+       infoMsgBox(QString("Model is Empty."),QMessageBox::Warning);
+    }
+    else
+    {
+        QModelIndexList indexes = tableView->selectionModel()->selectedRows();
+        while (!indexes.isEmpty()) {
+            model->removeRows(indexes.last().row(), 1);
+            indexes.removeLast();
+        }
+
+    }
+}
+void CSFWindow::on_batch_local_clicked()
+{
+    if (batch_local->isChecked())
+    {
+        batch_slurm->setEnabled(false);
+        slurm->setChecked(false);
+        local->setEnabled(true);
+        local->setChecked(true);
+
+    }
+    else{batch_slurm->setEnabled(true);}
+}
+
+void CSFWindow::on_batch_slurm_clicked()
+{
+    if (batch_slurm->isChecked())
+    {
+        batch_local->setEnabled(false);
+        local->setChecked(false);
+        slurm->setEnabled(true);
+        slurm->setChecked(true);
+
+    }
+    else{batch_local->setEnabled(true);}
+
+}
+
+
+void CSFWindow::on_Run_Batch_Process_clicked()
+{
+    bool model_empty = ModelIsEmpty();
+    if(model_empty)
+    {
+        infoMsgBox(QString("Model is Empty."),QMessageBox::Warning);
+    }
+    else 
+    {
+        batch_processing = true ;
+        QList<QStringList> data = model->getdata();
+        if (batch_slurm->isChecked())
+        {  
+            for (int row=0;row<model->rowCount();row++)
+            {
+                lineEdit_T1img->setText(data[row].at(0));
+                lineEdit_Segmentation->setText(data[row].at(1));
+                lineEdit_CSF_Probability_Map->setText(data[row].at(2));
+                lineEdit_LH_MID_Surface->setText(data[row].at(3)); 
+                lineEdit_LH_GM_Surface->setText(data[row].at(4));
+                lineEdit_RH_MID_Surface->setText(data[row].at(5));
+                lineEdit_RH_GM_Surface->setText(data[row].at(6));
+                lineEdit_Output_Directory->setText(data[row].at(7));
+                run_Local_EACSF(row);
+            }
+        }
+        if (batch_local->isChecked())
+        {
+            int row = 0;
+            lineEdit_T1img->setText(data[row].at(0));
+            lineEdit_Segmentation->setText(data[row].at(1));
+            lineEdit_CSF_Probability_Map->setText(data[row].at(2));
+            lineEdit_LH_MID_Surface->setText(data[row].at(3)); 
+            lineEdit_LH_GM_Surface->setText(data[row].at(4));
+            lineEdit_RH_MID_Surface->setText(data[row].at(5));
+            lineEdit_RH_GM_Surface->setText(data[row].at(6));
+            lineEdit_Output_Directory->setText(data[row].at(7));
+            run_Local_EACSF(row);
+        }
+    }     
 }
 
 
@@ -507,35 +612,52 @@ void CSFWindow::on_smooth_stateChanged(int state)
 
 // 5th tab - Execution
 
-void CSFWindow::prc_finished(QProcess *prc, QString outlog_filename, QString errlog_filename){
+void CSFWindow::prc_finished(QProcess *prc, QString outlog_filename, QString errlog_filename, int row){
 
     QString exit_message;
     int exitCode =  prc->exitCode();
     QProcess::ExitStatus exitStatus = prc->exitStatus();
-    if (local->isChecked())
+   
+    exit_message = QString("Local_EACSF pipeline ") + ((exitStatus == QProcess::NormalExit) ? QString("exited with code ") + QString::number(exitCode) : QString("crashed"));
+    if (exitCode==0)
     {
-        exit_message = QString("Local_EACSF pipeline ") + ((exitStatus == QProcess::NormalExit) ? QString("exited with code ") + QString::number(exitCode) : QString("crashed"));
-        if (exitCode==0)
-        {
-            exit_message="<font color=\"green\"><b>"+exit_message+"</b></font>";
-            output->append(exit_message);
-            cout<<exit_message.toStdString()<<endl;
-            QFile file(outlog_filename);
-            file.open(QIODevice::WriteOnly | QIODevice::Append);
-            QTextStream out(&file); out <<exit_message;
-            file.close();
-        }
-        else
-        {
-            exit_message="<font color=\"red\"><b>"+exit_message+"</b></font>";
-            error->append(exit_message);
-            cout<<exit_message.toStdString()<<endl;
-            QFile file(errlog_filename);
-            file.open(QIODevice::WriteOnly | QIODevice::Append);
-            QTextStream out(&file); out <<exit_message;
-            file.close();
-        }  
+        exit_message="<font color=\"green\"><b>"+exit_message+"</b></font>";
+        output->append(exit_message);
+        cout<<exit_message.toStdString()<<endl;
+        QFile file(outlog_filename);
+        file.open(QIODevice::WriteOnly | QIODevice::Append);
+        QTextStream out(&file); out <<exit_message;
+        file.close();
     }
+    else
+    {
+        exit_message="<font color=\"red\"><b>"+exit_message+"</b></font>";
+        error->append(exit_message);
+        cout<<exit_message.toStdString()<<endl;
+        QFile file(errlog_filename);
+        file.open(QIODevice::WriteOnly | QIODevice::Append);
+        QTextStream out(&file); out <<exit_message;
+        file.close();
+    }  
+    if (batch_processing)
+    {
+        QList<QStringList> data = model->getdata();
+        if (row < (model->rowCount()-1))
+        {
+            lineEdit_T1img->setText(data[row +1].at(0));
+            lineEdit_Segmentation->setText(data[row +1].at(1));
+            lineEdit_CSF_Probability_Map->setText(data[row+1].at(2));
+            lineEdit_LH_MID_Surface->setText(data[row +1].at(3)); 
+            lineEdit_LH_GM_Surface->setText(data[row +1].at(4));
+            lineEdit_RH_MID_Surface->setText(data[row +1].at(5));
+            lineEdit_RH_GM_Surface->setText(data[row +1].at(6));
+            lineEdit_Output_Directory->setText(data[row +1].at(7));
+            run_Local_EACSF(row+1);
+        }
+    }
+
+   
+
 }
 
 void CSFWindow::CleanFile(QString filename)
@@ -570,10 +692,10 @@ void CSFWindow::disp_err(QProcess *prc, QString errlog_filename)
 
 void CSFWindow::on_Execute_clicked()
 {  
-    run_Local_EACSF();   
+    run_Local_EACSF(-1);   //execute the program without batch processing
 }
 
-void CSFWindow::run_Local_EACSF()
+void CSFWindow::run_Local_EACSF(int row)
 {
     QProcess *prc; 
     prc = new QProcess;
@@ -593,28 +715,29 @@ void CSFWindow::run_Local_EACSF()
 
 
     if (local->isChecked())
-    {      
+    {  
+
         CleanFile(outlog_filename);
         CleanFile(errlog_filename);
 
         QString main_script = QDir::cleanPath(scripts_dir + QString("/main_script.py"));
         QStringList params = QStringList() << main_script;
 
+        prc->setWorkingDirectory(output_dir); 
         connect(prc, &QProcess::readyReadStandardOutput, [prc, outlog_filename, this](){
            disp_output(prc, outlog_filename);
         });
         connect(prc, &QProcess::readyReadStandardError, [prc, errlog_filename, this](){
            disp_err(prc, errlog_filename);
         });
-        connect(prc, static_cast<void(QProcess::*)(int, QProcess::ExitStatus)>(&QProcess::finished), [prc, outlog_filename, errlog_filename, this ](){
-            prc_finished(prc, outlog_filename, errlog_filename);  
+        connect(prc, static_cast<void(QProcess::*)(int, QProcess::ExitStatus)>(&QProcess::finished), [prc, outlog_filename, errlog_filename, row, this ](){
+            prc_finished(prc, outlog_filename, errlog_filename, row);  
         });
-        prc->setWorkingDirectory(output_dir); 
+       
         QMap<QString, QString> executables = m_exeWidget->GetExeMap();
         prc->start(executables[QString("python3")], params);  
-        prc->waitForFinished(-1); 
-       
-
+        //prc->waitForFinished(-1);
+        //prc->close(); 
     }
     
     if (slurm->isChecked())
@@ -639,11 +762,6 @@ void CSFWindow::run_Local_EACSF()
         });
         prc->start(QString("sbatch"), params);
       
-        /*QMessageBox::information(
-            this,
-            tr("Local EACSF"),
-            tr("Is running.")
-        );*/
     }  
 
 }
@@ -712,57 +830,4 @@ void CSFWindow::on_visualize_clicked()
 
 
 
-void CSFWindow::on_Remove_clicked()
-{
-    QModelIndexList indexes = tableView->selectionModel()->selectedRows();
 
-    while (!indexes.isEmpty()) {
-        model->removeRows(indexes.last().row(), 1);
-        indexes.removeLast();
-    }
-}
-
-void CSFWindow::on_Run_Batch_Process_clicked()
-{
-       QList<QStringList> data = model->getdata();
-       for (int j=0;j<model->rowCount();j++)
-        {
-            lineEdit_T1img->setText(data[j].at(0));
-            lineEdit_Segmentation->setText(data[j].at(1));
-            lineEdit_CSF_Probability_Map->setText(data[j].at(2));
-            lineEdit_LH_MID_Surface->setText(data[j].at(3)); 
-            lineEdit_LH_GM_Surface->setText(data[j].at(4));
-            lineEdit_RH_MID_Surface->setText(data[j].at(5));
-            lineEdit_RH_GM_Surface->setText(data[j].at(6));
-            lineEdit_Output_Directory->setText(data[j].at(7));
-            //run_Local_EACSF();
-
-            QProcess *prc; 
-            prc = new QProcess;
-
-            QJsonObject root_obj = getConfig();
-
-            CSFScripts csfscripts;
-            csfscripts.setConfig(root_obj);
-            csfscripts.run_EACSF();
-            QJsonObject data_obj = root_obj["data"].toObject();
-            QJsonObject param_obj = root_obj["parameters"].toObject();
-            QString output_dir = data_obj["Output_Directory"].toString();
-            QString scripts_dir = QDir::cleanPath(output_dir + QString("/PythonScripts"));
-            QString outlog_filename = QDir::cleanPath(output_dir + QString("/output_log.txt"));
-            QString errlog_filename = QDir::cleanPath(output_dir + QString("/errors_log.txt"));
-
-            CleanFile(outlog_filename);
-            CleanFile(errlog_filename);
-
-            QString main_script = QDir::cleanPath(scripts_dir + QString("/main_script.py"));
-            QStringList params = QStringList() << main_script;
-
-
-
-
-        }
-
-
-
-}

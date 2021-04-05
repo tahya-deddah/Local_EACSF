@@ -39,8 +39,6 @@ public:
     QJsonObject getConfig();
     void setConfig(QJsonObject root_obj);
 
-private slots:
-    void on_Run_Batch_Process_clicked();
 
 private:
 
@@ -57,7 +55,7 @@ private:
 
 private slots:
 
-    void prc_finished(QProcess *prc, QString outlog_filename, QString errlog_filename);
+    void prc_finished(QProcess *prc, QString outlog_filename, QString errlog_filename, int row);
     void disp_output(QProcess *prc, QString outlog_filename);
     void disp_err(QProcess *prc, QString errlog_filename);
 
@@ -74,6 +72,10 @@ private slots:
     void on_Find_clicked();   
     bool Find_Paths(QDir odir, QString filter, QStringList &vect);
     void on_Remove_clicked();
+    bool ModelIsEmpty();
+    void on_batch_slurm_clicked();
+    void on_batch_local_clicked();
+    void on_Run_Batch_Process_clicked();
     
     
     //2nd tab
@@ -98,7 +100,7 @@ private slots:
 
     //5th tab
     void on_Execute_clicked();
-    void run_Local_EACSF();
+    void run_Local_EACSF(int row);
 
     //6th tab
     void on_output_path_clicked();
@@ -113,6 +115,8 @@ private:
     ExtExecutablesWidget* m_exeWidget;
     static const QString m_github_url;
     CsvTableModel *model ;
+    bool batch_processing;
+    QList<QStringList> model_data;
     
 };
 

@@ -288,30 +288,30 @@
        <string>Add</string>
       </property>
      </widget>
-     <widget class="QCheckBox" name="checkBox_slurm">
+     <widget class="QCheckBox" name="batch_slurm">
       <property name="geometry">
        <rect>
         <x>60</x>
         <y>640</y>
-        <width>181</width>
+        <width>251</width>
         <height>25</height>
        </rect>
       </property>
       <property name="text">
-       <string>slurm parallelement</string>
+       <string>Slurm : Parallel Batch Processing</string>
       </property>
      </widget>
-     <widget class="QCheckBox" name="checkBox_local">
+     <widget class="QCheckBox" name="batch_local">
       <property name="geometry">
        <rect>
         <x>60</x>
         <y>610</y>
-        <width>171</width>
+        <width>231</width>
         <height>25</height>
        </rect>
       </property>
       <property name="text">
-       <string>Local en serie</string>
+       <string>Local : Serial Batch Processing</string>
       </property>
      </widget>
     </widget>
@@ -955,7 +955,7 @@ p, li { white-space: pre-wrap; }
         <x>10</x>
         <y>120</y>
         <width>441</width>
-        <height>461</height>
+        <height>531</height>
        </rect>
       </property>
      </widget>
@@ -965,7 +965,7 @@ p, li { white-space: pre-wrap; }
         <x>490</x>
         <y>120</y>
         <width>441</width>
-        <height>461</height>
+        <height>531</height>
        </rect>
       </property>
      </widget>
@@ -1075,11 +1075,6 @@ p, li { white-space: pre-wrap; }
        <string>Visualize the visitation map for both hemispheres in itksnap</string>
       </property>
      </widget>
-    </widget>
-    <widget class="QWidget" name="tab_2">
-     <attribute name="title">
-      <string>Page</string>
-     </attribute>
     </widget>
    </widget>
   </widget>
