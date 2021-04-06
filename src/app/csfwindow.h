@@ -21,6 +21,7 @@
 #include "csfscripts.h"
 #include "extexecutableswidget.h"
 #include "model.h"
+#include "addWidget.h"
 
 
 namespace Ui{
@@ -39,6 +40,9 @@ public:
     QJsonObject getConfig();
     void setConfig(QJsonObject root_obj);
 
+
+private slots:
+    void on_Add_clicked();
 
 private:
 

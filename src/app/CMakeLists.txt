@@ -21,6 +21,7 @@ list(APPEND ${APP_NAME}_src
 	    extexecutableswidget.cxx
 	    csfscripts.cpp
 	    model.cpp
+	    addWidget.cpp
 	    ${${APP_NAME}_generated_moc}
 	    ${${APP_NAME}_generated_ui}
 	    ${${APP_NAME}_generated_rcc}

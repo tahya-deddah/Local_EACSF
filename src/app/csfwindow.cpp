@@ -825,9 +825,14 @@ void CSFWindow::on_visualize_clicked()
             tr("Is running.")
         );
     }
-
 }
 
 
 
 
+
+void CSFWindow::on_Add_clicked()
+{
+    addWidget *add_Widget = new addWidget();
+    add_Widget->show();
+}
