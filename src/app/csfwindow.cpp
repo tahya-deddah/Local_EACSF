@@ -30,11 +30,6 @@ CSFWindow::CSFWindow(QWidget *m_parent)
 
     batch_processing = false ; 
     Model =false;
-
-    /*model = new CsvTableModel(this);
-    tableView->setModel(model);*/
-    /*tableView->resizeColumnsToContents();
-    tableView->resizeRowsToContents();*/
            
     QJsonObject root_obj = readConfig(QString(":/config/default_config.json"));
     
@@ -205,7 +200,8 @@ QString CSFWindow::SaveFile()
         this,
         "Save Document",
         QDir::currentPath(),
-        "JSON file (*.json)") ;
+        "JSON file (*.json);; Csv file(*.csv)"
+        );
     return filename;
   }
 
@@ -322,7 +318,8 @@ void CSFWindow::on_Find_clicked()
                        );
            }
            else
-           {  
+           { 
+                model_data.clear(); 
                 QDirIterator it(data_directory, QDir::Dirs | QDir::NoSymLinks | QDir::NoDotAndDotDot, QDirIterator::Subdirectories);        
                 while(it.hasNext())
                 {  
@@ -349,10 +346,8 @@ void CSFWindow::on_Find_clicked()
                 }
                 if(!model_data.isEmpty())
                 {
-                    model = new CsvTableModel(model_data,this);
+                    model = new CsvTableModel(model_data, this);
                     tableView->setModel(model);
-                    tableView->resizeColumnsToContents();
-                    tableView->resizeRowsToContents();
                     Model = true;
                 }              
             }
@@ -384,12 +379,8 @@ bool CSFWindow::Find_Paths(QDir oDir, QString filter,  QStringList &vect)
         }
     return found; 
 }
-bool CSFWindow::ModelIsEmpty()
-{
-    bool state =true;
-    if (!model_data.isEmpty()) {state =false;} 
-    return (state);
-}
+
+
 
 void CSFWindow::on_Add_clicked()
 {
@@ -401,38 +392,41 @@ void CSFWindow::on_Add_clicked()
 void CSFWindow::addToModel(QStringList line)
 {
     model_data.append(line);
-    if(Model){model->SetData(model_data);}
+    if(Model){model->SetModelData(model_data);}
     else
     {       
         model = new CsvTableModel(model_data, this);
         tableView->setModel(model);
-        tableView->resizeColumnsToContents();
-        tableView->resizeRowsToContents();
         Model = true;
     }
 }
 
 void CSFWindow::on_Remove_clicked()
 {
-    bool model_empty = ModelIsEmpty();
-    if (model_empty)
+    
+    if (Model)
     {
-       infoMsgBox(QString("Model is Empty."),QMessageBox::Warning);
-    }
-    else
-    {
-        QModelIndexList indexes = tableView->selectionModel()->selectedRows();
-        while (!indexes.isEmpty()) {
-            model->removeRows(indexes.last().row(), 1);
-            indexes.removeLast();
+        QItemSelectionModel *select = tableView->selectionModel();
+        if(select->hasSelection()) 
+        {
+            QModelIndexList indexes = select->selectedRows();
+            while (!indexes.isEmpty())
+            {
+                model->removeRows(indexes.last().row(), 1);
+                indexes.removeLast();
+            }
         }
+        else{ infoMsgBox(QString("No row selcted."),QMessageBox::Warning);}      
     }
 }
 
 void CSFWindow::on_Clear_clicked()
 {   
-    if (Model)
-    { model->clear(); }  
+    if(Model)
+    {
+        int RowCount = model->rowCount();
+        model->removeRows(0, RowCount);
+    }
 }
 
 void CSFWindow::on_batch_local_clicked()
@@ -457,21 +451,15 @@ void CSFWindow::on_batch_slurm_clicked()
         slurm->setChecked(true);
     }
     else{batch_local->setEnabled(true);}
-
 }
 
 
 void CSFWindow::on_Run_Batch_Process_clicked()
 {
-    bool model_empty = ModelIsEmpty();
-    if(model_empty)
-    {
-        infoMsgBox(QString("Model is Empty."),QMessageBox::Warning);
-    }
-    else 
+   if(Model)
     {
         batch_processing = true ;
-        QList<QStringList> data = model->getData();
+        QList<QStringList> data = model->GetModelData();
         if (batch_slurm->isChecked())
         {  
             for (int row=0;row<model->rowCount();row++)
@@ -670,7 +658,7 @@ void CSFWindow::prc_finished(QProcess *prc, QString outlog_filename, QString err
     }  
     if (batch_processing)
     {
-        QList<QStringList> data = model->getData();
+        QList<QStringList> data = model->GetModelData();
         if (row < (model->rowCount()-1))
         {
             lineEdit_T1img->setText(data[row +1].at(0));
@@ -857,7 +845,61 @@ void CSFWindow::on_visualize_clicked()
 
 
 
+void CSFWindow::on_actionLoad_Csv_File_triggered()
+{
+
+}
+
+void CSFWindow::on_actionSave_Csv_File_triggered()
+{
+    QString filename=SaveFile();
+    if (!filename.isEmpty())
+    {
+        if (!filename.endsWith(QString(".csv")))
+        {
+            filename+=QString(".csv");
+        }
+        bool success=writeCsv(filename);
+        if (success)
+        {
+            infoMsgBox(QString("Csv file saved with success : ")+filename,QMessageBox::Information);
+        }
+        else
+        {
+            infoMsgBox(QString("Couldn't save Csv file at this location. Try somewhere else."),QMessageBox::Warning);
+        }
+    }
+}
 
 
+bool CSFWindow::writeCsv(QString filename)
+{
+    if(Model)
+    {
+        QFile saveFile(filename);
+        if (!saveFile.open(QIODevice::WriteOnly | QFile::Text )) {
+            std::cout<<"Couldn't open save file."<<std::endl;
+            return false;
+        }
 
+        QList <QStringList> modeldata = model->GetModelData();
+        QStringList modelheader = QStringList() << "T1" << " Tissu Segmentation" << " CSF Probability Map " << " LH MID" << " LH GM" << " RH MID" << " RH GM" << " Output Directory" ;  
+        QTextStream s(&saveFile);
+        for (int i = 0; i < modelheader.size() - 1; ++i)
+        {s << modelheader.at(i) << QString(",");}  
+        s << modelheader.at(modelheader.size() - 1) << '\n';
+
+        for(int row =0 ; row < model->rowCount(); row++)
+        {
+            for(int column =0; column < model->columnCount() -1 ; column++)
+            {
+                s << modeldata[row ].at(column) << QString(",");
+            }
+            s << modeldata[row ].at(model->columnCount() -1) <<'\n';
+        }
+        saveFile.close();   
+        std::cout<<"Saved Csv file : "<<filename.toStdString()<<endl;
+        return true;
+    }    
+}
 
