@@ -28,7 +28,6 @@ public:
 signals:
    void newExePath(QString exeName,QString path); //Signal emitted when an executable's path has been changed by the user (to be connected to the application)
 
-
 private:
     QString m_exeDir; //Default directory for the QFileDialog
     QMap<QString, QLineEdit*> m_ExeMap;

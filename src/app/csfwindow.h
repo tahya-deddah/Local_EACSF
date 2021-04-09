@@ -40,9 +40,8 @@ public:
     QJsonObject getConfig();
     void setConfig(QJsonObject root_obj);
 
-
 private slots:
-    void on_Add_clicked();
+    void on_Clear_clicked();
 
 private:
 
@@ -75,6 +74,8 @@ private slots:
     void on_Data_Directory_clicked();
     void on_Find_clicked();   
     bool Find_Paths(QDir odir, QString filter, QStringList &vect);
+    void on_Add_clicked();
+    void addToModel(QStringList line);
     void on_Remove_clicked();
     bool ModelIsEmpty();
     void on_batch_slurm_clicked();
@@ -120,8 +121,8 @@ private:
     static const QString m_github_url;
     CsvTableModel *model ;
     bool batch_processing;
-    QList<QStringList> model_data;
-    
+    QList<QStringList> model_data;  
+    bool Model;
 };
 
 #endif

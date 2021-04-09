@@ -17,6 +17,7 @@ vector<QString> ExtExecutablesWidget::buildInterface(QMap<QString,QString> exeMa
 {
     QLayout *verticalLayout = new QVBoxLayout();
     verticalLayout->setAlignment(Qt::AlignTop);
+    
     vector<QString> notFound;
     
 

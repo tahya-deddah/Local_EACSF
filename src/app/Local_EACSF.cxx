@@ -31,35 +31,7 @@ QJsonObject readConfig(QString filename)
     return root_obj;
 }
 
-/*std::vector<std::pair<std::string, std::string>> read_csv(std::string filename)
-{
-    std::vector<std::pair<std::string, std::string>> result;
-    std::string line, colname;
-    std::vector< string > column_1; 
-    std::vector< string > column_2;  
 
-    std::ifstream myFile(filename);
-    if(!myFile.is_open()) throw std::runtime_error("Could not open file");
-
-    if(myFile.good())
-    {
-        while(std::getline(myFile, line))
-        {
-            std::stringstream ss(line);
-            std::getline(ss, colname, ',');
-            column_1.push_back({colname});
-            std::getline(ss, colname, '\n');
-            column_2.push_back({colname});
-        }  
-    }
-    int n = column_1.size();
-    for (int i=0; i<n; i++) 
-    {
-        result.push_back( make_pair(column_1[i],column_2[i]) ); 
-    }
-    myFile.close();
-    return result;
-}*/
 
 QString checkStringValue(string str_value, QJsonValue str_default){
     if(str_value.compare("") == 0){
@@ -72,32 +44,6 @@ QString checkStringValue(string str_value, QJsonValue str_default){
     }
 }
 
-std::string read_path_from_csv(std::string filename, std::string search_term)
-{
-    std::string input_path;
-    std::string name;
-    std::string path;
-    bool name_found = false;
-
-    std::ifstream myFile(filename);
-    if(!myFile.is_open()) throw std::runtime_error("Could not open file");
-    if(myFile.good())
-    {
-        while(std::getline(myFile, name, ',') && name_found ==false)
-        {
-            std::getline(myFile, path, '\n');
-            if(name == search_term)
-            {
-                name_found = true;
-                input_path = path;
-            }
-        }
-    } 
-    std::cout<< input_path << std::endl;  
-    return input_path ;
-}
-
-
 int  main(int argc, char** argv) 
 {
 
@@ -107,82 +53,88 @@ int  main(int argc, char** argv)
     if (noGUI)
     {
 
-
-       /* std::vector<std::pair<std::string, std::string>> csv = read_csv(csv_file);
         QJsonObject data_obj = root_obj["data"].toObject();
-        data_obj["T1"] = checkStringValue(csv[0].second, data_obj["T1"]);
-        data_obj["Tissu_Segmentation"] = checkStringValue(csv[1].second, data_obj["Tissu_Segmentation"]);
-        data_obj["CSF_Probability_Map"] = checkStringValue(csv[2].second, data_obj["CSF_Probability_Map"]);
-        data_obj["LH_MID_surface"] = checkStringValue(csv[3].second, data_obj["LH_MID_surface"]);
-        data_obj["LH_GM_surface"] = checkStringValue(csv[4].second, data_obj["LH_GM_surface"]);
-        data_obj["RH_MID_surface"] = checkStringValue(csv[5].second, data_obj["RH_MID_surface"]);
-        data_obj["RH_GM_surface"] = checkStringValue(csv[6].second,  data_obj["RH_GM_surface"]);
-        data_obj["Output_Directory"] = checkStringValue(csv[7].second,  data_obj["Output_Directory"]);
-        root_obj["data"]=data_obj;*/
 
+        std::ifstream myFile(csv_file);
+        if(!myFile.is_open()) {
+            throw std::runtime_error("Could not open file");}
 
+        if(myFile.good())
+        {   
+            std::string line, colname;
+            while(std::getline(myFile, line))
+            {
+                std::stringstream ss(line);
+                std::getline(ss, colname, ',');
+                data_obj["T1"] = checkStringValue(  colname ,  data_obj["T1"]);
+                std::getline(ss, colname, ',');
+                data_obj["Tissu_Segmentation"] = checkStringValue( colname,  data_obj["Tissu_Segmentation"]);
+                std::getline(ss, colname, ',');
+                data_obj["CSF_Probability_Map"] = checkStringValue(  colname,  data_obj["CSF_Probability_Map"]);
+                std::getline(ss, colname, ',');
+                data_obj["LH_MID_surface"] = checkStringValue(  colname,  data_obj["LH_MID_surface"]);
+                std::getline(ss, colname, ',');
+                data_obj["LH_GM_surface"] = checkStringValue(  colname,  data_obj["LH_GM_surface"]);
+                std::getline(ss, colname, ',');
+                data_obj["RH_MID_surface"] = checkStringValue(  colname,  data_obj["RH_MID_surface"]);
+                std::getline(ss, colname, ',');
+                data_obj["RH_GM_surface"] = checkStringValue(  colname,   data_obj["RH_GM_surface"]);
+                std::getline(ss, colname, '\n');
+                data_obj["Output_Directory"] = checkStringValue( colname,   data_obj["Output_Directory"]);  
+                root_obj["data"]=data_obj;  
 
+                QString output_dir = QDir::cleanPath(data_obj["Output_Directory"].toString());
+                QFileInfo info = QFileInfo(output_dir);
+                if(!info.exists()){
+                    QDir out_dir = QDir();
+                    out_dir.mkpath(output_dir);
+                }
 
-        QJsonObject data_obj = root_obj["data"].toObject();
-        data_obj["T1"] = checkStringValue( read_path_from_csv(csv_file, "T1"),  data_obj["T1"]);
-        data_obj["Tissu_Segmentation"] = checkStringValue( read_path_from_csv(csv_file, "Tissu_Segmentation"),  data_obj["Tissu_Segmentation"]);
-        data_obj["CSF_Probability_Map"] = checkStringValue( read_path_from_csv(csv_file, "CSF_Probability_Map"),  data_obj["CSF_Probability_Map"]);
-        data_obj["LH_MID_surface"] = checkStringValue( read_path_from_csv(csv_file, "LH_MID_surface"),  data_obj["LH_MID_surface"]);
-        data_obj["LH_GM_surface"] = checkStringValue( read_path_from_csv(csv_file, "LH_GM_surface"),  data_obj["LH_GM_surface"]);
-        data_obj["RH_MID_surface"] = checkStringValue( read_path_from_csv(csv_file, "RH_GM_surface"),  data_obj["RH_MID_surface"]);
-        data_obj["RH_GM_surface"] = checkStringValue( read_path_from_csv(csv_file, "RH_MID_surface"),   data_obj["RH_GM_surface"]);
-        data_obj["Output_Directory"] = checkStringValue( read_path_from_csv(csv_file, "Output_Directory"),   data_obj["Output_Directory"]);
-        root_obj["data"]=data_obj;
+                CSFScripts csfscripts;
+                csfscripts.setConfig(root_obj);
+                csfscripts.run_EACSF();
 
-        QString output_dir = QDir::cleanPath(data_obj["Output_Directory"].toString());
-        QFileInfo info = QFileInfo(output_dir);
-        if(!info.exists()){
-            QDir out_dir = QDir();
-            out_dir.mkpath(output_dir);
+                QString scripts_dir = QDir::cleanPath(output_dir + QString("/PythonScripts"));
+                QString outlog_filename = QDir::cleanPath(output_dir + QString("/output_log.txt"));
+                QString errlog_filename = QDir::cleanPath(output_dir + QString("/errors_log.txt"));
+
+                QProcess* prc =  new QProcess;
+                prc->setWorkingDirectory(output_dir);
+
+                if(slrum)
+                {
+                    QString slurm_script = QDir::cleanPath(scripts_dir + QString("/slurm-job"));
+                    QJsonObject param_obj = root_obj["parameters"].toObject();
+                    QString time = QString("--time=") + param_obj["Slurm_time"].toString();
+                    QString memory = QString("--mem=") + param_obj["Slurm_memory"].toString();
+                    QString core = QString("--ntasks=") + param_obj["Slurm_cores"].toString();
+                    QString node = QString("--nodes=") + param_obj["Slurm_nodes"].toString();
+                    QString output_file = QString("--output=") + outlog_filename ;
+                    QString error_file = QString("--error=") + errlog_filename ;
+
+                    QStringList params = QStringList() << time << memory << core << node << output_file << error_file << slurm_script;
+                    prc->start(QString("sbatch"), params);
+                }
+                else
+                {
+                    QString main_script = QDir::cleanPath(scripts_dir + QString("/main_script.py"));
+                    QStringList params = QStringList() << main_script;
+
+                    prc->setStandardOutputFile(outlog_filename);
+                    prc->setStandardErrorFile(errlog_filename);
+
+                    QMap<QString, QString> executables = csfscripts.GetExecutablesMap();
+                    cout<<executables["python3"].toStdString()<<" "<<params.join(" ").toStdString()<<endl;
+                    prc->start(executables["python3"], params);
+                    prc->waitForFinished(-1);
+                    prc->close(); 
+                }
+            }  
         }
-
-        CSFScripts csfscripts;
-        csfscripts.setConfig(root_obj);
-        csfscripts.run_EACSF();
-
-        QString scripts_dir = QDir::cleanPath(output_dir + QString("/PythonScripts"));
-        QString outlog_filename = QDir::cleanPath(output_dir + QString("/output_log.txt"));
-        QString errlog_filename = QDir::cleanPath(output_dir + QString("/errors_log.txt"));
-
-        QProcess* prc =  new QProcess;
-        prc->setWorkingDirectory(output_dir);
-
-        if(slrum)
-        {
-            QString slurm_script = QDir::cleanPath(scripts_dir + QString("/slurm-job"));
-            QJsonObject param_obj = root_obj["parameters"].toObject();
-            QString time = QString("--time=") + param_obj["Slurm_time"].toString();
-            QString memory = QString("--mem=") + param_obj["Slurm_memory"].toString();
-            QString core = QString("--ntasks=") + param_obj["Slurm_cores"].toString();
-            QString node = QString("--nodes=") + param_obj["Slurm_nodes"].toString();
-            QString output_file = QString("--output=") + outlog_filename ;
-            QString error_file = QString("--error=") + errlog_filename ;
-
-            QStringList params = QStringList() << time << memory << core << node << output_file << error_file << slurm_script;
-            prc->start(QString("sbatch"), params);
-            return EXIT_SUCCESS;
-        }
-
-        else
-        {
-            QString main_script = QDir::cleanPath(scripts_dir + QString("/main_script.py"));
-            QStringList params = QStringList() << main_script;
-
-            prc->setStandardOutputFile(outlog_filename);
-            prc->setStandardErrorFile(errlog_filename);
-
-            QMap<QString, QString> executables = csfscripts.GetExecutablesMap();
-            cout<<executables["python3"].toStdString()<<" "<<params.join(" ").toStdString()<<endl;
-            prc->start(executables["python3"], params);
-            return EXIT_SUCCESS;
-        }
-    
+    return EXIT_SUCCESS;  
     }
+
+
     else
     {
         QApplication app(argc,argv);

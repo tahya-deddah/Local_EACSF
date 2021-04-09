@@ -265,14 +265,14 @@
      <widget class="QPushButton" name="Remove">
       <property name="geometry">
        <rect>
-        <x>160</x>
+        <x>150</x>
         <y>560</y>
-        <width>92</width>
+        <width>161</width>
         <height>28</height>
        </rect>
       </property>
       <property name="text">
-       <string>Remove</string>
+       <string>Remove Selected row</string>
       </property>
      </widget>
      <widget class="QPushButton" name="Add">
@@ -312,6 +312,19 @@
       </property>
       <property name="text">
        <string>Local : Serial Batch Processing</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="Clear">
+      <property name="geometry">
+       <rect>
+        <x>320</x>
+        <y>560</y>
+        <width>92</width>
+        <height>28</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Clear</string>
       </property>
      </widget>
     </widget>

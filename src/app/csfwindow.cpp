@@ -28,12 +28,14 @@ CSFWindow::CSFWindow(QWidget *m_parent)
     
     this->setupUi(this);
 
-    batch_processing = false ;
-   /* model = new CsvTableModel(model_data,this);
-    tableView->setModel(model);
-    tableView->resizeColumnsToContents();
+    batch_processing = false ; 
+    Model =false;
+
+    /*model = new CsvTableModel(this);
+    tableView->setModel(model);*/
+    /*tableView->resizeColumnsToContents();
     tableView->resizeRowsToContents();*/
-   
+           
     QJsonObject root_obj = readConfig(QString(":/config/default_config.json"));
     
     QJsonArray exe_array = root_obj["executables"].toArray();
@@ -68,6 +70,7 @@ CSFWindow::CSFWindow(QWidget *m_parent)
     IterationsNumber->setValue(param_obj["Iterations_number"].toInt());
     ImageDimension->setText(param_obj["Image_dimension"].toString());
     tab->removeTab(3); 
+
 
 }
 
@@ -350,6 +353,7 @@ void CSFWindow::on_Find_clicked()
                     tableView->setModel(model);
                     tableView->resizeColumnsToContents();
                     tableView->resizeRowsToContents();
+                    Model = true;
                 }              
             }
 }
@@ -387,6 +391,27 @@ bool CSFWindow::ModelIsEmpty()
     return (state);
 }
 
+void CSFWindow::on_Add_clicked()
+{
+    addWidget *add_Widget = new addWidget();
+    connect(add_Widget, SIGNAL(add_to_model( QStringList )), this, SLOT(addToModel(QStringList )));
+    add_Widget->show();
+}
+
+void CSFWindow::addToModel(QStringList line)
+{
+    model_data.append(line);
+    if(Model){model->SetData(model_data);}
+    else
+    {       
+        model = new CsvTableModel(model_data, this);
+        tableView->setModel(model);
+        tableView->resizeColumnsToContents();
+        tableView->resizeRowsToContents();
+        Model = true;
+    }
+}
+
 void CSFWindow::on_Remove_clicked()
 {
     bool model_empty = ModelIsEmpty();
@@ -401,9 +426,15 @@ void CSFWindow::on_Remove_clicked()
             model->removeRows(indexes.last().row(), 1);
             indexes.removeLast();
         }
-
     }
 }
+
+void CSFWindow::on_Clear_clicked()
+{   
+    if (Model)
+    { model->clear(); }  
+}
+
 void CSFWindow::on_batch_local_clicked()
 {
     if (batch_local->isChecked())
@@ -412,7 +443,6 @@ void CSFWindow::on_batch_local_clicked()
         slurm->setChecked(false);
         local->setEnabled(true);
         local->setChecked(true);
-
     }
     else{batch_slurm->setEnabled(true);}
 }
@@ -425,7 +455,6 @@ void CSFWindow::on_batch_slurm_clicked()
         local->setChecked(false);
         slurm->setEnabled(true);
         slurm->setChecked(true);
-
     }
     else{batch_local->setEnabled(true);}
 
@@ -442,7 +471,7 @@ void CSFWindow::on_Run_Batch_Process_clicked()
     else 
     {
         batch_processing = true ;
-        QList<QStringList> data = model->getdata();
+        QList<QStringList> data = model->getData();
         if (batch_slurm->isChecked())
         {  
             for (int row=0;row<model->rowCount();row++)
@@ -564,7 +593,7 @@ void CSFWindow::updateExecutables(QString exeName, QString path)
 
 
 
-// 4rd Tab -  Smoothing + Cleaning + Location 
+// 4rd Tab -  Smoothing + Cleaning + Server
 
 void CSFWindow::on_local_clicked()
 {
@@ -641,7 +670,7 @@ void CSFWindow::prc_finished(QProcess *prc, QString outlog_filename, QString err
     }  
     if (batch_processing)
     {
-        QList<QStringList> data = model->getdata();
+        QList<QStringList> data = model->getData();
         if (row < (model->rowCount()-1))
         {
             lineEdit_T1img->setText(data[row +1].at(0));
@@ -736,8 +765,7 @@ void CSFWindow::run_Local_EACSF(int row)
        
         QMap<QString, QString> executables = m_exeWidget->GetExeMap();
         prc->start(executables[QString("python3")], params);  
-        //prc->waitForFinished(-1);
-        //prc->close(); 
+        
     }
     
     if (slurm->isChecked())
@@ -831,8 +859,5 @@ void CSFWindow::on_visualize_clicked()
 
 
 
-void CSFWindow::on_Add_clicked()
-{
-    addWidget *add_Widget = new addWidget();
-    add_Widget->show();
-}
+
+
