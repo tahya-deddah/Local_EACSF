@@ -40,12 +40,6 @@ public:
     QJsonObject getConfig();
     void setConfig(QJsonObject root_obj);
 
-private slots:
-    void on_actionSave_Csv_File_triggered();
-
-private slots:
-    void on_actionLoad_Csv_File_triggered();
-
 private:
 
     QString OpenFile();
@@ -57,7 +51,8 @@ private:
     QString checkStringValue(QJsonValue str_value);
     void CleanFile(QString filename);
 
-    bool writeCsv(QString filename);
+    bool writeToCsv(QString filename);
+    QList<QStringList> readCsv(QString filename);
 
    
 
@@ -71,6 +66,8 @@ private slots:
     //File
     void on_actionSave_Config_File_triggered();
     void on_actionLoad_Config_File_triggered();
+    void on_actionLoad_Csv_File_triggered();
+    void on_actionSave_Csv_File_triggered();
     //Window menu
     void on_actionToggle_advanced_mode_toggled(bool toggled);
     //About

@@ -17,10 +17,10 @@
    <widget class="QTabWidget" name="tab">
     <property name="geometry">
      <rect>
-      <x>50</x>
+      <x>30</x>
       <y>0</y>
       <width>951</width>
-      <height>711</height>
+      <height>701</height>
      </rect>
     </property>
     <property name="minimumSize">
@@ -952,14 +952,14 @@ p, li { white-space: pre-wrap; }
      <widget class="QPushButton" name="Execute">
       <property name="geometry">
        <rect>
-        <x>390</x>
-        <y>30</y>
-        <width>161</width>
+        <x>370</x>
+        <y>40</y>
+        <width>181</width>
         <height>41</height>
        </rect>
       </property>
       <property name="text">
-       <string>Execute</string>
+       <string>Execute One Case</string>
       </property>
      </widget>
      <widget class="QTextBrowser" name="output">

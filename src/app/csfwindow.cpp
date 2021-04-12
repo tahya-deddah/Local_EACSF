@@ -232,6 +232,49 @@ void CSFWindow::infoMsgBox(QString message, QMessageBox::Icon type)
     mb.setStandardButtons(QMessageBox::Ok);
     mb.exec();
 }
+QList<QStringList> CSFWindow::readCsv(QString filename)
+{
+    QFile file(filename);
+    file.open(QIODevice::ReadOnly | QIODevice::Text);
+
+    QTextStream stream(&file);
+    QList<QStringList> data;
+    QString separator(",");
+    QString line = stream.readLine(); // read the firsst line 
+    while (stream.atEnd() == false)
+    {
+        QString line = stream.readLine();
+        data << line.split(separator);
+    }
+
+    file.close();
+    return data;
+}
+bool CSFWindow::writeToCsv(QString filename)
+{
+    QFile saveFile(filename);
+    if (!saveFile.open(QIODevice::Append | QIODevice::Text)) {
+        std::cout<<"Couldn't open save file."<<std::endl;
+        return false;
+    }
+    if(!Model){
+        std::cout<<"No data to save."<<std::endl;
+        return false;
+    }
+    QList <QStringList> modeldata = model->GetModelData();
+    QTextStream stream(&saveFile);
+    QString separator(",");
+    stream << QString("T1") << separator << QString("Tissu Segmentation") << separator << QString("CSF Probability Map") << separator << QString(" LH MID Surface") << separator
+    << QString("LH GM Surface") << separator << QString("RH MID Surface") << separator << QString("RH GM Surface") << separator << QString("Output Directory") << endl ;
+    for (int i = 0; i < modeldata.size(); ++i)
+    {
+        stream << modeldata.at(i).join(separator) << endl;
+    }
+    stream.flush();
+    saveFile.close();
+    return true; 
+}
+
 
 
 //File menu
@@ -265,7 +308,41 @@ void CSFWindow::on_actionSave_Config_File_triggered()
                 infoMsgBox(QString("Couldn't save configuration file at this location. Try somewhere else."),QMessageBox::Warning);
             }
         }
-
+}
+void CSFWindow::on_actionLoad_Csv_File_triggered()
+{
+    QString filename= OpenFile();
+        if (!filename.isEmpty())
+        {
+            QList<QStringList> list = readCsv(filename);
+            if(Model){model->SetModelData(list);}
+            else
+            {       
+                model = new CsvTableModel(list, this);
+                tableView->setModel(model);
+                Model = true;
+            }
+        }
+}
+void CSFWindow::on_actionSave_Csv_File_triggered()
+{
+    QString filename=SaveFile();
+    if (!filename.isEmpty())
+    {
+        if (!filename.endsWith(QString(".csv")))
+        {
+            filename+=QString(".csv");
+        }
+        bool success=writeToCsv(filename);
+        if (success)
+        {
+            infoMsgBox(QString("Csv file saved with success : ")+filename,QMessageBox::Information);
+        }
+        else
+        {
+            infoMsgBox(QString("Couldn't save Csv file at this location. Try somewhere else."),QMessageBox::Warning);
+        }
+    }
 }
 
 //Help menu
@@ -726,9 +803,9 @@ void CSFWindow::run_Local_EACSF(int row)
     QJsonObject data_obj = root_obj["data"].toObject();
     QJsonObject param_obj = root_obj["parameters"].toObject();
     QString output_dir = data_obj["Output_Directory"].toString();
-    QString scripts_dir = QDir::cleanPath(output_dir + QString("/PythonScripts"));
-    QString outlog_filename = QDir::cleanPath(output_dir + QString("/output_log.txt"));
-    QString errlog_filename = QDir::cleanPath(output_dir + QString("/errors_log.txt"));
+    QString scripts_dir = QDir::cleanPath(output_dir + QString("/LocalEACSF") + QString("/PythonScripts"));
+    QString outlog_filename = QDir::cleanPath(output_dir + QString("/LocalEACSF") + QString("/output_log.txt"));
+    QString errlog_filename = QDir::cleanPath(output_dir + QString("/LocalEACSF") + QString("/errors_log.txt"));
 
 
     if (local->isChecked())
@@ -811,8 +888,8 @@ void CSFWindow::on_visualize_clicked()
     QProcess *visualization;
     visualization = new QProcess;
     QString OutputDirectory =lineEdit_output_path->text();
-    QString LH_Directory = QDir::cleanPath(OutputDirectory + QString("/LH_Directory"));
-    QString RH_Directory = QDir::cleanPath(OutputDirectory + QString("/RH_Directory"));
+    QString LH_Directory = QDir::cleanPath(OutputDirectory + QString("/LocalEACSF") + QString("/LH_Directory"));
+    QString RH_Directory = QDir::cleanPath(OutputDirectory + QString("/LocalEACSF") + QString("/RH_Directory"));
 
 
     if (itksnap->isChecked())
@@ -845,61 +922,11 @@ void CSFWindow::on_visualize_clicked()
 
 
 
-void CSFWindow::on_actionLoad_Csv_File_triggered()
-{
-
-}
-
-void CSFWindow::on_actionSave_Csv_File_triggered()
-{
-    QString filename=SaveFile();
-    if (!filename.isEmpty())
-    {
-        if (!filename.endsWith(QString(".csv")))
-        {
-            filename+=QString(".csv");
-        }
-        bool success=writeCsv(filename);
-        if (success)
-        {
-            infoMsgBox(QString("Csv file saved with success : ")+filename,QMessageBox::Information);
-        }
-        else
-        {
-            infoMsgBox(QString("Couldn't save Csv file at this location. Try somewhere else."),QMessageBox::Warning);
-        }
-    }
-}
 
 
-bool CSFWindow::writeCsv(QString filename)
-{
-    if(Model)
-    {
-        QFile saveFile(filename);
-        if (!saveFile.open(QIODevice::WriteOnly | QFile::Text )) {
-            std::cout<<"Couldn't open save file."<<std::endl;
-            return false;
-        }
 
-        QList <QStringList> modeldata = model->GetModelData();
-        QStringList modelheader = QStringList() << "T1" << " Tissu Segmentation" << " CSF Probability Map " << " LH MID" << " LH GM" << " RH MID" << " RH GM" << " Output Directory" ;  
-        QTextStream s(&saveFile);
-        for (int i = 0; i < modelheader.size() - 1; ++i)
-        {s << modelheader.at(i) << QString(",");}  
-        s << modelheader.at(modelheader.size() - 1) << '\n';
 
-        for(int row =0 ; row < model->rowCount(); row++)
-        {
-            for(int column =0; column < model->columnCount() -1 ; column++)
-            {
-                s << modeldata[row ].at(column) << QString(",");
-            }
-            s << modeldata[row ].at(model->columnCount() -1) <<'\n';
-        }
-        saveFile.close();   
-        std::cout<<"Saved Csv file : "<<filename.toStdString()<<endl;
-        return true;
-    }    
-}
+
+
+
 

@@ -31,9 +31,28 @@ QJsonObject readConfig(QString filename)
     return root_obj;
 }
 
+QList<QStringList> readCsv(QString filename)
+{
+    QFile file(filename);
+    file.open(QIODevice::ReadOnly | QIODevice::Text);
+
+    QTextStream stream(&file);
+    QList<QStringList> data;
+    QString separator(",");
+    QString line = stream.readLine(); // read the firsst line 
+    while (stream.atEnd() == false)
+    {
+        QString line = stream.readLine();
+        data << line.split(separator);
+    }
+    file.close();
+    return data;
+}
 
 
-QString checkStringValue(string str_value, QJsonValue str_default){
+
+QString checkStringValue(string str_value, QJsonValue str_default)
+{
     if(str_value.compare("") == 0){
         if(str_default.isUndefined()){
             return QString("");
@@ -49,38 +68,24 @@ int  main(int argc, char** argv)
 
 	PARSE_ARGS;
     QJsonObject root_obj = readConfig(QString::fromStdString(parameters));
+
    
     if (noGUI)
     {
 
         QJsonObject data_obj = root_obj["data"].toObject();
-
-        std::ifstream myFile(csv_file);
-        if(!myFile.is_open()) {
-            throw std::runtime_error("Could not open file");}
-
-        if(myFile.good())
-        {   
-            std::string line, colname;
-            while(std::getline(myFile, line))
+        QList<QStringList> CSVFile = readCsv(QString::fromStdString(csv_file));    
+        for(int i =0 ; i< CSVFile.size(); i++)
             {
-                std::stringstream ss(line);
-                std::getline(ss, colname, ',');
-                data_obj["T1"] = checkStringValue(  colname ,  data_obj["T1"]);
-                std::getline(ss, colname, ',');
-                data_obj["Tissu_Segmentation"] = checkStringValue( colname,  data_obj["Tissu_Segmentation"]);
-                std::getline(ss, colname, ',');
-                data_obj["CSF_Probability_Map"] = checkStringValue(  colname,  data_obj["CSF_Probability_Map"]);
-                std::getline(ss, colname, ',');
-                data_obj["LH_MID_surface"] = checkStringValue(  colname,  data_obj["LH_MID_surface"]);
-                std::getline(ss, colname, ',');
-                data_obj["LH_GM_surface"] = checkStringValue(  colname,  data_obj["LH_GM_surface"]);
-                std::getline(ss, colname, ',');
-                data_obj["RH_MID_surface"] = checkStringValue(  colname,  data_obj["RH_MID_surface"]);
-                std::getline(ss, colname, ',');
-                data_obj["RH_GM_surface"] = checkStringValue(  colname,   data_obj["RH_GM_surface"]);
-                std::getline(ss, colname, '\n');
-                data_obj["Output_Directory"] = checkStringValue( colname,   data_obj["Output_Directory"]);  
+               
+                data_obj["T1"] = checkStringValue((CSVFile[i].at(0)).toStdString() ,  data_obj["T1"]);
+                data_obj["Tissu_Segmentation"] = checkStringValue( (CSVFile[i].at(1)).toStdString(),  data_obj["Tissu_Segmentation"]);
+                data_obj["CSF_Probability_Map"] = checkStringValue( (CSVFile[i].at(2)).toStdString(),  data_obj["CSF_Probability_Map"]);
+                data_obj["LH_MID_surface"] = checkStringValue(  (CSVFile[i].at(3)).toStdString(),  data_obj["LH_MID_surface"]);
+                data_obj["LH_GM_surface"] = checkStringValue(  (CSVFile[i].at(4)).toStdString(),  data_obj["LH_GM_surface"]);
+                data_obj["RH_MID_surface"] = checkStringValue((CSVFile[i].at(5)).toStdString(),  data_obj["RH_MID_surface"]);
+                data_obj["RH_GM_surface"] = checkStringValue(  (CSVFile[i].at(6)).toStdString(),   data_obj["RH_GM_surface"]);
+                data_obj["Output_Directory"] = checkStringValue((CSVFile[i].at(7)).toStdString(),   data_obj["Output_Directory"]);  
                 root_obj["data"]=data_obj;  
 
                 QString output_dir = QDir::cleanPath(data_obj["Output_Directory"].toString());
@@ -94,9 +99,9 @@ int  main(int argc, char** argv)
                 csfscripts.setConfig(root_obj);
                 csfscripts.run_EACSF();
 
-                QString scripts_dir = QDir::cleanPath(output_dir + QString("/PythonScripts"));
-                QString outlog_filename = QDir::cleanPath(output_dir + QString("/output_log.txt"));
-                QString errlog_filename = QDir::cleanPath(output_dir + QString("/errors_log.txt"));
+                QString scripts_dir = QDir::cleanPath(output_dir + QString("/LocalEACSF") + QString("/PythonScripts"));
+                QString outlog_filename = QDir::cleanPath(output_dir + QString("/LocalEACSF") + QString("/output_log.txt"));
+                QString errlog_filename = QDir::cleanPath(output_dir + QString("/LocalEACSF")+ QString("/errors_log.txt"));
 
                 QProcess* prc =  new QProcess;
                 prc->setWorkingDirectory(output_dir);
@@ -130,7 +135,7 @@ int  main(int argc, char** argv)
                     prc->close(); 
                 }
             }  
-        }
+        
     return EXIT_SUCCESS;  
     }
 

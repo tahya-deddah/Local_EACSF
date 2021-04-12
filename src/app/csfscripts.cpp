@@ -15,10 +15,11 @@ void CSFScripts::run_EACSF()
 
     QDir out_dir = QDir();
     out_dir.mkdir(QDir::cleanPath(checkStringValue(data_obj["Output_Directory"].toString())));
-    out_dir.mkdir(QDir::cleanPath(checkStringValue(data_obj["Output_Directory"]) + m_PythonScripts));
+    out_dir.mkdir(QDir::cleanPath(checkStringValue(data_obj["Output_Directory"]) + QString("/LocalEACSF")));
+    out_dir.mkdir(QDir::cleanPath(checkStringValue(data_obj["Output_Directory"]) + QString("/LocalEACSF") + m_PythonScripts));
 
     
-    QFile saveFile(QDir::cleanPath(checkStringValue(data_obj["Output_Directory"]) + "/Local_EACSF_config.json"));
+    QFile saveFile(QDir::cleanPath(checkStringValue(data_obj["Output_Directory"]) + "/LocalEACSF" +  "/Local_EACSF_config.json"));
     saveFile.open(QIODevice::WriteOnly);
     QJsonDocument saveDoc(m_Root_obj);
     saveFile.write(saveDoc.toJson());
@@ -66,7 +67,7 @@ void CSFScripts::write_main_script()
 
     script.replace("@python3_PATH@", checkStringValue(m_Executables["python3"]));
 
-    QString scripts_dir = QDir::cleanPath(checkStringValue(data_obj["Output_Directory"]) + m_PythonScripts);
+    QString scripts_dir = QDir::cleanPath(checkStringValue(data_obj["Output_Directory"]) + QString("/LocalEACSF") + m_PythonScripts);
     
     QString main_script = QDir::cleanPath(scripts_dir + QString("/main_script.py"));
     QFile outfile(main_script);
@@ -125,7 +126,7 @@ void CSFScripts::write_process_left_hemisphere()
     script_left_hemisphere.replace("@Smooth@", checkBoolValue(param_obj["Smooth"]));
 
     
-    QString scripts_dir = QDir::cleanPath(checkStringValue(data_obj["Output_Directory"]) + m_PythonScripts);
+    QString scripts_dir = QDir::cleanPath(checkStringValue(data_obj["Output_Directory"]) + QString("/LocalEACSF") + m_PythonScripts);
     
     QString left_hemisphere_script = QDir::cleanPath(scripts_dir + QString("/process_left_hemisphere.py"));
     QFile outfile_left_hemisphere(left_hemisphere_script);
@@ -184,7 +185,7 @@ void CSFScripts::write_process_right_hemisphere()
 
 
     
-    QString scripts_dir = QDir::cleanPath(checkStringValue(data_obj["Output_Directory"]) + m_PythonScripts);
+    QString scripts_dir = QDir::cleanPath(checkStringValue(data_obj["Output_Directory"]) + QString("/LocalEACSF") + m_PythonScripts);
     
     QString right_hemisphere_script = QDir::cleanPath(scripts_dir + QString("/process_right_hemisphere.py"));
     QFile outfile_right_hemisphere(right_hemisphere_script);
@@ -199,7 +200,7 @@ void CSFScripts::write_slurm_job()
 {
 
     QJsonObject data_obj = m_Root_obj["data"].toObject();
-    QString scripts_dir = QDir::cleanPath(checkStringValue(data_obj["Output_Directory"]) + m_PythonScripts);
+    QString scripts_dir = QDir::cleanPath(checkStringValue(data_obj["Output_Directory"]) + QString("/LocalEACSF") + m_PythonScripts);
    
     QFile file_slurm_job(QString(":/PythonScripts/slurm-job"));
     file_slurm_job.open(QIODevice::ReadOnly);

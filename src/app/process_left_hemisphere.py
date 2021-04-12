@@ -48,7 +48,7 @@ def main_loop(args):
 	print("time for LH:",end - start, flush=True)
 
 def process_LH(args):
-	LH_Directory = os.path.join(args.Output_Directory,"LH_Directory") 
+	LH_Directory = os.path.join(args.Output_Directory, "LocalEACSF", "LH_Directory") 
 	isDir = os.path.isdir(LH_Directory)
 	if isDir==False :
 		os.mkdir(LH_Directory) 

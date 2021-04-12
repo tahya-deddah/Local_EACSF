@@ -11,7 +11,7 @@ def main(args):
 	#Executables
 	python = args.python3
 	#Output Path
-	OUT_PATH = args.Output_Directory
+	OUT_PATH = os.path.join(args.Output_Directory,"LocalEACSF") 	
 	scripts_prefix = os.path.join(OUT_PATH, "PythonScripts")
 	process_left_hemisphere = os.path.join(scripts_prefix,"process_left_hemisphere.py")
 	process_right_hemisphere = os.path.join(scripts_prefix,"process_right_hemisphere.py")
