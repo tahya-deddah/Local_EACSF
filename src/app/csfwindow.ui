@@ -36,7 +36,7 @@
      <string/>
     </property>
     <property name="currentIndex">
-     <number>0</number>
+     <number>4</number>
     </property>
     <widget class="QWidget" name="tab_batch">
      <attribute name="title">
@@ -272,7 +272,7 @@
        </rect>
       </property>
       <property name="text">
-       <string>Remove Selected row</string>
+       <string>Remove Selected rows</string>
       </property>
      </widget>
      <widget class="QPushButton" name="Add">
@@ -288,32 +288,6 @@
        <string>Add</string>
       </property>
      </widget>
-     <widget class="QCheckBox" name="batch_slurm">
-      <property name="geometry">
-       <rect>
-        <x>60</x>
-        <y>640</y>
-        <width>251</width>
-        <height>25</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>Slurm : Parallel Batch Processing</string>
-      </property>
-     </widget>
-     <widget class="QCheckBox" name="batch_local">
-      <property name="geometry">
-       <rect>
-        <x>60</x>
-        <y>610</y>
-        <width>231</width>
-        <height>25</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>Local : Serial Batch Processing</string>
-      </property>
-     </widget>
      <widget class="QPushButton" name="Clear">
       <property name="geometry">
        <rect>
@@ -325,6 +299,32 @@
       </property>
       <property name="text">
        <string>Clear</string>
+      </property>
+     </widget>
+     <widget class="QRadioButton" name="batchLocal">
+      <property name="geometry">
+       <rect>
+        <x>50</x>
+        <y>600</y>
+        <width>241</width>
+        <height>25</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Local: Serial Batch Processing</string>
+      </property>
+     </widget>
+     <widget class="QRadioButton" name="batchSlurm">
+      <property name="geometry">
+       <rect>
+        <x>50</x>
+        <y>630</y>
+        <width>241</width>
+        <height>25</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Slurm: Parallel Batch Processing</string>
       </property>
      </widget>
     </widget>
@@ -776,26 +776,46 @@ p, li { white-space: pre-wrap; }
       <layout class="QFormLayout" name="slurm_parameters_layout">
        <item row="0" column="0">
         <widget class="QLabel" name="Node">
+         <property name="enabled">
+          <bool>false</bool>
+         </property>
          <property name="text">
           <string>-Nodes number (-N) </string>
          </property>
         </widget>
        </item>
        <item row="0" column="1">
-        <widget class="QLineEdit" name="lineEdit_Node"/>
+        <widget class="QLineEdit" name="lineEdit_Node">
+         <property name="enabled">
+          <bool>false</bool>
+         </property>
+         <property name="dragEnabled">
+          <bool>true</bool>
+         </property>
+        </widget>
        </item>
        <item row="1" column="0">
         <widget class="QLabel" name="Core">
+         <property name="enabled">
+          <bool>false</bool>
+         </property>
          <property name="text">
           <string>-Cores number (-n)</string>
          </property>
         </widget>
        </item>
        <item row="1" column="1">
-        <widget class="QLineEdit" name="lineEdit_Core"/>
+        <widget class="QLineEdit" name="lineEdit_Core">
+         <property name="enabled">
+          <bool>false</bool>
+         </property>
+        </widget>
        </item>
        <item row="2" column="0">
         <widget class="QLabel" name="Time">
+         <property name="enabled">
+          <bool>false</bool>
+         </property>
          <property name="baseSize">
           <size>
            <width>2</width>
@@ -808,17 +828,28 @@ p, li { white-space: pre-wrap; }
         </widget>
        </item>
        <item row="2" column="1">
-        <widget class="QLineEdit" name="lineEdit_Time"/>
+        <widget class="QLineEdit" name="lineEdit_Time">
+         <property name="enabled">
+          <bool>false</bool>
+         </property>
+        </widget>
        </item>
        <item row="3" column="0">
         <widget class="QLabel" name="Memory">
+         <property name="enabled">
+          <bool>false</bool>
+         </property>
          <property name="text">
           <string>-Memory (-mem)</string>
          </property>
         </widget>
        </item>
        <item row="3" column="1">
-        <widget class="QLineEdit" name="lineEdit_Memory"/>
+        <widget class="QLineEdit" name="lineEdit_Memory">
+         <property name="enabled">
+          <bool>false</bool>
+         </property>
+        </widget>
        </item>
       </layout>
      </widget>
@@ -834,6 +865,9 @@ p, li { white-space: pre-wrap; }
       <layout class="QFormLayout" name="smoothing_parameters">
        <item row="0" column="0">
         <widget class="QLabel" name="Smoothing_NumberIter">
+         <property name="enabled">
+          <bool>false</bool>
+         </property>
          <property name="text">
           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Smoothing number of iterations&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
          </property>
@@ -841,44 +875,29 @@ p, li { white-space: pre-wrap; }
        </item>
        <item row="1" column="0">
         <widget class="QLabel" name="Smoothing_Bandwith">
+         <property name="enabled">
+          <bool>false</bool>
+         </property>
          <property name="text">
           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Smoothing kernel bandwidth&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
          </property>
         </widget>
        </item>
        <item row="0" column="1">
-        <widget class="QLineEdit" name="NumberIter_lineEdit"/>
+        <widget class="QLineEdit" name="NumberIter_lineEdit">
+         <property name="enabled">
+          <bool>false</bool>
+         </property>
+        </widget>
        </item>
        <item row="1" column="1">
-        <widget class="QLineEdit" name="Bandwith_lineEdit"/>
+        <widget class="QLineEdit" name="Bandwith_lineEdit">
+         <property name="enabled">
+          <bool>false</bool>
+         </property>
+        </widget>
        </item>
       </layout>
-     </widget>
-     <widget class="QCheckBox" name="local">
-      <property name="geometry">
-       <rect>
-        <x>40</x>
-        <y>340</y>
-        <width>131</width>
-        <height>25</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>Option1:Local</string>
-      </property>
-     </widget>
-     <widget class="QCheckBox" name="slurm">
-      <property name="geometry">
-       <rect>
-        <x>40</x>
-        <y>370</y>
-        <width>191</width>
-        <height>25</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>Option2:SLURM/Longleaf</string>
-      </property>
      </widget>
      <widget class="QLabel" name="slurm_parameters">
       <property name="geometry">
@@ -942,6 +961,35 @@ p, li { white-space: pre-wrap; }
       </property>
       <property name="text">
        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:12pt; text-decoration: underline;&quot;&gt;2.Clean the output direcory of intermediate outputs:&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+      </property>
+     </widget>
+     <widget class="QRadioButton" name="radioButton_local">
+      <property name="geometry">
+       <rect>
+        <x>40</x>
+        <y>340</y>
+        <width>141</width>
+        <height>25</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Option1 : Local</string>
+      </property>
+      <property name="checked">
+       <bool>true</bool>
+      </property>
+     </widget>
+     <widget class="QRadioButton" name="radioButton_slurm">
+      <property name="geometry">
+       <rect>
+        <x>40</x>
+        <y>370</y>
+        <width>211</width>
+        <height>25</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Option2 : SLURM/Longleaf</string>
       </property>
      </widget>
     </widget>

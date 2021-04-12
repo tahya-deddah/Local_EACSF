@@ -39,7 +39,7 @@ QList<QStringList> readCsv(QString filename)
     QTextStream stream(&file);
     QList<QStringList> data;
     QString separator(",");
-    QString line = stream.readLine(); // read the firsst line 
+    QString line = stream.readLine(); // read the first line 
     while (stream.atEnd() == false)
     {
         QString line = stream.readLine();

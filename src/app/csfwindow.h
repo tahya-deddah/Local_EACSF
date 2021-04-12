@@ -81,8 +81,8 @@ private slots:
     void addToModel(QStringList line);
     void on_Remove_clicked();
     void on_Clear_clicked();
-    void on_batch_slurm_clicked();
-    void on_batch_local_clicked();
+    void on_batchSlurm_clicked(bool checked);
+    void on_batchLocal_clicked(bool checked);
     void on_Run_Batch_Process_clicked();
     
     
@@ -101,9 +101,9 @@ private slots:
     void updateExecutables(QString exeName, QString path);
 
     //4th tab
-    void on_slurm_clicked();
-    void on_local_clicked();
-    void on_slurm_stateChanged(int state);
+    void slurm_parameters_state(bool checked);
+    void on_radioButton_local_clicked(bool checked);
+    void on_radioButton_slurm_clicked(bool checked);
     void on_smooth_stateChanged(int state);
 
     //5th tab
@@ -122,10 +122,10 @@ private:
     QJsonObject root_obj ;
     ExtExecutablesWidget* m_exeWidget;
     static const QString m_github_url;
-    CsvTableModel *model ;
-    bool batch_processing;
-    QList<QStringList> model_data;  
-    bool Model;
+    CsvTableModel *model ;   
+    QList<QStringList> model_data; 
+    bool batch_processing; 
+   
 };
 
 #endif

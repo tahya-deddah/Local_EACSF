@@ -1,4 +1,4 @@
-#include "csfwindow.h"
+﻿#include "csfwindow.h"
 
 #include<stdlib.h>
 #include <string>
@@ -29,8 +29,11 @@ CSFWindow::CSFWindow(QWidget *m_parent)
     this->setupUi(this);
 
     batch_processing = false ; 
-    Model =false;
-           
+    model = new CsvTableModel(model_data, this);
+    tableView->setSelectionMode(QAbstractItemView::ExtendedSelection);
+    tableView->setModel(model);
+   
+
     QJsonObject root_obj = readConfig(QString(":/config/default_config.json"));
     
     QJsonArray exe_array = root_obj["executables"].toArray();
@@ -53,12 +56,6 @@ CSFWindow::CSFWindow(QWidget *m_parent)
         connect(m_exeWidget, SIGNAL(newExePath(QString,QString)), this, SLOT(updateExecutables(QString,QString)));
     }
 
-
-    slurm->setChecked(true);
-    slurm->setChecked(false);
-    smooth->setChecked(true);
-    smooth->setChecked(false);      
-   
     QJsonObject param_obj = root_obj["parameters"].toObject();
     ClosingRadius->setValue(param_obj["Closing_radius"].toInt());
     DilationRadius->setValue(param_obj["Dilation_radius"].toInt());
@@ -157,7 +154,7 @@ QJsonObject CSFWindow::getConfig(){
     data_obj["Output_Directory"]=lineEdit_Output_Directory->text();
 
     QJsonObject param_obj;
-    if(slurm->isChecked())
+    if(radioButton_slurm->isChecked())
     {
         param_obj["Slurm_nodes"] = lineEdit_Node->text();    
         param_obj["Slurm_cores"] = lineEdit_Core->text();
@@ -257,10 +254,6 @@ bool CSFWindow::writeToCsv(QString filename)
         std::cout<<"Couldn't open save file."<<std::endl;
         return false;
     }
-    if(!Model){
-        std::cout<<"No data to save."<<std::endl;
-        return false;
-    }
     QList <QStringList> modeldata = model->GetModelData();
     QTextStream stream(&saveFile);
     QString separator(",");
@@ -315,13 +308,7 @@ void CSFWindow::on_actionLoad_Csv_File_triggered()
         if (!filename.isEmpty())
         {
             QList<QStringList> list = readCsv(filename);
-            if(Model){model->SetModelData(list);}
-            else
-            {       
-                model = new CsvTableModel(list, this);
-                tableView->setModel(model);
-                Model = true;
-            }
+            model->SetModelData(list);
         }
 }
 void CSFWindow::on_actionSave_Csv_File_triggered()
@@ -423,9 +410,7 @@ void CSFWindow::on_Find_clicked()
                 }
                 if(!model_data.isEmpty())
                 {
-                    model = new CsvTableModel(model_data, this);
-                    tableView->setModel(model);
-                    Model = true;
+                    model->SetModelData(model_data);
                 }              
             }
 }
@@ -469,92 +454,50 @@ void CSFWindow::on_Add_clicked()
 void CSFWindow::addToModel(QStringList line)
 {
     model_data.append(line);
-    if(Model){model->SetModelData(model_data);}
-    else
-    {       
-        model = new CsvTableModel(model_data, this);
-        tableView->setModel(model);
-        Model = true;
-    }
+    model->SetModelData(model_data);
 }
 
 void CSFWindow::on_Remove_clicked()
 {
-    
-    if (Model)
+    QItemSelectionModel *select = tableView->selectionModel();
+    if(select->hasSelection()) 
     {
-        QItemSelectionModel *select = tableView->selectionModel();
-        if(select->hasSelection()) 
+        QModelIndexList indexes = select->selectedRows();
+        while (!indexes.isEmpty())
         {
-            QModelIndexList indexes = select->selectedRows();
-            while (!indexes.isEmpty())
-            {
-                model->removeRows(indexes.last().row(), 1);
-                indexes.removeLast();
-            }
+            model->removeRows(indexes.last().row(), 1);
+            indexes.removeLast();
         }
-        else{ infoMsgBox(QString("No row selcted."),QMessageBox::Warning);}      
     }
+    else{ infoMsgBox(QString("No row selcted."),QMessageBox::Warning);}      
 }
 
 void CSFWindow::on_Clear_clicked()
-{   
-    if(Model)
-    {
-        int RowCount = model->rowCount();
-        model->removeRows(0, RowCount);
-    }
+{  
+    int RowCount = model->rowCount();
+    model->removeRows(0, RowCount);
 }
-
-void CSFWindow::on_batch_local_clicked()
+void CSFWindow::on_batchLocal_clicked(bool checked)
 {
-    if (batch_local->isChecked())
-    {
-        batch_slurm->setEnabled(false);
-        slurm->setChecked(false);
-        local->setEnabled(true);
-        local->setChecked(true);
-    }
-    else{batch_slurm->setEnabled(true);}
+    radioButton_local->setChecked(checked);
+    slurm_parameters_state(!checked);
 }
 
-void CSFWindow::on_batch_slurm_clicked()
+void CSFWindow::on_batchSlurm_clicked(bool checked)
 {
-    if (batch_slurm->isChecked())
-    {
-        batch_local->setEnabled(false);
-        local->setChecked(false);
-        slurm->setEnabled(true);
-        slurm->setChecked(true);
-    }
-    else{batch_local->setEnabled(true);}
+    radioButton_slurm->setChecked(checked);
+    slurm_parameters_state(checked); 
 }
-
 
 void CSFWindow::on_Run_Batch_Process_clicked()
 {
-   if(Model)
-    {
-        batch_processing = true ;
-        QList<QStringList> data = model->GetModelData();
-        if (batch_slurm->isChecked())
-        {  
-            for (int row=0;row<model->rowCount();row++)
-            {
-                lineEdit_T1img->setText(data[row].at(0));
-                lineEdit_Segmentation->setText(data[row].at(1));
-                lineEdit_CSF_Probability_Map->setText(data[row].at(2));
-                lineEdit_LH_MID_Surface->setText(data[row].at(3)); 
-                lineEdit_LH_GM_Surface->setText(data[row].at(4));
-                lineEdit_RH_MID_Surface->setText(data[row].at(5));
-                lineEdit_RH_GM_Surface->setText(data[row].at(6));
-                lineEdit_Output_Directory->setText(data[row].at(7));
-                run_Local_EACSF(row);
-            }
-        }
-        if (batch_local->isChecked())
+   
+    batch_processing = true ;
+    QList<QStringList> data = model->GetModelData();
+    if (batchSlurm->isChecked())
+    {  
+        for (int row=0;row<model->rowCount();row++)
         {
-            int row = 0;
             lineEdit_T1img->setText(data[row].at(0));
             lineEdit_Segmentation->setText(data[row].at(1));
             lineEdit_CSF_Probability_Map->setText(data[row].at(2));
@@ -565,7 +508,20 @@ void CSFWindow::on_Run_Batch_Process_clicked()
             lineEdit_Output_Directory->setText(data[row].at(7));
             run_Local_EACSF(row);
         }
-    }     
+    }
+    if (batchLocal->isChecked())
+    {
+        int row = 0;
+        lineEdit_T1img->setText(data[row].at(0));
+        lineEdit_Segmentation->setText(data[row].at(1));
+        lineEdit_CSF_Probability_Map->setText(data[row].at(2));
+        lineEdit_LH_MID_Surface->setText(data[row].at(3)); 
+        lineEdit_LH_GM_Surface->setText(data[row].at(4));
+        lineEdit_RH_MID_Surface->setText(data[row].at(5));
+        lineEdit_RH_GM_Surface->setText(data[row].at(6));
+        lineEdit_Output_Directory->setText(data[row].at(7));
+        run_Local_EACSF(row);
+    }  
 }
 
 
@@ -659,35 +615,27 @@ void CSFWindow::updateExecutables(QString exeName, QString path)
 
 
 // 4rd Tab -  Smoothing + Cleaning + Server
-
-void CSFWindow::on_local_clicked()
+void CSFWindow::on_radioButton_slurm_clicked(bool checked)
 {
-    if (local->isChecked()){slurm->setEnabled(false);}
-    else{slurm->setEnabled(true);}
+    slurm_parameters_state(checked);
 }
 
-void CSFWindow::on_slurm_clicked()
+void CSFWindow::on_radioButton_local_clicked(bool checked)
 {
-    if (slurm->isChecked()){local->setEnabled(false);}
-    else{local->setEnabled(true);}
-
+    slurm_parameters_state(!checked);
 }
 
-void CSFWindow::on_slurm_stateChanged(int state)
+void CSFWindow::slurm_parameters_state(bool checked)
 {
-    bool enab;
-        if (state==Qt::Checked){enab=true;}
-        else{enab=false;}
-
-        slurm_parameters->setEnabled(enab);
-        Core->setEnabled(enab);
-        Memory->setEnabled(enab);
-        Node->setEnabled(enab);
-        Time->setEnabled(enab);
-        lineEdit_Core->setEnabled(enab);
-        lineEdit_Memory->setEnabled(enab);
-        lineEdit_Node->setEnabled(enab);
-        lineEdit_Time->setEnabled(enab);
+    slurm_parameters->setEnabled(checked);
+    Core->setEnabled(checked);
+    Memory->setEnabled(checked);
+    Node->setEnabled(checked);
+    Time->setEnabled(checked);
+    lineEdit_Core->setEnabled(checked);
+    lineEdit_Memory->setEnabled(checked);
+    lineEdit_Node->setEnabled(checked);
+    lineEdit_Time->setEnabled(checked);
 }
 
 void CSFWindow::on_smooth_stateChanged(int state)
@@ -808,7 +756,7 @@ void CSFWindow::run_Local_EACSF(int row)
     QString errlog_filename = QDir::cleanPath(output_dir + QString("/LocalEACSF") + QString("/errors_log.txt"));
 
 
-    if (local->isChecked())
+    if (radioButton_local->isChecked())
     {  
 
         CleanFile(outlog_filename);
@@ -833,7 +781,7 @@ void CSFWindow::run_Local_EACSF(int row)
         
     }
     
-    if (slurm->isChecked())
+    if (radioButton_slurm->isChecked())
     {
         QString slurm_script = QDir::cleanPath(scripts_dir + QString("/slurm-job"));
         QString time = QString("--time=") + param_obj["Slurm_time"].toString();
@@ -919,13 +867,6 @@ void CSFWindow::on_visualize_clicked()
         );
     }
 }
-
-
-
-
-
-
-
 
 
 
