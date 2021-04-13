@@ -30,7 +30,6 @@ CSFWindow::CSFWindow(QWidget *m_parent)
 
     batch_processing = false ; 
     model = new CsvTableModel(model_data, this);
-    tableView->setSelectionMode(QAbstractItemView::ExtendedSelection);
     tableView->setModel(model);
    
 
@@ -56,14 +55,28 @@ CSFWindow::CSFWindow(QWidget *m_parent)
         connect(m_exeWidget, SIGNAL(newExePath(QString,QString)), this, SLOT(updateExecutables(QString,QString)));
     }
 
+
     QJsonObject param_obj = root_obj["parameters"].toObject();
     ClosingRadius->setValue(param_obj["Closing_radius"].toInt());
     DilationRadius->setValue(param_obj["Dilation_radius"].toInt());
     IterationsNumber->setValue(param_obj["Iterations_number"].toInt());
     ImageDimension->setText(param_obj["Image_dimension"].toString());
+
+    lineEdit_Core->setText(param_obj["Slurm_cores"].toString());
+    lineEdit_Node->setText(param_obj["Slurm_nodes"].toString());
+    lineEdit_Time->setText(param_obj["Slurm_time"].toString());
+    lineEdit_Memory->setText(param_obj["Slurm_memory"].toString());
+
+    lineEdit_T1_filter->setText("T1.*\\.(nrrd|nii|.gz)");
+    lineEdit_Seg_filter->setText("Seg.*\\.(nrrd|nii|.gz)");
+    lineEdit_CSF_Prob_filter->setText("CSF_Pro.*\\.(nrrd|nii|.gz)");
+    lineEdit_LH_MID_filter->setText("LH.*MID\\.vtk");
+    lineEdit_LH_GM_filter->setText("LH.*GM\\.vtk");
+    lineEdit_RH_MID_filter->setText("RH.*MID\\.vtk");
+    lineEdit_RH_GM_filter->setText("RH.*GM\\.vtk");
+
+
     tab->removeTab(3); 
-
-
 }
 
 CSFWindow::~CSFWindow(){}
@@ -409,9 +422,8 @@ void CSFWindow::on_Find_clicked()
                     } 
                 }
                 if(!model_data.isEmpty())
-                {
-                    model->SetModelData(model_data);
-                }              
+                { model->SetModelData(model_data); } 
+                else{ infoMsgBox(QString("No data found."),QMessageBox::Warning);}             
             }
 }
 
@@ -459,24 +471,33 @@ void CSFWindow::addToModel(QStringList line)
 
 void CSFWindow::on_Remove_clicked()
 {
-    QItemSelectionModel *select = tableView->selectionModel();
-    if(select->hasSelection()) 
+    bool EmptyModel = ModelIsEmpty();
+    if (! EmptyModel)
     {
-        QModelIndexList indexes = select->selectedRows();
-        while (!indexes.isEmpty())
+         QItemSelectionModel *select = tableView->selectionModel();
+        if(select->hasSelection()) 
         {
-            model->removeRows(indexes.last().row(), 1);
-            indexes.removeLast();
-        }
-    }
-    else{ infoMsgBox(QString("No row selcted."),QMessageBox::Warning);}      
+            QModelIndexList indexes = select->selectedRows();
+            while (!indexes.isEmpty())
+            {
+                model->removeRows(indexes.last().row(), 1);
+                indexes.removeLast();
+            }
+            }
+        else{ infoMsgBox(QString("No row selcted."),QMessageBox::Warning);}
+    }         
 }
 
 void CSFWindow::on_Clear_clicked()
-{  
-    int RowCount = model->rowCount();
-    model->removeRows(0, RowCount);
+{
+    bool EmptyModel = ModelIsEmpty();
+    if (! EmptyModel)
+    {
+        int RowCount = model->rowCount();
+        model->removeRows(0, RowCount);
+    }     
 }
+
 void CSFWindow::on_batchLocal_clicked(bool checked)
 {
     radioButton_local->setChecked(checked);
@@ -491,13 +512,30 @@ void CSFWindow::on_batchSlurm_clicked(bool checked)
 
 void CSFWindow::on_Run_Batch_Process_clicked()
 {
-   
-    batch_processing = true ;
-    QList<QStringList> data = model->GetModelData();
-    if (batchSlurm->isChecked())
-    {  
-        for (int row=0;row<model->rowCount();row++)
+    bool EmptyModel = ModelIsEmpty();
+    if (! EmptyModel)
+    {
+        batch_processing = true ;
+        QList<QStringList> data = model->GetModelData();
+        if (batchSlurm->isChecked())
+        {  
+            for (int row=0;row<model->rowCount();row++)
+            {
+                lineEdit_T1img->setText(data[row].at(0));
+                lineEdit_Segmentation->setText(data[row].at(1));
+                lineEdit_CSF_Probability_Map->setText(data[row].at(2));
+                lineEdit_LH_MID_Surface->setText(data[row].at(3)); 
+                lineEdit_LH_GM_Surface->setText(data[row].at(4));
+                lineEdit_RH_MID_Surface->setText(data[row].at(5));
+                lineEdit_RH_GM_Surface->setText(data[row].at(6));
+                lineEdit_Output_Directory->setText(data[row].at(7));
+                run_Local_EACSF(row);
+            }
+        }
+
+        if (batchLocal->isChecked())
         {
+            int row = 0;
             lineEdit_T1img->setText(data[row].at(0));
             lineEdit_Segmentation->setText(data[row].at(1));
             lineEdit_CSF_Probability_Map->setText(data[row].at(2));
@@ -507,23 +545,16 @@ void CSFWindow::on_Run_Batch_Process_clicked()
             lineEdit_RH_GM_Surface->setText(data[row].at(6));
             lineEdit_Output_Directory->setText(data[row].at(7));
             run_Local_EACSF(row);
-        }
-    }
-    if (batchLocal->isChecked())
-    {
-        int row = 0;
-        lineEdit_T1img->setText(data[row].at(0));
-        lineEdit_Segmentation->setText(data[row].at(1));
-        lineEdit_CSF_Probability_Map->setText(data[row].at(2));
-        lineEdit_LH_MID_Surface->setText(data[row].at(3)); 
-        lineEdit_LH_GM_Surface->setText(data[row].at(4));
-        lineEdit_RH_MID_Surface->setText(data[row].at(5));
-        lineEdit_RH_GM_Surface->setText(data[row].at(6));
-        lineEdit_Output_Directory->setText(data[row].at(7));
-        run_Local_EACSF(row);
-    }  
+        }  
+    }    
 }
 
+bool CSFWindow::ModelIsEmpty()
+{
+    QList<QStringList> data = model->GetModelData();
+    if (data.isEmpty()){return true;}
+    else {return false;}
+}
 
 //2nd tab
 
@@ -697,9 +728,6 @@ void CSFWindow::prc_finished(QProcess *prc, QString outlog_filename, QString err
             run_Local_EACSF(row+1);
         }
     }
-
-   
-
 }
 
 void CSFWindow::CleanFile(QString filename)
@@ -871,3 +899,10 @@ void CSFWindow::on_visualize_clicked()
 
 
 
+
+void CSFWindow::on_Help_clicked()
+{
+    QString message;
+    message =  QString ("The input directory should contains the following files:\nT1 : T1.nrrd\nTissu Segmentation : Seg.nrrd\nCSF Probability Map : CSF_Prob.nrrd\nLeft hemisphere MID surface : LH_MID.vtk\nLeft hemisphere Gray Matter surface : LH_GM.vtk\nRight hemisphere MID surface: RH_MID.vtk\nRight hemisphere Gray Matter surface : RH_GM.vtk\n");
+    infoMsgBox(message ,QMessageBox::Information);
+}

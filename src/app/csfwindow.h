@@ -40,6 +40,9 @@ public:
     QJsonObject getConfig();
     void setConfig(QJsonObject root_obj);
 
+private slots:
+    void on_Help_clicked();
+
 private:
 
     QString OpenFile();
@@ -84,6 +87,7 @@ private slots:
     void on_batchSlurm_clicked(bool checked);
     void on_batchLocal_clicked(bool checked);
     void on_Run_Batch_Process_clicked();
+    bool ModelIsEmpty();
     
     
     //2nd tab

@@ -39,7 +39,7 @@ QList<QStringList> readCsv(QString filename)
     QTextStream stream(&file);
     QList<QStringList> data;
     QString separator(",");
-    QString line = stream.readLine(); // read the first line 
+    QString keys = stream.readLine(); // read the first line 
     while (stream.atEnd() == false)
     {
         QString line = stream.readLine();
@@ -48,7 +48,6 @@ QList<QStringList> readCsv(QString filename)
     file.close();
     return data;
 }
-
 
 
 QString checkStringValue(string str_value, QJsonValue str_default)
@@ -68,6 +67,7 @@ int  main(int argc, char** argv)
 
 	PARSE_ARGS;
     QJsonObject root_obj = readConfig(QString::fromStdString(parameters));
+    //QList<QMap<QString, QStringList>> tahya;
 
    
     if (noGUI)
@@ -138,8 +138,6 @@ int  main(int argc, char** argv)
         
     return EXIT_SUCCESS;  
     }
-
-
     else
     {
         QApplication app(argc,argv);
