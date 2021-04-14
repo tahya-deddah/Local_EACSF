@@ -55,11 +55,9 @@ private:
     void CleanFile(QString filename);
 
     bool writeToCsv(QString filename);
-    QList<QStringList> readCsv(QString filename);
+    QList<QMap<QString, QString>> readCSV(QString filename);
 
    
-
-
 private slots:
 
     void prc_finished(QProcess *prc, QString outlog_filename, QString errlog_filename, int row);
@@ -79,7 +77,7 @@ private slots:
     //1st tab
     void on_Data_Directory_clicked();
     void on_Find_clicked();   
-    bool Find_Paths(QDir odir, QString filter, QStringList &vect);
+    bool Find_File(QDir oDir, QString filter, QString key, QMap<QString, QString> &vect);
     void on_Add_clicked();
     void addToModel(QStringList line);
     void on_Remove_clicked();
@@ -88,6 +86,9 @@ private slots:
     void on_batchLocal_clicked(bool checked);
     void on_Run_Batch_Process_clicked();
     bool ModelIsEmpty();
+
+    //////Test map
+    
     
     
     //2nd tab
@@ -129,6 +130,11 @@ private:
     CsvTableModel *model ;   
     QList<QStringList> model_data; 
     bool batch_processing; 
+
+
+
+    ///Test
+    QList<QMap<QString, QString>> ModelData;
    
 };
 
