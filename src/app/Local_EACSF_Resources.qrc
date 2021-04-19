@@ -8,4 +8,8 @@
     <qresource prefix="/config">
         <file>default_config.json</file>
     </qresource>
+     <qresource prefix="/batch">
+        <file>Batch_Processing_Directory.png</file>
+    </qresource>
+
 </RCC>

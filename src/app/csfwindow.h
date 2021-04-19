@@ -41,6 +41,12 @@ public:
     void setConfig(QJsonObject root_obj);
 
 private slots:
+    void on_Export_clicked();
+
+private slots:
+    void on_Load_clicked();
+
+private slots:
     void on_Help_clicked();
 
 private:
@@ -55,7 +61,7 @@ private:
     void CleanFile(QString filename);
 
     bool writeToCsv(QString filename);
-    QList<QMap<QString, QString>> readCSV(QString filename);
+    QList<QMap<QString, QString>*> readCSV(QString filename);
 
    
 private slots:
@@ -77,20 +83,17 @@ private slots:
     //1st tab
     void on_Data_Directory_clicked();
     void on_Find_clicked();   
-    bool Find_File(QDir oDir, QString filter, QString key, QMap<QString, QString> &vect);
+    bool Find_File(QDir oDir, QString filter, QString key, QMap<QString, QString> *vect);
+    //bool Find_File(QDir oDir, QString filter, QString key, QMap<QString, QString>* &vect);
     void on_Add_clicked();
-    void addToModel(QStringList line);
+    void addToModel(QMap<QString, QString> row);
     void on_Remove_clicked();
     void on_Clear_clicked();
     void on_batchSlurm_clicked(bool checked);
     void on_batchLocal_clicked(bool checked);
     void on_Run_Batch_Process_clicked();
     bool ModelIsEmpty();
-
-    //////Test map
-    
-    
-    
+ 
     //2nd tab
    
     void on_T1_clicked();
@@ -122,20 +125,13 @@ private slots:
     void on_visualize_clicked();
     
 private:
-
     
     QJsonObject root_obj ;
     ExtExecutablesWidget* m_exeWidget;
     static const QString m_github_url;
-    CsvTableModel *model ;   
-    QList<QStringList> model_data; 
-    bool batch_processing; 
-
-
-
-    ///Test
-    QList<QMap<QString, QString>> ModelData;
-   
+    CsvTableModel *model;  
+    QList<QMap<QString, QString>*> ModelData;
+    bool batch_processing;    
 };
 
 #endif

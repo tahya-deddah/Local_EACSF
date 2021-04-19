@@ -1,4 +1,4 @@
-﻿#include "csfwindow.h"
+#include "csfwindow.h"
 
 #include<stdlib.h>
 #include <string>
@@ -11,6 +11,7 @@
 #include <QFileDialog>
 #include <QBoxLayout>
 #include <QTextStream>
+#include <QPixmap>
 
 #ifndef Local_EACSF_TITLE
 #define Local_EACSF_TITLE "Local_EACSF"
@@ -29,9 +30,12 @@ CSFWindow::CSFWindow(QWidget *m_parent)
     this->setupUi(this);
 
     batch_processing = false ; 
+
     model = new CsvTableModel(ModelData, this);
     tableView->setModel(model);
-   
+    tableView->setTextElideMode(Qt::ElideLeft);
+    tableView->setWordWrap(false);
+
 
     QJsonObject root_obj = readConfig(QString(":/config/default_config.json"));
     
@@ -54,27 +58,6 @@ CSFWindow::CSFWindow(QWidget *m_parent)
         exe_layout->addWidget(m_exeWidget,Qt::AlignCenter);
         connect(m_exeWidget, SIGNAL(newExePath(QString,QString)), this, SLOT(updateExecutables(QString,QString)));
     }
-
-
-    QJsonObject param_obj = root_obj["parameters"].toObject();
-    ClosingRadius->setValue(param_obj["Closing_radius"].toInt());
-    DilationRadius->setValue(param_obj["Dilation_radius"].toInt());
-    IterationsNumber->setValue(param_obj["Iterations_number"].toInt());
-    ImageDimension->setText(param_obj["Image_dimension"].toString());
-
-    lineEdit_Core->setText(param_obj["Slurm_cores"].toString());
-    lineEdit_Node->setText(param_obj["Slurm_nodes"].toString());
-    lineEdit_Time->setText(param_obj["Slurm_time"].toString());
-    lineEdit_Memory->setText(param_obj["Slurm_memory"].toString());
-
-    lineEdit_T1_filter->setText("T1.*\\.(nrrd|nii|.gz)");
-    lineEdit_Seg_filter->setText("Seg.*\\.(nrrd|nii|.gz)");
-    lineEdit_CSF_Prob_filter->setText("CSF_Pro.*\\.(nrrd|nii|.gz)");
-    lineEdit_LH_MID_filter->setText("LH.*MID\\.vtk");
-    lineEdit_LH_GM_filter->setText("LH.*GM\\.vtk");
-    lineEdit_RH_MID_filter->setText("RH.*MID\\.vtk");
-    lineEdit_RH_GM_filter->setText("RH.*GM\\.vtk");
-
 
     tab->removeTab(3); 
 }
@@ -243,22 +226,22 @@ void CSFWindow::infoMsgBox(QString message, QMessageBox::Icon type)
     mb.exec();
 }
 
-QList<QMap<QString, QString>> CSFWindow::readCSV(QString filename)
+QList<QMap<QString, QString>*> CSFWindow::readCSV(QString filename)
 {
     QFile file(filename);
     file.open(QIODevice::ReadOnly | QIODevice::Text);
 
     QTextStream stream(&file);
-    QList<QMap<QString, QString>> data;
+    QList<QMap<QString, QString>*> data;
     QString separator(","); 
     QStringList keys = stream.readLine().split(separator); //header
     while (stream.atEnd() == false)
     {
-        QMap<QString, QString> line;
+        QMap<QString, QString> *line = new QMap<QString, QString>;
         QStringList record = stream.readLine().split(separator);
         for (int i = 0 ; i < keys.size() ; i ++)
         {
-            line.insert(keys.at(i), record.at(i));
+            line->insert(keys.at(i), record.at(i));
         }
         data << line;
     }
@@ -267,26 +250,26 @@ QList<QMap<QString, QString>> CSFWindow::readCSV(QString filename)
 }
 bool CSFWindow::writeToCsv(QString filename)
 {
-    /*QFile saveFile(filename);
+    QFile saveFile(filename);
     if (!saveFile.open(QIODevice::Append | QIODevice::Text)) {
         std::cout<<"Couldn't open save file."<<std::endl;
         return false;
     }
-    QList <QStringList> modeldata = model->GetModelData();
-    QTextStream stream(&saveFile);
-    QString separator(",");
-    stream << QString("T1") << separator << QString("Tissu Segmentation") << separator << QString("CSF Probability Map") << separator << QString(" LH MID Surface") << separator
-    << QString("LH GM Surface") << separator << QString("RH MID Surface") << separator << QString("RH GM Surface") << separator << QString("Output Directory") << endl ;
-    for (int i = 0; i < modeldata.size(); ++i)
+    QList<QMap<QString, QString>*> modeldata = model->GetModelData();
+    if(!modeldata.isEmpty())
     {
-        stream << modeldata.at(i).join(separator) << endl;
-    }
-    stream.flush();
-    saveFile.close();*/
-    return true; 
+        QTextStream stream(&saveFile);
+        QString separator(",");
+        stream << modeldata.at(0)->keys().join(separator) << endl;
+        for (int i = 0; i < modeldata.size(); ++i)
+        {
+            stream << modeldata.at(i)->values().join(separator) << endl;
+        }
+        stream.flush();
+        saveFile.close();
+        return true; 
+    } 
 }
-
-
 
 //File menu
 
@@ -325,13 +308,13 @@ void CSFWindow::on_actionLoad_Csv_File_triggered()
     QString filename= OpenFile();
     if (!filename.isEmpty())
     {
-        QList<QMap<QString, QString>> list = readCSV(filename);
+        QList<QMap<QString, QString>*> list = readCSV(filename);
         model->SetModelData(list);
     }
 }
 void CSFWindow::on_actionSave_Csv_File_triggered()
 {
-   /* QString filename=SaveFile();
+    QString filename=SaveFile();
     if (!filename.isEmpty())
     {
         if (!filename.endsWith(QString(".csv")))
@@ -347,7 +330,7 @@ void CSFWindow::on_actionSave_Csv_File_triggered()
         {
             infoMsgBox(QString("Couldn't save Csv file at this location. Try somewhere else."),QMessageBox::Warning);
         }
-    }*/
+    }
 }
 
 //Help menu
@@ -401,7 +384,6 @@ void CSFWindow::on_Find_clicked()
    }
    else
    { 
-
         ModelData.clear(); 
         QDirIterator it(data_directory, QDir::Dirs | QDir::NoSymLinks | QDir::NoDotAndDotDot, QDirIterator::Subdirectories);        
         while(it.hasNext())
@@ -411,7 +393,8 @@ void CSFWindow::on_Find_clicked()
             if (file.isDir()) 
             { 
                 QDir oDir(file.absoluteFilePath());  
-                QMap<QString, QString> row;
+                //QMap<QString, QString> row;
+                QMap<QString, QString> *row = new QMap<QString, QString>;
                 bool T1_Found = Find_File(oDir, lineEdit_T1_filter->text(), QString("T1"), row); 
                 bool Seg_Found = Find_File(oDir, lineEdit_Seg_filter->text(), QString("Tissu Segmentation"), row);
                 bool CSF_Found = Find_File(oDir, lineEdit_CSF_Prob_filter->text(), QString("CSF Probability Map"), row);   
@@ -422,9 +405,8 @@ void CSFWindow::on_Find_clicked()
 
                 if(T1_Found &&  Seg_Found  && CSF_Found &&  LH_MID_Found && LH_GM_Found &&  RH_MID_Found && RH_GM_Found)
                 {
-                    row.insert(QString("Output Directory"), file.absoluteFilePath()); 
-                    ModelData << row ; 
-                    //ModelData->append(row)  ;    
+                    row->insert(QString("Output Directory"), file.absoluteFilePath()); 
+                    ModelData << row ;  
                 }    
             } 
         }
@@ -434,7 +416,8 @@ void CSFWindow::on_Find_clicked()
     }
 }
 
-bool CSFWindow::Find_File(QDir oDir, QString filter, QString key, QMap<QString, QString> &vect)
+//bool CSFWindow::Find_File(QDir oDir, QString filter, QString key, QMap<QString, QString>* &vect)
+bool CSFWindow::Find_File(QDir oDir, QString filter, QString key, QMap<QString, QString> *vect)
 { 
 
     QStringList oDirList = oDir.entryList(QDir::Files);
@@ -450,7 +433,9 @@ bool CSFWindow::Find_File(QDir oDir, QString filter, QString key, QMap<QString, 
         {        
             count = count + 1; 
             found = true;
-            vect.insert(key, QFileInfo( oDir, filename).absoluteFilePath());        
+            auto & map = *vect;
+            map.insert(key, QFileInfo( oDir, filename).absoluteFilePath());  
+            //vect->insert(key, QFileInfo( oDir, filename).absoluteFilePath());        
         }
     }
     if (count > 1)
@@ -464,14 +449,14 @@ bool CSFWindow::Find_File(QDir oDir, QString filter, QString key, QMap<QString, 
 void CSFWindow::on_Add_clicked()
 {
     addWidget *add_Widget = new addWidget();
-    connect(add_Widget, SIGNAL(add_to_model( QStringList )), this, SLOT(addToModel(QStringList )));
+    connect(add_Widget, SIGNAL(add_to_model( QMap<QString, QString>  )), this, SLOT(addToModel(QMap<QString, QString> )));
     add_Widget->show();
 }
 
-void CSFWindow::addToModel(QStringList line)
+void CSFWindow::addToModel(QMap<QString, QString> row)
 {
-    /*ModelData.append(line);
-    model->SetModelData(model_data);*/
+   /* ModelData << row;
+    model->SetModelData(ModelData);*/
 }
 
 void CSFWindow::on_Remove_clicked()
@@ -521,34 +506,34 @@ void CSFWindow::on_Run_Batch_Process_clicked()
     if (! EmptyModel)
     {
         batch_processing = true ;
-        QList<QMap<QString, QString>> data = model->GetModelData();
+        QList<QMap<QString, QString>*> data = model->GetModelData();
         if (batchSlurm->isChecked())
         {  
             for (int row=0;row<model->rowCount();row++)
             {
 
-                lineEdit_T1img->setText(data[row].value("T1"));
-                lineEdit_Segmentation->setText(data[row].value("Tissu Segmentation"));
-                lineEdit_CSF_Probability_Map->setText(data[row].value("CSF Probability Map"));
-                lineEdit_LH_MID_Surface->setText(data[row].value("LH MID Surface")); 
-                lineEdit_LH_GM_Surface->setText(data[row].value("LH GM Surface"));
-                lineEdit_RH_MID_Surface->setText(data[row].value("RH MID Surface"));
-                lineEdit_RH_GM_Surface->setText(data[row].value("RH GM Surface"));
-                lineEdit_Output_Directory->setText(data[row].value("Output Directory"));
+                lineEdit_T1img->setText(data[row]->value("T1"));
+                lineEdit_Segmentation->setText(data[row]->value("Tissu Segmentation"));
+                lineEdit_CSF_Probability_Map->setText(data[row]->value("CSF Probability Map"));
+                lineEdit_LH_MID_Surface->setText(data[row]->value("LH MID Surface")); 
+                lineEdit_LH_GM_Surface->setText(data[row]->value("LH GM Surface"));
+                lineEdit_RH_MID_Surface->setText(data[row]->value("RH MID Surface"));
+                lineEdit_RH_GM_Surface->setText(data[row]->value("RH GM Surface"));
+                lineEdit_Output_Directory->setText(data[row]->value("Output Directory"));
                 run_Local_EACSF(row);
             }
         }
         if (batchLocal->isChecked())
         {
             int row = 0;
-            lineEdit_T1img->setText(data[row].value("T1"));
-            lineEdit_Segmentation->setText(data[row].value("Tissu Segmentation"));
-            lineEdit_CSF_Probability_Map->setText(data[row].value("CSF Probability Map"));
-            lineEdit_LH_MID_Surface->setText(data[row].value("LH MID Surface")); 
-            lineEdit_LH_GM_Surface->setText(data[row].value("LH GM Surface"));
-            lineEdit_RH_MID_Surface->setText(data[row].value("RH MID Surface"));
-            lineEdit_RH_GM_Surface->setText(data[row].value("RH GM Surface"));
-            lineEdit_Output_Directory->setText(data[row].value("Output Directory"));
+            lineEdit_T1img->setText(data[row]->value("T1"));
+            lineEdit_Segmentation->setText(data[row]->value("Tissu Segmentation"));
+            lineEdit_CSF_Probability_Map->setText(data[row]->value("CSF Probability Map"));
+            lineEdit_LH_MID_Surface->setText(data[row]->value("LH MID Surface")); 
+            lineEdit_LH_GM_Surface->setText(data[row]->value("LH GM Surface"));
+            lineEdit_RH_MID_Surface->setText(data[row]->value("RH MID Surface"));
+            lineEdit_RH_GM_Surface->setText(data[row]->value("RH GM Surface"));
+            lineEdit_Output_Directory->setText(data[row]->value("Output Directory"));
             run_Local_EACSF(row);
         }  
     }    
@@ -556,7 +541,7 @@ void CSFWindow::on_Run_Batch_Process_clicked()
 
 bool CSFWindow::ModelIsEmpty()
 {
-    QList<QMap<QString, QString>> data = model->GetModelData();
+    QList<QMap<QString, QString>*> data = model->GetModelData();
     if (data.isEmpty()){return true;}
     else {return false;}
 }
@@ -719,17 +704,17 @@ void CSFWindow::prc_finished(QProcess *prc, QString outlog_filename, QString err
     }  
     if (batch_processing)
     {
-       QList<QMap<QString, QString>> data = model->GetModelData();
+       QList<QMap<QString, QString>*> data = model->GetModelData();
         if (row < (model->rowCount()-1))
         {
-            lineEdit_T1img->setText(data[row + 1].value("T1"));
-                lineEdit_Segmentation->setText(data[row + 1].value("Tissu Segmentation"));
-                lineEdit_CSF_Probability_Map->setText(data[row + 1].value("CSF Probability Map"));
-                lineEdit_LH_MID_Surface->setText(data[row + 1].value("LH MID Surface")); 
-                lineEdit_LH_GM_Surface->setText(data[row + 1].value("LH GM Surface"));
-                lineEdit_RH_MID_Surface->setText(data[row + 1].value("RH MID Surface"));
-                lineEdit_RH_GM_Surface->setText(data[row + 1].value("RH GM Surface"));
-                lineEdit_Output_Directory->setText(data[row + 1].value("Output Directory"));
+            lineEdit_T1img->setText(data[row + 1]->value("T1"));
+                lineEdit_Segmentation->setText(data[row + 1]->value("Tissu Segmentation"));
+                lineEdit_CSF_Probability_Map->setText(data[row + 1]->value("CSF Probability Map"));
+                lineEdit_LH_MID_Surface->setText(data[row + 1]->value("LH MID Surface")); 
+                lineEdit_LH_GM_Surface->setText(data[row + 1]->value("LH GM Surface"));
+                lineEdit_RH_MID_Surface->setText(data[row + 1]->value("RH MID Surface"));
+                lineEdit_RH_GM_Surface->setText(data[row + 1]->value("RH GM Surface"));
+                lineEdit_Output_Directory->setText(data[row + 1]->value("Output Directory"));
             run_Local_EACSF(row+1);
         }
     }
@@ -903,7 +888,45 @@ void CSFWindow::on_visualize_clicked()
 
 void CSFWindow::on_Help_clicked()
 {
-    QString message;
-    message =  QString ("The input directory should contains the following files:\nT1 : T1.nrrd\nTissu Segmentation : Seg.nrrd\nCSF Probability Map : CSF_Prob.nrrd\nLeft hemisphere MID surface : LH_MID.vtk\nLeft hemisphere Gray Matter surface : LH_GM.vtk\nRight hemisphere MID surface: RH_MID.vtk\nRight hemisphere Gray Matter surface : RH_GM.vtk\n");
-    infoMsgBox(message ,QMessageBox::Information);
+    QWidget *help = new QWidget();
+    help->resize(520, 440);
+    QLabel *label = new QLabel(help);
+    label->setGeometry(20,0,200,30);
+    label->setText("The Data Directory should be like: ");
+    QLabel *image = new QLabel(help);
+    image->setGeometry(20,30,320,330);
+    QPixmap pic(":/batch/Batch_Processing_Directory.png");
+    image->setPixmap(pic);
+    help->show();
+}
+
+void CSFWindow::on_Load_clicked()
+{
+    QString filename= OpenFile();
+    if (!filename.isEmpty())
+    {
+        QList<QMap<QString, QString>*> list = readCSV(filename);
+        model->SetModelData(list);
+    }
+}
+
+void CSFWindow::on_Export_clicked()
+{
+    QString filename=SaveFile();
+        if (!filename.isEmpty())
+        {
+            if (!filename.endsWith(QString(".csv")))
+            {
+                filename+=QString(".csv");
+            }
+            bool success=writeToCsv(filename);
+            if (success)
+            {
+                infoMsgBox(QString("Csv file saved with success : ")+filename,QMessageBox::Information);
+            }
+            else
+            {
+                infoMsgBox(QString("Couldn't save Csv file at this location. Try somewhere else."),QMessageBox::Warning);
+            }
+        }
 }

@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1011</width>
-    <height>743</height>
+    <width>1000</width>
+    <height>713</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -20,7 +20,7 @@
       <x>30</x>
       <y>0</y>
       <width>951</width>
-      <height>691</height>
+      <height>671</height>
      </rect>
     </property>
     <property name="minimumSize">
@@ -36,7 +36,7 @@
      <string/>
     </property>
     <property name="currentIndex">
-     <number>0</number>
+     <number>6</number>
     </property>
     <widget class="QWidget" name="tab_batch">
      <attribute name="title">
@@ -87,12 +87,15 @@
         <height>31</height>
        </rect>
       </property>
+      <property name="text">
+       <string>T1.*\.(nrrd|nii|.gz)</string>
+      </property>
      </widget>
      <widget class="QPushButton" name="Run_Batch_Process">
       <property name="geometry">
        <rect>
-        <x>740</x>
-        <y>610</y>
+        <x>710</x>
+        <y>580</y>
         <width>141</width>
         <height>31</height>
        </rect>
@@ -123,6 +126,9 @@
         <height>31</height>
        </rect>
       </property>
+      <property name="text">
+       <string>Seg.*\.(nrrd|nii|.gz)</string>
+      </property>
      </widget>
      <widget class="QLabel" name="CSF_Prob_filter">
       <property name="geometry">
@@ -145,6 +151,9 @@
         <width>131</width>
         <height>31</height>
        </rect>
+      </property>
+      <property name="text">
+       <string>CSF_Pro.*\.(nrrd|nii|.gz)</string>
       </property>
      </widget>
      <widget class="QLabel" name="LH_MID_filter">
@@ -169,6 +178,9 @@
         <height>31</height>
        </rect>
       </property>
+      <property name="text">
+       <string>LH.*MID\.vtk</string>
+      </property>
      </widget>
      <widget class="QLabel" name="LH_GM_filter">
       <property name="geometry">
@@ -191,6 +203,9 @@
         <width>131</width>
         <height>31</height>
        </rect>
+      </property>
+      <property name="text">
+       <string>LH.*GM\.vtk</string>
       </property>
      </widget>
      <widget class="QLabel" name="RH_MID_filter">
@@ -215,6 +230,9 @@
         <height>31</height>
        </rect>
       </property>
+      <property name="text">
+       <string>RH.*MID\.vtk</string>
+      </property>
      </widget>
      <widget class="QLabel" name="RH_GM_filter">
       <property name="geometry">
@@ -238,6 +256,9 @@
         <height>31</height>
        </rect>
       </property>
+      <property name="text">
+       <string>RH.*GM\.vtk</string>
+      </property>
      </widget>
      <widget class="QPushButton" name="Find">
       <property name="geometry">
@@ -255,8 +276,8 @@
      <widget class="QTableView" name="tableView">
       <property name="geometry">
        <rect>
-        <x>20</x>
-        <y>200</y>
+        <x>10</x>
+        <y>180</y>
         <width>911</width>
         <height>351</height>
        </rect>
@@ -265,8 +286,8 @@
      <widget class="QPushButton" name="Remove">
       <property name="geometry">
        <rect>
-        <x>150</x>
-        <y>560</y>
+        <x>140</x>
+        <y>540</y>
         <width>161</width>
         <height>28</height>
        </rect>
@@ -278,8 +299,8 @@
      <widget class="QPushButton" name="Add">
       <property name="geometry">
        <rect>
-        <x>50</x>
-        <y>560</y>
+        <x>30</x>
+        <y>540</y>
         <width>92</width>
         <height>28</height>
        </rect>
@@ -291,8 +312,8 @@
      <widget class="QPushButton" name="Clear">
       <property name="geometry">
        <rect>
-        <x>320</x>
-        <y>560</y>
+        <x>310</x>
+        <y>540</y>
         <width>92</width>
         <height>28</height>
        </rect>
@@ -304,8 +325,8 @@
      <widget class="QRadioButton" name="batchLocal">
       <property name="geometry">
        <rect>
-        <x>50</x>
-        <y>600</y>
+        <x>30</x>
+        <y>580</y>
         <width>241</width>
         <height>25</height>
        </rect>
@@ -317,8 +338,8 @@
      <widget class="QRadioButton" name="batchSlurm">
       <property name="geometry">
        <rect>
-        <x>50</x>
-        <y>630</y>
+        <x>30</x>
+        <y>610</y>
         <width>241</width>
         <height>25</height>
        </rect>
@@ -343,8 +364,8 @@
      <widget class="QPushButton" name="Export">
       <property name="geometry">
        <rect>
-        <x>430</x>
-        <y>560</y>
+        <x>420</x>
+        <y>540</y>
         <width>161</width>
         <height>28</height>
        </rect>
@@ -356,8 +377,8 @@
      <widget class="QPushButton" name="Load">
       <property name="geometry">
        <rect>
-        <x>620</x>
-        <y>560</y>
+        <x>600</x>
+        <y>540</y>
         <width>161</width>
         <height>28</height>
        </rect>
@@ -681,6 +702,9 @@
         <height>31</height>
        </rect>
       </property>
+      <property name="specialValueText">
+       <string>15</string>
+      </property>
      </widget>
      <widget class="QSpinBox" name="DilationRadius">
       <property name="geometry">
@@ -690,6 +714,9 @@
         <width>71</width>
         <height>31</height>
        </rect>
+      </property>
+      <property name="specialValueText">
+       <string>2</string>
       </property>
      </widget>
      <widget class="QLabel" name="Number_iterations">
@@ -714,6 +741,9 @@
         <height>31</height>
        </rect>
       </property>
+      <property name="specialValueText">
+       <string>1</string>
+      </property>
      </widget>
      <widget class="QLabel" name="image_dimension">
       <property name="geometry">
@@ -736,6 +766,9 @@
         <width>113</width>
         <height>32</height>
        </rect>
+      </property>
+      <property name="text">
+       <string>300</string>
       </property>
      </widget>
      <widget class="QTextBrowser" name="textBrowser">
@@ -828,6 +861,9 @@ p, li { white-space: pre-wrap; }
          <property name="enabled">
           <bool>false</bool>
          </property>
+         <property name="text">
+          <string>1</string>
+         </property>
          <property name="dragEnabled">
           <bool>true</bool>
          </property>
@@ -847,6 +883,9 @@ p, li { white-space: pre-wrap; }
         <widget class="QLineEdit" name="lineEdit_Core">
          <property name="enabled">
           <bool>false</bool>
+         </property>
+         <property name="text">
+          <string>2</string>
          </property>
         </widget>
        </item>
@@ -871,6 +910,9 @@ p, li { white-space: pre-wrap; }
          <property name="enabled">
           <bool>false</bool>
          </property>
+         <property name="text">
+          <string>8:00:00</string>
+         </property>
         </widget>
        </item>
        <item row="3" column="0">
@@ -887,6 +929,9 @@ p, li { white-space: pre-wrap; }
         <widget class="QLineEdit" name="lineEdit_Memory">
          <property name="enabled">
           <bool>false</bool>
+         </property>
+         <property name="text">
+          <string>32G</string>
          </property>
         </widget>
        </item>
@@ -1055,7 +1100,7 @@ p, li { white-space: pre-wrap; }
         <x>10</x>
         <y>120</y>
         <width>441</width>
-        <height>531</height>
+        <height>511</height>
        </rect>
       </property>
      </widget>
@@ -1065,7 +1110,7 @@ p, li { white-space: pre-wrap; }
         <x>490</x>
         <y>120</y>
         <width>441</width>
-        <height>531</height>
+        <height>511</height>
        </rect>
       </property>
      </widget>
@@ -1096,15 +1141,15 @@ p, li { white-space: pre-wrap; }
       </property>
      </widget>
     </widget>
-    <widget class="QWidget" name="tab_visualization">
+    <widget class="QWidget" name="tab_QC">
      <attribute name="title">
-      <string>Visualization</string>
+      <string>QC</string>
      </attribute>
      <widget class="QPushButton" name="output_path">
       <property name="geometry">
        <rect>
         <x>10</x>
-        <y>110</y>
+        <y>50</y>
         <width>231</width>
         <height>41</height>
        </rect>
@@ -1117,7 +1162,7 @@ p, li { white-space: pre-wrap; }
       <property name="geometry">
        <rect>
         <x>260</x>
-        <y>110</y>
+        <y>50</y>
         <width>531</width>
         <height>41</height>
        </rect>
@@ -1127,7 +1172,7 @@ p, li { white-space: pre-wrap; }
       <property name="geometry">
        <rect>
         <x>20</x>
-        <y>60</y>
+        <y>20</y>
         <width>201</width>
         <height>31</height>
        </rect>
@@ -1139,8 +1184,8 @@ p, li { white-space: pre-wrap; }
      <widget class="QPushButton" name="visualize">
       <property name="geometry">
        <rect>
-        <x>280</x>
-        <y>340</y>
+        <x>590</x>
+        <y>150</y>
         <width>231</width>
         <height>41</height>
        </rect>
@@ -1153,7 +1198,7 @@ p, li { white-space: pre-wrap; }
       <property name="geometry">
        <rect>
         <x>20</x>
-        <y>200</y>
+        <y>130</y>
         <width>531</width>
         <height>25</height>
        </rect>
@@ -1166,13 +1211,36 @@ p, li { white-space: pre-wrap; }
       <property name="geometry">
        <rect>
         <x>20</x>
-        <y>250</y>
+        <y>180</y>
         <width>531</width>
         <height>25</height>
        </rect>
       </property>
       <property name="text">
        <string>Visualize the visitation map for both hemispheres in itksnap</string>
+      </property>
+     </widget>
+     <widget class="QTextBrowser" name="csf_volume">
+      <property name="geometry">
+       <rect>
+        <x>50</x>
+        <y>350</y>
+        <width>421</width>
+        <height>221</height>
+       </rect>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="pushButton">
+      <property name="geometry">
+       <rect>
+        <x>90</x>
+        <y>290</y>
+        <width>301</width>
+        <height>41</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Compute and show the value of volume</string>
       </property>
      </widget>
     </widget>
@@ -1183,7 +1251,7 @@ p, li { white-space: pre-wrap; }
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1011</width>
+     <width>1000</width>
      <height>28</height>
     </rect>
    </property>
