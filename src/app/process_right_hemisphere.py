@@ -37,9 +37,20 @@ def clean_up(RH_Directory):
 	print("Cleaning the right hemisphere output directory done", flush=True)
 
 
+def CSFDensity_Sum (CSF_Density_txtFile, CSF_Volume_txtFile):
 
-
-
+	data = []
+	with open(CSF_Density_txtFile) as inputfile:
+		number_of_points = inputfile.readline()
+		dimension = inputfile.readline()
+		Type = inputfile.readline()
+		for line in inputfile:
+			fields = line.split()
+			rowdata = map(float, fields)
+			data.extend(rowdata)
+	CSFDensity_Sum = sum(data)
+	with open(CSF_Volume_txtFile, "a") as outputfile:
+		outputfile.write("Sum of CSF Density = " + str(CSFDensity_Sum))
 
 def main_loop(args):
 	start = time.time()
@@ -79,6 +90,7 @@ def process_RH(args):
 	EstimateCortexStreamlinesDensity = args.EstimateCortexStreamlinesDensity
 	AddScalarstoPolyData = args.AddScalarstoPolyData
 	HeatKernelSmoothing = args.HeatKernelSmoothing
+	ComputeCSFVolume = args.ComputeCSFVolume
 
 
 	###
@@ -114,17 +126,16 @@ def process_RH(args):
 	else :
 		print('Computing RH EACSF  ')
 		call_and_print([EstimateCortexStreamlinesDensity, "--InputSurface" ,"RH_MID.vtk", "--InputOuterStreamlines",  "RH_Outer_streamlines.vtk",\
-			"--InputSegmentation", "CSF_Probability_Map.nrrd", "--InputMask", "RH_GM_Dilated.nrrd", "--OutputSurface", "RH_CSF_Density.vtk", "--VistitingMap",\
+			"--InputSegmentation", "CSF_Probability_Map.nrrd", "--InputMask", "RH_GM_Dilated.nrrd", "--OutputSurface", "RH_CSF_Density.vtk", "--VisitingMap",\
 			"RH__Visitation.nrrd"])
 		if(args.Smooth) :
-			call_and_print([HeatKernelSmoothing , "--InputSurface", "RH_CSF_Density.vtk", "--NumberIter", "@NumberIter@", "--sigma", "@Bandwith@", "--OutputSurface", "RH_CSF_Density.vtk"])
-			call_and_print([AddScalarstoPolyData, "--InputFile", "RH_GM.vtk", "--OutputFile", "RH_GM.vtk", "--ScalarsFile", "RH_SmoothedCSFDensity.txt", "--Scalars_Name", 'EACSF'])
-		else :
-			call_and_print([AddScalarstoPolyData, "--InputFile", "RH_GM.vtk", "--OutputFile", "RH_GM.vtk", "--ScalarsFile", "RH_MID.CSFDensity.txt", "--Scalars_Name", 'EACSF'])
+			call_and_print([HeatKernelSmoothing , "--InputSurface", "RH_CSF_Density.vtk", "--NumberIter", "@NumberIter@", "--sigma", "@Bandwith@", "--OutputSurface", "RH_CSF_Density.vtk"])		
+		call_and_print([AddScalarstoPolyData, "--InputFile", "RH_GM.vtk", "--OutputFile", "RH_GM.vtk", "--ScalarsFile", "RH_MID.CSFDensity.txt", "--Scalars_Name", 'EACSF'])
+		call_and_print([ComputeCSFVolume, "--VisitingMap", "RH__Visitation.nrrd", "--CSFProb", "CSF_Probability_Map.nrrd"])
+		CSFDensity_Sum ("RH_MID.CSFDensity.txt", "RH_CSFVolume.txt")
 	if(args.Clean_up) :
 		clean_up(RH_Directory)
 	
-
 
 parser = argparse.ArgumentParser(description='Calculates CSF Density')
 parser.add_argument("--T1",type=str, help='T1 Image', default="@T1_IMAGE@")
@@ -140,6 +151,7 @@ parser.add_argument('--klaplace', type=str, help='klaplace executable path', def
 parser.add_argument('--EstimateCortexStreamlinesDensity', type=str, help='EstimateCortexStreamlinesDensity executable path', default='@EstimateCortexStreamlinesDensity_PATH@')
 parser.add_argument('--AddScalarstoPolyData', type=str, help='AddScalarstoPolyData executable path', default='@AddScalarstoPolyData_PATH@')
 parser.add_argument('--HeatKernelSmoothing', type=str, help='HeatKernelSmoothing executable path', default='@HeatKernelSmoothing_PATH@')
+parser.add_argument('--ComputeCSFVolume', type=str, help='ComputeCSFVolume executable path', default='@ComputeCSFVolume_PATH@')
 parser.add_argument('--Smooth', type=bool, help='Smooth the CSF Density with a heat kernel smoothing', default=@Smooth@)
 parser.add_argument('--Clean_up', type=bool, help='Clean the output directory of intermediate outputs', default=@Clean@)
 args = parser.parse_args()

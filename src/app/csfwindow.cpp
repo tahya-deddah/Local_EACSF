@@ -825,7 +825,7 @@ void CSFWindow::run_Local_EACSF(int row)
 
 }
 
-//6th Visualization
+//6th QC
 
 void CSFWindow::on_output_path_clicked()
 {
@@ -837,18 +837,6 @@ void CSFWindow::on_output_path_clicked()
        }
 }
 
-void CSFWindow::on_shapepopoulationviewer_clicked()
-{
-    if (shapepopoulationviewer->isChecked()){itksnap->setEnabled(false);}
-        else {itksnap->setEnabled(true);}
-}
-
-void CSFWindow::on_itksnap_clicked()
-{
-    if (itksnap->isChecked()){shapepopoulationviewer->setEnabled(false);}
-        else {shapepopoulationviewer->setEnabled(true);}
-}
-
 void CSFWindow::on_visualize_clicked()
 {
     QProcess *visualization;
@@ -858,7 +846,7 @@ void CSFWindow::on_visualize_clicked()
     QString RH_Directory = QDir::cleanPath(OutputDirectory + QString("/LocalEACSF") + QString("/RH_Directory"));
 
 
-    if (itksnap->isChecked())
+    if (VisualiseVisitationMAp->isChecked())
     {
         QString LH_visitation_map = LH_Directory + QString("/LH__Visitation.nrrd");
         QString RH_visitation_map = RH_Directory + QString("/RH__Visitation.nrrd");
@@ -871,7 +859,7 @@ void CSFWindow::on_visualize_clicked()
             tr("Is running.")
         );
     }
-    if (shapepopoulationviewer->isChecked())
+    if (VisualiseCSFDensity->isChecked())
     {
         QString LH_CSFDensity = LH_Directory + QString("/LH_CSF_Density.vtk");
         QString RH_CSFDensity  = RH_Directory + QString("/RH_CSF_Density.vtk");
@@ -884,19 +872,46 @@ void CSFWindow::on_visualize_clicked()
             tr("Is running.")
         );
     }
+     if (VisualiseCSFPorbMAp->isChecked())
+    {
+        QString CSF_Probability_Map = LH_Directory + QString("/CSF_Probability_Map.nrrd");
+        QStringList arguments = QStringList() <<  CSF_Probability_Map  ;
+        visualization->setWorkingDirectory(OutputDirectory);
+        visualization->start(QString("itksnap"),arguments);
+        QMessageBox::information(
+            this,
+            tr("Visualization"),
+            tr("Is running.")
+        );
+    }
 }
 
 void CSFWindow::on_Help_clicked()
 {
     QWidget *help = new QWidget();
-    help->resize(520, 440);
+    help->resize(900, 520);
     QLabel *label = new QLabel(help);
-    label->setGeometry(20,0,200,30);
-    label->setText("The Data Directory should be like: ");
+    label->setGeometry(20,10,200,30);
+    label->setText("<b> The Data Directory should be like: </b>");
+
     QLabel *image = new QLabel(help);
-    image->setGeometry(20,30,320,330);
-    QPixmap pic(":/batch/Batch_Processing_Directory.png");
+    image->setGeometry(20,30,800,300);
+    QPixmap pic(":/batch/BatchProcessingDirectory.png");
     image->setPixmap(pic);
+
+    QLabel *txt = new QLabel(help);
+    txt->setGeometry(20,330,700,30);
+    txt->setText("<b> The CSV File should be like the following example ( the order of the header doesn't matter) : </b>");
+
+    QLabel *CSV = new QLabel(help);
+    CSV->setGeometry(20,250,800,320);
+    QPixmap csv_pic(":/batch/CSVFile.png");
+    CSV->setPixmap(csv_pic);
+
+    QLabel *txt_regex = new QLabel(help);
+    txt_regex->setGeometry(20,470,400,30);
+    txt_regex->setText("<b> NB: Regualar Expression is used to find the inputs files </b>");
+
     help->show();
 }
 
@@ -929,4 +944,23 @@ void CSFWindow::on_Export_clicked()
                 infoMsgBox(QString("Couldn't save Csv file at this location. Try somewhere else."),QMessageBox::Warning);
             }
         }
+}
+
+void CSFWindow::on_Compare_clicked()
+{
+    QString OutputDirectory =lineEdit_output_path->text();
+    QString LH_CSFVolume = QDir::cleanPath(OutputDirectory + QString("/LocalEACSF") + QString("/LH_Directory") + QString("/LH_CSFVolume.txt"));
+    QString RH_CSFVolume = QDir::cleanPath(OutputDirectory + QString("/LocalEACSF") + QString("/RH_Directory") + QString("/RH_CSFVolume.txt"));
+
+    QFile fileLH(LH_CSFVolume);
+    fileLH.open(QIODevice::ReadOnly | QIODevice::Text);
+    QString qstrLH = fileLH.readAll();
+    fileLH.close();
+    lefthemisphere->append(qstrLH);  
+
+    QFile fileRH(RH_CSFVolume);
+    fileRH.open(QIODevice::ReadOnly | QIODevice::Text);
+    QString qstrRH = fileRH.readAll();
+    fileRH.close();
+    righthemisphere->append(qstrRH); 
 }

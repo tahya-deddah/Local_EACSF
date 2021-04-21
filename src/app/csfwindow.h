@@ -41,6 +41,9 @@ public:
     void setConfig(QJsonObject root_obj);
 
 private slots:
+    void on_Compare_clicked();
+
+private slots:
     void on_Export_clicked();
 
 private slots:
@@ -120,8 +123,6 @@ private slots:
 
     //6th tab
     void on_output_path_clicked();
-    void on_itksnap_clicked();
-    void on_shapepopoulationviewer_clicked();
     void on_visualize_clicked();
     
 private:

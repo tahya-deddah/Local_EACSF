@@ -2,16 +2,17 @@
 <executable>
   <category>PROJECT</category>
   <title>Local_EACSF</title>
-  <version>1.0.0</version>
-  <contributor>Martin Styner, Juan Prieto, Tahya Deddah</contributor>
-  <description>local csf extraction</description>
+  <version>0.0.1</version>
+  <contributor>Tahya Deddah, Martin Styner, Juan Prieto</contributor>
+  <description>Compute CSF Density</description>
   <parameters advanced="false">
     <file>
       <name>csv_file</name>
       <longflag>csv</longflag>
       <flag>c</flag>
       <description>
-        a CSV file containing all the inputs paths and the output directory path
+        a CSV file which his header is :
+        T1 Tissu Segmentation CSF Probability Map LH MID Surface LH GM Surface RH MID Surface RH GM Surface Output Directory
       </description>
       <channel>input</channel>
     </file>

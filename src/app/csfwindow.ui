@@ -17,7 +17,7 @@
    <widget class="QTabWidget" name="tab">
     <property name="geometry">
      <rect>
-      <x>30</x>
+      <x>20</x>
       <y>0</y>
       <width>951</width>
       <height>671</height>
@@ -1184,8 +1184,8 @@ p, li { white-space: pre-wrap; }
      <widget class="QPushButton" name="visualize">
       <property name="geometry">
        <rect>
-        <x>590</x>
-        <y>150</y>
+        <x>560</x>
+        <y>130</y>
         <width>231</width>
         <height>41</height>
        </rect>
@@ -1194,12 +1194,35 @@ p, li { white-space: pre-wrap; }
        <string>Visualize</string>
       </property>
      </widget>
-     <widget class="QCheckBox" name="shapepopoulationviewer">
+     <widget class="QTextBrowser" name="lefthemisphere">
       <property name="geometry">
        <rect>
         <x>20</x>
-        <y>130</y>
-        <width>531</width>
+        <y>380</y>
+        <width>311</width>
+        <height>111</height>
+       </rect>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="Compare">
+      <property name="geometry">
+       <rect>
+        <x>290</x>
+        <y>300</y>
+        <width>161</width>
+        <height>41</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Compare</string>
+      </property>
+     </widget>
+     <widget class="QRadioButton" name="VisualiseCSFDensity">
+      <property name="geometry">
+       <rect>
+        <x>20</x>
+        <y>110</y>
+        <width>541</width>
         <height>25</height>
        </rect>
       </property>
@@ -1207,12 +1230,12 @@ p, li { white-space: pre-wrap; }
        <string>Visualize the CSF density for both hemispheres in ShapePopulationViewer </string>
       </property>
      </widget>
-     <widget class="QCheckBox" name="itksnap">
+     <widget class="QRadioButton" name="VisualiseVisitationMAp">
       <property name="geometry">
        <rect>
         <x>20</x>
-        <y>180</y>
-        <width>531</width>
+        <y>150</y>
+        <width>441</width>
         <height>25</height>
        </rect>
       </property>
@@ -1220,27 +1243,66 @@ p, li { white-space: pre-wrap; }
        <string>Visualize the visitation map for both hemispheres in itksnap</string>
       </property>
      </widget>
-     <widget class="QTextBrowser" name="csf_volume">
+     <widget class="QRadioButton" name="VisualiseCSFPorbMAp">
       <property name="geometry">
        <rect>
-        <x>50</x>
-        <y>350</y>
-        <width>421</width>
-        <height>221</height>
-       </rect>
-      </property>
-     </widget>
-     <widget class="QPushButton" name="pushButton">
-      <property name="geometry">
-       <rect>
-        <x>90</x>
-        <y>290</y>
-        <width>301</width>
-        <height>41</height>
+        <x>20</x>
+        <y>190</y>
+        <width>441</width>
+        <height>25</height>
        </rect>
       </property>
       <property name="text">
-       <string>Compute and show the value of volume</string>
+       <string>Visualize the CSF Probability  map  in itksnap</string>
+      </property>
+     </widget>
+     <widget class="QTextBrowser" name="righthemisphere">
+      <property name="geometry">
+       <rect>
+        <x>390</x>
+        <y>380</y>
+        <width>311</width>
+        <height>111</height>
+       </rect>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_lefthemisphere">
+      <property name="geometry">
+       <rect>
+        <x>30</x>
+        <y>350</y>
+        <width>181</width>
+        <height>20</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Left Hemisphere</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_righthemisphere">
+      <property name="geometry">
+       <rect>
+        <x>410</x>
+        <y>350</y>
+        <width>181</width>
+        <height>20</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Right Hemisphere</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label">
+      <property name="geometry">
+       <rect>
+        <x>20</x>
+        <y>250</y>
+        <width>431</width>
+        <height>31</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:12pt; font-weight:600;&quot;&gt;Compare the CSF Density sum with the CSF Volume :&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
       </property>
      </widget>
     </widget>

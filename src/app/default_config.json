@@ -46,6 +46,10 @@
             "path": ""
         },
         {
+            "name": "ComputeCSFVolume",
+            "path": ""
+        },
+        {
             "name": "EditPolyData",
             "path": ""
         },

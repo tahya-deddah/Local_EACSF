@@ -39,7 +39,7 @@ QList<QMap<QString, QString>> readCSV(QString filename)
     QTextStream stream(&file);
     QList<QMap<QString, QString>> data;
     QString separator(","); 
-    QStringList keys = stream.readLine().split(separator); //header
+    QStringList keys = stream.readLine().split(separator); // csv header
     while (stream.atEnd() == false)
     {
         QMap<QString, QString> line;
@@ -136,8 +136,7 @@ int  main(int argc, char** argv)
                     prc->waitForFinished(-1);
                     prc->close(); 
                 }
-            }  
-        
+            }         
     return EXIT_SUCCESS;  
     }
     else

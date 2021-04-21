@@ -37,7 +37,7 @@
     </file>
     <file>
       <name>OutputVoxelVistitingMap</name>
-      <longflag>VistitingMap</longflag>
+      <longflag>VisitingMap</longflag>
       <flag>v</flag>
       <description> Output Voxel Vistiting Map a nrrd file</description>
     </file>

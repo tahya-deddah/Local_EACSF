@@ -113,7 +113,7 @@ void CSFScripts::write_process_left_hemisphere()
     script_left_hemisphere.replace("@EstimateCortexStreamlinesDensity_PATH@", checkStringValue(m_Executables["EstimateCortexStreamlinesDensity"]));
     script_left_hemisphere.replace("@AddScalarstoPolyData_PATH@", checkStringValue(m_Executables["AddScalarstoPolyData"]));
     script_left_hemisphere.replace("@HeatKernelSmoothing_PATH@", checkStringValue(m_Executables["HeatKernelSmoothing"]));
-
+    script_left_hemisphere.replace("@ComputeCSFVolume_PATH@", checkStringValue(m_Executables["ComputeCSFVolume"]));
 
     script_left_hemisphere.replace("@closingradius@", QString::number(param_obj["Closing_radius"].toInt()));
     script_left_hemisphere.replace("@dilationradius@", QString::number(param_obj["Dilation_radius"].toInt()));
@@ -170,6 +170,8 @@ void CSFScripts::write_process_right_hemisphere()
     script_right_hemisphere.replace("@EstimateCortexStreamlinesDensity_PATH@", checkStringValue(m_Executables["EstimateCortexStreamlinesDensity"]));
     script_right_hemisphere.replace("@AddScalarstoPolyData_PATH@", checkStringValue(m_Executables["AddScalarstoPolyData"]));
     script_right_hemisphere.replace("@HeatKernelSmoothing_PATH@", checkStringValue(m_Executables["HeatKernelSmoothing"]));
+    script_right_hemisphere.replace("@ComputeCSFVolume_PATH@", checkStringValue(m_Executables["ComputeCSFVolume"]));
+
 
 
     script_right_hemisphere.replace("@closingradius@", QString::number(param_obj["Closing_radius"].toInt()));
