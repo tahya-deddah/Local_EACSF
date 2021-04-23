@@ -1,11 +1,8 @@
+#pragma GCC diagnostic ignored "-Wshadow"
 #include "csfwindow.h"
-
 #include<stdlib.h>
 #include <string>
 #include <iostream>
-#include <chrono>
-#include <thread>
-
 
 #include <QtGui>
 #include <QFileDialog>
@@ -232,7 +229,7 @@ QList<QMap<QString, QString>*> CSFWindow::readCSV(QString filename)
     file.open(QIODevice::ReadOnly | QIODevice::Text);
 
     QTextStream stream(&file);
-    QList<QMap<QString, QString>*> data;
+    QList<QMap<QString, QString>*> modeldata;
     QString separator(","); 
     QStringList keys = stream.readLine().split(separator); //header
     while (stream.atEnd() == false)
@@ -243,10 +240,10 @@ QList<QMap<QString, QString>*> CSFWindow::readCSV(QString filename)
         {
             line->insert(keys.at(i), record.at(i));
         }
-        data << line;
+        modeldata << line;
     }
     file.close();
-    return data;
+    return modeldata;
 }
 bool CSFWindow::writeToCsv(QString filename)
 {
@@ -256,33 +253,27 @@ bool CSFWindow::writeToCsv(QString filename)
         return false;
     }
     QList<QMap<QString, QString>*> modeldata = model->GetModelData();
-    if(!modeldata.isEmpty())
+    QTextStream stream(&saveFile);
+    QString separator(",");
+    stream << modeldata.at(0)->keys().join(separator) << endl;
+    for (int i = 0; i < modeldata.size(); ++i)
     {
-        QTextStream stream(&saveFile);
-        QString separator(",");
-        stream << modeldata.at(0)->keys().join(separator) << endl;
-        for (int i = 0; i < modeldata.size(); ++i)
-        {
-            stream << modeldata.at(i)->values().join(separator) << endl;
-        }
-        stream.flush();
-        saveFile.close();
-        return true; 
-    } 
+        stream << modeldata.at(i)->values().join(separator) << endl;
+    }
+    stream.flush();
+    saveFile.close();
+    return true; 
 }
 
 //File menu
-
 void CSFWindow::on_actionLoad_Config_File_triggered()
 {
-
         QString filename= OpenFile();
         if (!filename.isEmpty())
         {
             setConfig(readConfig(filename));
         }
 }
-
 void CSFWindow::on_actionSave_Config_File_triggered()
 {
         QString filename=SaveFile();
@@ -393,7 +384,6 @@ void CSFWindow::on_Find_clicked()
             if (file.isDir()) 
             { 
                 QDir oDir(file.absoluteFilePath());  
-                //QMap<QString, QString> row;
                 QMap<QString, QString> *row = new QMap<QString, QString>;
                 bool T1_Found = Find_File(oDir, lineEdit_T1_filter->text(), QString("T1"), row); 
                 bool Seg_Found = Find_File(oDir, lineEdit_Seg_filter->text(), QString("Tissu Segmentation"), row);
@@ -416,10 +406,8 @@ void CSFWindow::on_Find_clicked()
     }
 }
 
-//bool CSFWindow::Find_File(QDir oDir, QString filter, QString key, QMap<QString, QString>* &vect)
 bool CSFWindow::Find_File(QDir oDir, QString filter, QString key, QMap<QString, QString> *vect)
 { 
-
     QStringList oDirList = oDir.entryList(QDir::Files);
     bool found = false;
     int count = 0;
@@ -434,8 +422,7 @@ bool CSFWindow::Find_File(QDir oDir, QString filter, QString key, QMap<QString, 
             count = count + 1; 
             found = true;
             auto & map = *vect;
-            map.insert(key, QFileInfo( oDir, filename).absoluteFilePath());  
-            //vect->insert(key, QFileInfo( oDir, filename).absoluteFilePath());        
+            map.insert(key, QFileInfo( oDir, filename).absoluteFilePath());     
         }
     }
     if (count > 1)
@@ -449,43 +436,95 @@ bool CSFWindow::Find_File(QDir oDir, QString filter, QString key, QMap<QString, 
 void CSFWindow::on_Add_clicked()
 {
     addWidget *add_Widget = new addWidget();
-    connect(add_Widget, SIGNAL(add_to_model( QMap<QString, QString>  )), this, SLOT(addToModel(QMap<QString, QString> )));
+    connect(add_Widget, SIGNAL(add_to_model( QMap<QString, QString>* )), this, SLOT(addToModel(QMap<QString, QString>* )));
     add_Widget->show();
 }
 
-void CSFWindow::addToModel(QMap<QString, QString> row)
-{
-   /* ModelData << row;
-    model->SetModelData(ModelData);*/
+void CSFWindow::addToModel(QMap<QString, QString> *row)
+{   
+
+    ModelData << row;
+    model->SetModelData(ModelData);
 }
 
 void CSFWindow::on_Remove_clicked()
 {
-    bool EmptyModel = ModelIsEmpty();
-    if (! EmptyModel)
+   QItemSelectionModel *select = tableView->selectionModel();
+    if(select->hasSelection()) 
     {
-         QItemSelectionModel *select = tableView->selectionModel();
-        if(select->hasSelection()) 
+        QModelIndexList indexes = select->selectedRows();
+        while (!indexes.isEmpty())
         {
-            QModelIndexList indexes = select->selectedRows();
-            while (!indexes.isEmpty())
-            {
-                model->removeRows(indexes.last().row(), 1);
-                indexes.removeLast();
-            }
-            }
-        else{ infoMsgBox(QString("No row selcted."),QMessageBox::Warning);}
-    }         
+            model->removeRows(indexes.last().row(), 1);
+            indexes.removeLast();
+        }
+    }
+    else{ infoMsgBox(QString("No row selcted."),QMessageBox::Warning);}            
 }
 
 void CSFWindow::on_Clear_clicked()
 {
-    bool EmptyModel = ModelIsEmpty();
-    if (! EmptyModel)
+    model->clear();        
+}
+void CSFWindow::on_Help_clicked()
+{
+    QWidget *help = new QWidget();
+    help->resize(900, 520);
+
+    QLabel *help_txt_1 = new QLabel(help);
+    help_txt_1->setGeometry(20,10,200,30);
+    help_txt_1->setText("<b> The Data Directory should be like: </b>");
+
+    QLabel *Data_directory_image = new QLabel(help);
+    Data_directory_image->setGeometry(20,30,800,300);
+    QPixmap pic(":/batch/BatchProcessingDirectory.png");
+    Data_directory_image->setPixmap(pic);
+
+    QLabel *help_txt_2 = new QLabel(help);
+    help_txt_2->setGeometry(20,330,700,30);
+    help_txt_2->setText("<b> The CSV File should be like the following example ( the order of the header doesn't matter) : </b>");
+
+    QLabel *CSV_image = new QLabel(help);
+    CSV_image->setGeometry(20,250,800,320);
+    QPixmap csv_pic(":/batch/CSVFile.png");
+    CSV_image->setPixmap(csv_pic);
+
+    QLabel *help_txt_3 = new QLabel(help);
+    help_txt_3->setGeometry(20,470,400,30);
+    help_txt_3->setText("<b> NB: Regular Expression is used to find the inputs files </b>");
+
+    help->show();
+}
+
+void CSFWindow::on_Load_clicked()
+{
+    QString filename= OpenFile();
+    if (!filename.isEmpty())
     {
-        int RowCount = model->rowCount();
-        model->removeRows(0, RowCount);
-    }     
+        QList<QMap<QString, QString>*> list = readCSV(filename);
+        model->SetModelData(list);
+    }
+}
+
+void CSFWindow::on_Export_clicked()
+{
+    QString filename=SaveFile();
+        if (!filename.isEmpty())
+        {
+            if (!filename.endsWith(QString(".csv")))
+            {
+                filename+=QString(".csv");
+            }
+            bool success=writeToCsv(filename);
+            if (success)
+            {
+                infoMsgBox(QString("Csv file saved with success : ")+filename,QMessageBox::Information);
+            }
+            else
+            {
+                infoMsgBox(QString("Couldn't save Csv file at this location. Try somewhere else."),QMessageBox::Warning);
+            }
+        }
 }
 
 void CSFWindow::on_batchLocal_clicked(bool checked)
@@ -501,12 +540,11 @@ void CSFWindow::on_batchSlurm_clicked(bool checked)
 }
 
 void CSFWindow::on_Run_Batch_Process_clicked()
-{
-    bool EmptyModel = ModelIsEmpty();
-    if (! EmptyModel)
+{       
+    QList<QMap<QString, QString>*> data = model->GetModelData();
+    if(!data.isEmpty())
     {
         batch_processing = true ;
-        QList<QMap<QString, QString>*> data = model->GetModelData();
         if (batchSlurm->isChecked())
         {  
             for (int row=0;row<model->rowCount();row++)
@@ -535,15 +573,8 @@ void CSFWindow::on_Run_Batch_Process_clicked()
             lineEdit_RH_GM_Surface->setText(data[row]->value("RH GM Surface"));
             lineEdit_Output_Directory->setText(data[row]->value("Output Directory"));
             run_Local_EACSF(row);
-        }  
-    }    
-}
-
-bool CSFWindow::ModelIsEmpty()
-{
-    QList<QMap<QString, QString>*> data = model->GetModelData();
-    if (data.isEmpty()){return true;}
-    else {return false;}
+        }       
+    }       
 }
 
 //2nd tab
@@ -825,7 +856,7 @@ void CSFWindow::run_Local_EACSF(int row)
 
 }
 
-//6th QC
+//6th QC 
 
 void CSFWindow::on_output_path_clicked()
 {
@@ -886,66 +917,6 @@ void CSFWindow::on_visualize_clicked()
     }
 }
 
-void CSFWindow::on_Help_clicked()
-{
-    QWidget *help = new QWidget();
-    help->resize(900, 520);
-    QLabel *label = new QLabel(help);
-    label->setGeometry(20,10,200,30);
-    label->setText("<b> The Data Directory should be like: </b>");
-
-    QLabel *image = new QLabel(help);
-    image->setGeometry(20,30,800,300);
-    QPixmap pic(":/batch/BatchProcessingDirectory.png");
-    image->setPixmap(pic);
-
-    QLabel *txt = new QLabel(help);
-    txt->setGeometry(20,330,700,30);
-    txt->setText("<b> The CSV File should be like the following example ( the order of the header doesn't matter) : </b>");
-
-    QLabel *CSV = new QLabel(help);
-    CSV->setGeometry(20,250,800,320);
-    QPixmap csv_pic(":/batch/CSVFile.png");
-    CSV->setPixmap(csv_pic);
-
-    QLabel *txt_regex = new QLabel(help);
-    txt_regex->setGeometry(20,470,400,30);
-    txt_regex->setText("<b> NB: Regualar Expression is used to find the inputs files </b>");
-
-    help->show();
-}
-
-void CSFWindow::on_Load_clicked()
-{
-    QString filename= OpenFile();
-    if (!filename.isEmpty())
-    {
-        QList<QMap<QString, QString>*> list = readCSV(filename);
-        model->SetModelData(list);
-    }
-}
-
-void CSFWindow::on_Export_clicked()
-{
-    QString filename=SaveFile();
-        if (!filename.isEmpty())
-        {
-            if (!filename.endsWith(QString(".csv")))
-            {
-                filename+=QString(".csv");
-            }
-            bool success=writeToCsv(filename);
-            if (success)
-            {
-                infoMsgBox(QString("Csv file saved with success : ")+filename,QMessageBox::Information);
-            }
-            else
-            {
-                infoMsgBox(QString("Couldn't save Csv file at this location. Try somewhere else."),QMessageBox::Warning);
-            }
-        }
-}
-
 void CSFWindow::on_Compare_clicked()
 {
     QString OutputDirectory =lineEdit_output_path->text();
@@ -956,11 +927,13 @@ void CSFWindow::on_Compare_clicked()
     fileLH.open(QIODevice::ReadOnly | QIODevice::Text);
     QString qstrLH = fileLH.readAll();
     fileLH.close();
+    lefthemisphere->clear();
     lefthemisphere->append(qstrLH);  
 
     QFile fileRH(RH_CSFVolume);
     fileRH.open(QIODevice::ReadOnly | QIODevice::Text);
     QString qstrRH = fileRH.readAll();
     fileRH.close();
+    righthemisphere->clear(); 
     righthemisphere->append(qstrRH); 
 }

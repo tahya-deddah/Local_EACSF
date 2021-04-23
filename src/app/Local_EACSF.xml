@@ -4,7 +4,7 @@
   <title>Local_EACSF</title>
   <version>0.0.1</version>
   <contributor>Tahya Deddah, Martin Styner, Juan Prieto</contributor>
-  <description>Compute CSF Density</description>
+  <description>Local EACSF Quantification</description>
   <parameters advanced="false">
     <file>
       <name>csv_file</name>

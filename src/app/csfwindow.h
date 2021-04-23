@@ -40,18 +40,6 @@ public:
     QJsonObject getConfig();
     void setConfig(QJsonObject root_obj);
 
-private slots:
-    void on_Compare_clicked();
-
-private slots:
-    void on_Export_clicked();
-
-private slots:
-    void on_Load_clicked();
-
-private slots:
-    void on_Help_clicked();
-
 private:
 
     QString OpenFile();
@@ -78,7 +66,7 @@ private slots:
     void on_actionLoad_Config_File_triggered();
     void on_actionLoad_Csv_File_triggered();
     void on_actionSave_Csv_File_triggered();
-    //Window menu
+    //Window 
     void on_actionToggle_advanced_mode_toggled(bool toggled);
     //About
     void on_actionAbout_triggered();
@@ -87,16 +75,17 @@ private slots:
     void on_Data_Directory_clicked();
     void on_Find_clicked();   
     bool Find_File(QDir oDir, QString filter, QString key, QMap<QString, QString> *vect);
-    //bool Find_File(QDir oDir, QString filter, QString key, QMap<QString, QString>* &vect);
     void on_Add_clicked();
-    void addToModel(QMap<QString, QString> row);
+    void addToModel(QMap<QString, QString> *row);
     void on_Remove_clicked();
     void on_Clear_clicked();
+    void on_Export_clicked();
+    void on_Load_clicked();
+    void on_Help_clicked();
     void on_batchSlurm_clicked(bool checked);
     void on_batchLocal_clicked(bool checked);
     void on_Run_Batch_Process_clicked();
-    bool ModelIsEmpty();
- 
+    
     //2nd tab
    
     void on_T1_clicked();
@@ -124,6 +113,7 @@ private slots:
     //6th tab
     void on_output_path_clicked();
     void on_visualize_clicked();
+    void on_Compare_clicked();
     
 private:
     

@@ -50,7 +50,7 @@ def CSFDensity_Sum (CSF_Density_txtFile, CSF_Volume_txtFile):
 			data.extend(rowdata)
 	CSFDensity_Sum = sum(data)
 	with open(CSF_Volume_txtFile, "a") as outputfile:
-		outputfile.write("Sum of CSF Density = " + str(CSFDensity_Sum))
+		outputfile.write("Sum of EACSF Density = " + str(CSFDensity_Sum))
 
 def main_loop(args):
 	start = time.time()
