@@ -16,14 +16,11 @@ int  main(int argc, char** argv)
 {
     PARSE_ARGS;
    
-	
 	vtkSmartPointer<vtkPolyDataReader> polyIn = vtkSmartPointer<vtkPolyDataReader>::New();
     polyIn->SetFileName(InputFileName.c_str());
     polyIn->Update();
     vtkSmartPointer<vtkPolyData> polydataAtt = polyIn->GetOutput();
 
-
-   
     char     line[70];
     std::ifstream input;
     int      NPoints, NDimension;
@@ -40,10 +37,7 @@ int  main(int argc, char** argv)
     aux = strtok(NULL, " = ");
     NDimension = atof(aux);
 
-   
     input.getline(line, 500, '\n'); // read type line (Scalars)
-
-
 
     vtkSmartPointer<vtkFloatArray> scalars = vtkSmartPointer<vtkFloatArray>::New();
     scalars->SetNumberOfComponents(NDimension);
@@ -88,9 +82,7 @@ int  main(int argc, char** argv)
     input.close();
   
     polydataAtt->GetPointData()->AddArray(scalars);
-
-
-    
+  
     // Writing the new mesh
     vtkSmartPointer<vtkPolyDataWriter> SurfaceWriter = vtkSmartPointer<vtkPolyDataWriter>::New();
     SurfaceWriter->SetInputData(polydataAtt);
