@@ -6,6 +6,8 @@ import shutil
 from shutil import copyfile
 import subprocess
 from subprocess import Popen
+from multiprocessing import Process
+import tempfile
 
 
 def call_and_print(args):
@@ -29,37 +31,11 @@ def call_and_print(args):
 	if status_code != 0:
 	   	print("return code:",check_returncode, flush=True)
 
-def clean_up(LH_Directory):
-
-	print("Cleaning the left hemisphere output directory", flush=True)
-	for i in os.listdir(LH_Directory):
-		if i.endswith('.vtp') or i.endswith('.vts'):
-			os.remove(i)
-	print("Cleaning the left hemisphere output directory done", flush=True)
-
-def CSFDensity_Sum (CSF_Density_txtFile, CSF_Volume_txtFile):
-
-	data = []
-	with open(CSF_Density_txtFile) as inputfile:
-		number_of_points = inputfile.readline()
-		dimension = inputfile.readline()
-		Type = inputfile.readline()
-		for line in inputfile:
-			fields = line.split()
-			rowdata = map(float, fields)
-			data.extend(rowdata)
-	CSFDensity_Sum = sum(data)
-	with open(CSF_Volume_txtFile, "a") as outputfile:
-		outputfile.write("Sum of EACSF Density =" + str(CSFDensity_Sum))
-	
 def main_loop(args):
+
 	start = time.time()
 	print ("Processing Left Side", flush=True)
-	process_LH(args) 
-	end = time.time()
-	print("time for LH:",end - start, flush=True)
 
-def process_LH(args):
 	LH_Directory = os.path.join(args.Output_Directory, "LocalEACSF", "LH_Directory") 
 	isDir = os.path.isdir(LH_Directory)
 	if isDir==False :
@@ -68,19 +44,41 @@ def process_LH(args):
 	else :
 		print ("Dirctory exist", flush=True)
 
-	T1 = os.path.join(LH_Directory, "T1.nrrd")
+	InterpolationMaxValue_Directory = os.path.join(LH_Directory, "InterpolationMaxValue") 
+	InterpolationMinValue_Directory = os.path.join(LH_Directory, "InterpolationMinValue") 
+	if os.path.isdir(InterpolationMaxValue_Directory)==False :
+		os.mkdir(InterpolationMaxValue_Directory)
+	if os.path.isdir(InterpolationMinValue_Directory)==False :
+		os.mkdir(InterpolationMinValue_Directory)
+
+	ImageSize = @imagedimension@
+	ImageSizeMax = int(ImageSize) + 20
+	ImageSizeMin = int(ImageSize) - 20
+	ProcessingWithoutInterpolation = Process(target=processing(args, LH_Directory, str(ImageSize))) 
+	ProcessingWithoutInterpolation.start()                  
+	InterpolationMaxValueProcessing = Process(target=processing(args, InterpolationMaxValue_Directory, str(ImageSizeMax)))
+	InterpolationMaxValueProcessing.start()
+	InterpolationMinValueProcessing = Process(target=processing(args, InterpolationMinValue_Directory, str(ImageSizeMin)))
+	InterpolationMinValueProcessing.start()
+	
+
+	end = time.time()
+	print("time for LH:",end - start, flush=True)
+
+def processing(args, Directory, ImageDimension):
+
+	T1 = os.path.join(Directory, "T1.nrrd")
 	Data_existence_test =os.path.isfile(T1) 
 	if Data_existence_test==False:
 		print("Copying Data", flush=True)
-		copyfile(args.T1, os.path.join(LH_Directory,"T1.nrrd"))
-		copyfile(args.Tissu_Segmentation, os.path.join(LH_Directory,"Tissu_Segmentation.nrrd"))
-		copyfile(args.CSF_Probability_Map, os.path.join(LH_Directory,"CSF_Probability_Map.nrrd"))
-		copyfile(args.LH_MID_surface, os.path.join(LH_Directory,"LH_MID.vtk"))
-		copyfile(args.LH_GM_surface, os.path.join(LH_Directory,"LH_GM.vtk"))
+		copyfile(args.T1, os.path.join(Directory,"T1.nrrd"))
+		copyfile(args.Tissu_Segmentation, os.path.join(Directory,"Tissu_Segmentation.nrrd"))
+		copyfile(args.CSF_Probability_Map, os.path.join(Directory,"CSF_Probability_Map.nrrd"))
+		copyfile(args.LH_MID_surface, os.path.join(Directory,"LH_MID.vtk"))
+		copyfile(args.LH_GM_surface, os.path.join(Directory,"LH_GM.vtk"))
 		print("Copying Done", flush=True)
 	else :
 		print("Data Exists", flush=True)	
-
 
 	#Executables:
 	CreateOuterImage = args.CreateOuterImage
@@ -92,9 +90,8 @@ def process_LH(args):
 	HeatKernelSmoothing = args.HeatKernelSmoothing
 	ComputeCSFVolume = args.ComputeCSFVolume
 
-	##
-	os.chdir(LH_Directory)
-	Streamline_Path = os.path.join(LH_Directory,"LH_Outer_streamlines.vtk")
+	os.chdir(Directory)
+	Streamline_Path = os.path.join(Directory,"LH_Outer_streamlines.vtk")
 	StreamlinesExistenceTest = os.path.isfile(Streamline_Path)
 	if StreamlinesExistenceTest ==True :
 		print('LH streamline computation Done!', flush=True)
@@ -106,17 +103,15 @@ def process_LH(args):
 		call_and_print([CreateOuterSurface,"--InputBinaryImg","LH_GM_Dilated.nrrd", "--OutputSurface","LH_GM_Outer_MC.vtk", "--NumberIterations", "@NumberIterations@"])
 		call_and_print([EditPolyData, "--InputSurface","LH_GM_Outer_MC.vtk", "--OutputSurface","LH_GM_Outer_MC.vtk", "--flipx", ' -1', "--flipy", ' -1', "--flipz", '1'])
 		print('Creating Outer LH Convex Hull Surface Done!', flush=True)
-	
+
 		print('Creating LH streamlines', flush=True)
 		print('CEstablishing Surface Correspondance', flush=True)
-		call_and_print([klaplace,'-dims', "@imagedimension@","LH_MID.vtk", "LH_GM_Outer_MC.vtk",'-surfaceCorrespondence',"LH_Outer.corr"])
-
+		call_and_print([klaplace,'-dims', ImageDimension,"LH_MID.vtk", "LH_GM_Outer_MC.vtk",'-surfaceCorrespondence',"LH_Outer.corr"])
 		print('CEstablishing Streamlines', flush=True)
 		call_and_print([klaplace, '-traceStream',"LH_Outer.corr_field.vts","LH_MID.vtk", "LH_GM_Outer_MC.vtk", "LH_Outer_streamlines.vtp", \
 									"LH_Outer_points.vtp",'-traceDirection','forward'])
 		call_and_print([klaplace, '-conv',"LH_Outer_streamlines.vtp", "LH_Outer_streamlines.vtk"])
 		print('Creating LH streamlines Done!', flush=True)
-
 
 	CSFDensdity_Path=os.path.join(LH_Directory,"LH_MID.CSFDensity.txt")
 	CSFDensityExistenceTest = os.path.isfile(CSFDensdity_Path)
@@ -127,16 +122,9 @@ def process_LH(args):
 		call_and_print([EstimateCortexStreamlinesDensity, "--InputSurface" ,"LH_MID.vtk", "--InputOuterStreamlines",  "LH_Outer_streamlines.vtk",\
 			"--InputSegmentation", "CSF_Probability_Map.nrrd", "--InputMask", "LH_GM_Dilated.nrrd", "--OutputSurface", "LH_CSF_Density.vtk", "--VisitingMap",\
 			"LH__Visitation.nrrd"])
-		if(args.Smooth) :
-			call_and_print([HeatKernelSmoothing , "--InputSurface", "LH_CSF_Density.vtk", "--NumberIter", "@NumberIter@", "--sigma", "@Bandwith@", "--OutputSurface", "LH_CSF_Density.vtk"])
-		call_and_print([AddScalarstoPolyData, "--InputFile", "LH_GM.vtk", "--OutputFile", "LH_GM.vtk", "--ScalarsFile", "LH_MID.CSFDensity.txt", "--Scalars_Name", 'EACSF'])
-		call_and_print([ComputeCSFVolume, "--VisitingMap", "LH__Visitation.nrrd", "--CSFProb", "CSF_Probability_Map.nrrd"])
-		CSFDensity_Sum ("LH_MID.CSFDensity.txt", "LH_CSFVolume.txt")
-	if(args.Clean_up) :
-	 	clean_up(LH_Directory)
-
-
-parser = argparse.ArgumentParser(description='Calculates CSF Density')
+		
+	
+parser = argparse.ArgumentParser(description='EACSF Density Quantification')
 parser.add_argument("--T1",type=str, help='T1 Image', default="@T1_IMAGE@")
 parser.add_argument("--Tissu_Segmentation",type=str, help='Tissu Segmentation for Outer CSF Hull Creation', default="@Tissu_Segmentation@")
 parser.add_argument("--CSF_Probability_Map",type=str, help='CSF Probality Map', default="@CSF_Probability_Map@")

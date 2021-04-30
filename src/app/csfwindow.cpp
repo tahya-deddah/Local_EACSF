@@ -442,9 +442,7 @@ void CSFWindow::on_Add_clicked()
 
 void CSFWindow::addToModel(QMap<QString, QString> *row)
 {   
-
-    ModelData << row;
-    model->SetModelData(ModelData);
+    model->AddRow(row);
 }
 
 void CSFWindow::on_Remove_clicked()
@@ -592,7 +590,6 @@ void CSFWindow::on_T1_clicked()
 
 void CSFWindow::on_Segmentation_clicked()
 {
-
     QString path=OpenFile();
     if (!path.isEmpty())
     {

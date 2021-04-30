@@ -7,6 +7,7 @@ from shutil import copyfile
 import subprocess
 from subprocess import Popen
 
+
 def main(args):
 	#Executables
 	python = args.python3
@@ -17,11 +18,11 @@ def main(args):
 	process_right_hemisphere = os.path.join(scripts_prefix,"process_right_hemisphere.py")
 	####
 	Process_Left_Side = subprocess.call([python, process_left_hemisphere])
-	Process_Right_Side = subprocess.call([python, process_right_hemisphere])
+	#Process_Right_Side = subprocess.call([python, process_right_hemisphere])
 
 
 if (__name__ == "__main__"):
-	parser = argparse.ArgumentParser(description='Compute CSF Density')
+	parser = argparse.ArgumentParser(description='Compute Local EACSF Density')
 	parser.add_argument("--Output_Directory",type=str, help='Output Directory', default="@Output_Directory@")
 	parser.add_argument('--python3', type=str, help='Python3 Executable Path', default='@python3_PATH@')
 	args = parser.parse_args()

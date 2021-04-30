@@ -137,7 +137,7 @@ def process_RH(args):
 		clean_up(RH_Directory)
 	
 
-parser = argparse.ArgumentParser(description='Calculates CSF Density')
+parser = argparse.ArgumentParser(description='EACSF Density Quantification')
 parser.add_argument("--T1",type=str, help='T1 Image', default="@T1_IMAGE@")
 parser.add_argument("--Tissu_Segmentation",type=str, help='Tissu Segmentation for Outer CSF Hull Creation', default="@Tissu_Segmentation@")
 parser.add_argument("--CSF_Probability_Map",type=str, help='CSF Probality Map', default="@CSF_Probability_Map@")
