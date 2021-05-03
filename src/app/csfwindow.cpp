@@ -123,6 +123,8 @@ void CSFWindow::setConfig(QJsonObject root_obj)
     IterationsNumber->setValue(param_obj["Iterations_number"].toInt());
     ImageDimension->setText(param_obj["Image_dimension"].toString());
 
+    checkBox_Interpolation->setChecked(param_obj["Interpolation"].toBool());
+
     QJsonArray exe_array = root_obj["executables"].toArray();
     foreach (const QJsonValue exe_val, exe_array)
     {
@@ -166,6 +168,8 @@ QJsonObject CSFWindow::getConfig(){
     param_obj["Dilation_radius"] = DilationRadius->value();
     param_obj["Iterations_number"] = IterationsNumber->value();
     param_obj["Image_dimension"] = ImageDimension->text();
+
+    param_obj["Interpolation"] = checkBox_Interpolation->isChecked();
 
     QJsonObject root_obj;
     root_obj["data"] = data_obj;
@@ -922,15 +926,22 @@ void CSFWindow::on_Compare_clicked()
 
     QFile fileLH(LH_CSFVolume);
     fileLH.open(QIODevice::ReadOnly | QIODevice::Text);
-    QString qstrLH = fileLH.readAll();
-    fileLH.close();
-    lefthemisphere->clear();
-    lefthemisphere->append(qstrLH);  
-
+   
     QFile fileRH(RH_CSFVolume);
     fileRH.open(QIODevice::ReadOnly | QIODevice::Text);
-    QString qstrRH = fileRH.readAll();
-    fileRH.close();
-    righthemisphere->clear(); 
-    righthemisphere->append(qstrRH); 
+    int column = 0;
+    int row = 0 ;
+    while (!fileRH.atEnd())
+    {
+        QString line = fileRH.readLine();
+        QStringList splitline = line.split(QString(" = "));
+        QString result = splitline.at(1);
+        QString t = result.remove(QChar('\n'), Qt::CaseInsensitive);
+        qDebug() << t.toFloat();
+    }
+    //setItem(int row, int column, QTableWidgetItem *item)
+    QStringList vertical_header  = QStringList() << QString("Volume") <<  QString("Density sum") ;
+    tableWidget->setVerticalHeaderLabels( vertical_header );
+    QStringList horizontal_header  = QStringList() << QString("Left") <<  QString("Right") <<  QString("Left - Right");
+    tableWidget->setHorizontalHeaderLabels( horizontal_header );
 }
