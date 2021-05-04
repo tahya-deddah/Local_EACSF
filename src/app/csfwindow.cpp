@@ -904,12 +904,25 @@ void CSFWindow::on_visualize_clicked()
             tr("Is running.")
         );
     }
-     if (VisualiseCSFPorbMAp->isChecked())
+    if (VisualiseCSFPorbMAp->isChecked())
     {
         QString CSF_Probability_Map = LH_Directory + QString("/CSF_Probability_Map.nrrd");
         QStringList arguments = QStringList() <<  CSF_Probability_Map  ;
         visualization->setWorkingDirectory(OutputDirectory);
         visualization->start(QString("itksnap"),arguments);
+        QMessageBox::information(
+            this,
+            tr("Visualization"),
+            tr("Is running.")
+        );
+    }
+    if (VisualiseDelta->isChecked())
+    {
+        QString LH_CSFDensity = LH_Directory + QString("/LH_GM.vtk");
+        QString RH_CSFDensity  = RH_Directory + QString("/RH_GM.vtk");
+        QStringList arguments = QStringList() << QString("-v") << LH_CSFDensity  << QString("-v")<< RH_CSFDensity ;
+        visualization->setWorkingDirectory(OutputDirectory);
+        visualization->start(QString("ShapePopulationViewer"), arguments);
         QMessageBox::information(
             this,
             tr("Visualization"),
@@ -926,22 +939,41 @@ void CSFWindow::on_Compare_clicked()
 
     QFile fileLH(LH_CSFVolume);
     fileLH.open(QIODevice::ReadOnly | QIODevice::Text);
-   
     QFile fileRH(RH_CSFVolume);
     fileRH.open(QIODevice::ReadOnly | QIODevice::Text);
-    int column = 0;
-    int row = 0 ;
-    while (!fileRH.atEnd())
+    int row  = 0;
+    while (!fileLH.atEnd())
     {
-        QString line = fileRH.readLine();
-        QStringList splitline = line.split(QString(" = "));
-        QString result = splitline.at(1);
-        QString t = result.remove(QChar('\n'), Qt::CaseInsensitive);
-        qDebug() << t.toFloat();
+        QString line_LH = fileLH.readLine();
+        QString line_RH = fileRH.readLine();
+        QStringList splitline_LH = line_LH.split(QString(" ="));
+        QString result_LH = splitline_LH.at(1);
+        QStringList splitline_RH = line_RH.split(QString(" ="));
+        QString result_RH = splitline_RH.at(1);
+        tableWidget->setItem( row , 0, new QTableWidgetItem( result_LH.remove(QChar('\n'), Qt::CaseInsensitive) ));
+        tableWidget->setItem( row, 1, new QTableWidgetItem( result_RH.remove(QChar('\n'), Qt::CaseInsensitive) ));
+        if(tableWidget->item(row,0) != 0 && tableWidget->item(row,1) != 0)
+        {
+            QString left = tableWidget->item(row,0)->text();
+            QString right = tableWidget->item(row,1)->text();
+            float difference = (left.toFloat() - right.toFloat())/ (left.toFloat() + right.toFloat());
+            tableWidget->setItem( row, 2, new QTableWidgetItem( QString::number( difference))); 
+        }                
+        row = row  + 1;
     }
-    //setItem(int row, int column, QTableWidgetItem *item)
-    QStringList vertical_header  = QStringList() << QString("Volume") <<  QString("Density sum") ;
-    tableWidget->setVerticalHeaderLabels( vertical_header );
-    QStringList horizontal_header  = QStringList() << QString("Left") <<  QString("Right") <<  QString("Left - Right");
-    tableWidget->setHorizontalHeaderLabels( horizontal_header );
+    for(int i = 0; i<tableWidget->columnCount()-1; i++)
+    {
+        if(tableWidget->item(0,i) != 0 && tableWidget->item(1,i) != 0)
+        {
+            float diff = tableWidget->item(1,i)->text().toFloat() - tableWidget->item(0,i)->text().toFloat();
+            if (diff > 0 || diff == 0)
+            {  
+                tableWidget->item(0,i)->setBackground(Qt::green);
+                tableWidget->item(1,i)->setBackground(Qt::green);
+            }else{
+                tableWidget->item(0,i)->setBackground(Qt::red);
+                tableWidget->item(1,i)->setBackground(Qt::red);
+            }
+        }        
+    }
 }

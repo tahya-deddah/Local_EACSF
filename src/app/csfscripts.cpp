@@ -185,9 +185,9 @@ void CSFScripts::write_process_right_hemisphere()
 
     script_right_hemisphere.replace("@Clean@", checkBoolValue(param_obj["Clean"]));
     script_right_hemisphere.replace("@Smooth@", checkBoolValue(param_obj["Smooth"]));
+    script_right_hemisphere.replace("@Interpolation@", checkBoolValue(param_obj["Interpolation"]));
 
-
-    
+  
     QString scripts_dir = QDir::cleanPath(checkStringValue(data_obj["Output_Directory"]) + QString("/LocalEACSF") + m_PythonScripts);
     
     QString right_hemisphere_script = QDir::cleanPath(scripts_dir + QString("/process_right_hemisphere.py"));

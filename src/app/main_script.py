@@ -15,10 +15,10 @@ def main(args):
 	OUT_PATH = os.path.join(args.Output_Directory,"LocalEACSF") 	
 	scripts_prefix = os.path.join(OUT_PATH, "PythonScripts")
 	process_left_hemisphere = os.path.join(scripts_prefix,"process_left_hemisphere.py")
-	process_right_hemisphere = os.path.join(scripts_prefix,"process_right_hemisphere.py")
+	#process_right_hemisphere = os.path.join(scripts_prefix,"process_right_hemisphere.py")
 	####
 	Process_Left_Side = subprocess.call([python, process_left_hemisphere])
-	#Process_Right_Side = subprocess.call([python, process_right_hemisphere])
+	Process_Right_Side = subprocess.call([python, process_right_hemisphere])
 
 
 if (__name__ == "__main__"):

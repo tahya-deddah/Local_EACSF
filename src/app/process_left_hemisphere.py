@@ -30,16 +30,16 @@ def call_and_print(args):
 	if status_code != 0:
 	   	print("return code:",check_returncode, flush=True)
 
-def ComputeInterpolatedCSFDensity(EACSFMaxValueFile, EACSFMinValueFile , EACSFInterpolatedValueFile):
+def ComputeInterpolatedCSFDensity(EACSFMaxValueFile, EACSFMinValueFile , EACSFInterpolatedFile):
 
 	EACSFDensityMax = open(EACSFMaxValueFile, "r")
 	EACSFDensityMin = open(EACSFMinValueFile, "r")
-	EACSFDensityInterpolated = open(EACSFInterpolatedValueFile, "w")
+	EACSFDensityInterpolated = open(EACSFInterpolatedFile, "w")
 
 	##### read and write the first lines
-	number_of_points = EACSFDensityMax .readline()
-	dimension = EACSFDensityMax .readline()
-	Type = EACSFDensityMax .readline()
+	number_of_points = EACSFDensityMax.readline()
+	dimension = EACSFDensityMax.readline()
+	Type = EACSFDensityMax.readline()
 
 	EACSFDensityMin.readline()
 	EACSFDensityMin.readline()
@@ -51,12 +51,40 @@ def ComputeInterpolatedCSFDensity(EACSFMaxValueFile, EACSFMinValueFile , EACSFIn
 	
 	for line in EACSFDensityMax.readlines():
 		valueMax = line
-		valueMin = float(EACSFDensityMin.readline())
-		mu = (float(valueMax) + valueMin)/2
-		EACSFDensityInterpolated.write(str("%.4f" % mu) + "\n" ) 
+		valueMin = Decimal(EACSFDensityMin.readline())
+		mu = (Decimal(valueMax) + valueMin)/2
+		EACSFDensityInterpolated.write(str(mu) + "\n" ) 
 	EACSFDensityMax.close()
 	EACSFDensityMin.close()
 	EACSFDensityInterpolated.close() 
+
+def AbsoluteDifference(EACSFInterpolatedValueFile, EACSFFile, AbsoluteDifferenceFile):
+
+	EACSFInterpolated = open(EACSFInterpolatedValueFile, "r")
+	EACSF = open(EACSFFile, "r")
+	AbsoluteDifference = open( AbsoluteDifferenceFile, "w")
+
+	##### read and write the first lines
+	number_of_points = EACSF.readline()
+	dimension = EACSF.readline()
+	Type = EACSF.readline()
+
+	EACSFInterpolated.readline()
+	EACSFInterpolated.readline()
+	EACSFInterpolated.readline()
+
+	AbsoluteDifference.write(number_of_points)
+	AbsoluteDifference.write(dimension)
+	AbsoluteDifference.write(Type)
+	
+	for line in EACSF.readlines():
+		EACSFvalue = line
+		EACSFInterpolatedvalue = float(EACSFInterpolated.readline())
+		delta = EACSFInterpolatedvalue - float(EACSFvalue)
+		AbsoluteDifference.write(str("%.4f" % delta) + "\n" ) 
+	EACSF.close()
+	EACSFInterpolated.close()
+	AbsoluteDifference.close() 
 
 def clean_up(LH_Directory):
 
@@ -122,25 +150,22 @@ def main_loop(args):
 			process.join() 
 		EACSFMaxValueFile = os.path.join( InterpolationMaxValue_Directory, "LH_MID.CSFDensity.txt")
 		EACSFMinValueFile = os.path.join( InterpolationMinValue_Directory, "LH_MID.CSFDensity.txt") 
-		EACSFInterpolatedValueFile = os.path.join( LH_Directory, "LH_MID.CSFDensityInterpolated.txt")
+		EACSFInterpolatedFile = os.path.join( LH_Directory, "LH_MID.CSFDensityInterpolated.txt")
 		EACSFFile = os.path.join( LH_Directory, "LH_MID.CSFDensity.txt")
 		AbsoluteDifferenceFile = os.path.join( LH_Directory, "LH_absolute_difference.txt" )
-		ComputeInterpolatedCSFDensity(EACSFMaxValueFile, EACSFMinValueFile , EACSFInterpolatedValueFile)
+		ComputeInterpolatedCSFDensity(EACSFMaxValueFile, EACSFMinValueFile , EACSFInterpolatedFile)
+		AbsoluteDifference(EACSFInterpolatedFile, EACSFFile, AbsoluteDifferenceFile)
 		shutil.rmtree(InterpolationMaxValue_Directory)
 		shutil.rmtree(InterpolationMinValue_Directory)
-
-		#compute difference between CSF density and interpolated csf densiy delta
-		#AbsoluteDifference(EACSFInterpolatedValueFile, EACSFFile, AbsoluteDifferenceFile)
-
-		os.chdir(LH_Directory)
+		
 		AddScalarstoPolyData = args.AddScalarstoPolyData
 		HeatKernelSmoothing = args.HeatKernelSmoothing
 		ComputeCSFVolume = args.ComputeCSFVolume
-
+		os.chdir(LH_Directory)
 		if(args.Interpolation) :
 			if os.path.isfile(EACSFFile)==True :
 				os.remove(EACSFFile)
-			os.rename(EACSFInterpolatedValueFile, EACSFFile)
+			os.rename(EACSFInterpolatedFile, EACSFFile)
 			call_and_print([AddScalarstoPolyData, "--InputFile", "LH_CSF_Density.vtk", "--OutputFile", "LH_CSF_Density.vtk", "--ScalarsFile", \
 			"LH_MID.CSFDensity.txt", "--Scalars_Name", 'CSFDensity'])
 		if(args.Smooth) :
@@ -150,8 +175,7 @@ def main_loop(args):
 		 	clean_up(LH_Directory)
 		call_and_print([ComputeCSFVolume, "--VisitingMap", "LH__Visitation.nrrd", "--CSFProb", "CSF_Probability_Map.nrrd"])
 		CSFDensity_Sum ("LH_MID.CSFDensity.txt", "LH_CSFVolume.txt")
-
-
+		call_and_print([AddScalarstoPolyData, "--InputFile", "LH_GM.vtk", "--OutputFile", "LH_GM.vtk", "--ScalarsFile", "LH_absolute_difference.txt", "--Scalars_Name", 'Delta'])
 	end = time.time()
 	print("time for LH:",end - start, flush=True)
 
