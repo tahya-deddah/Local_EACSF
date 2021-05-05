@@ -2,7 +2,7 @@
 #include <vtkPolyDataReader.h>
 #include <vtkPolyDataWriter.h>
 #include <vtkSmartPointer.h>
-#include <vtkFloatArray.h>
+#include <vtkDoubleArray.h>
 #include <vtkPointData.h>
 #include <vtkPolyData.h>
 
@@ -39,19 +39,18 @@ int  main(int argc, char** argv)
 
     input.getline(line, 500, '\n'); // read type line (Scalars)
 
-    vtkSmartPointer<vtkFloatArray> scalars = vtkSmartPointer<vtkFloatArray>::New();
+    vtkSmartPointer<vtkDoubleArray> scalars = vtkSmartPointer<vtkDoubleArray>::New();
     scalars->SetNumberOfComponents(NDimension);
     scalars->SetName(ScalarsName.c_str());
-    std::cout<< ScalarsName.c_str() << std::endl;
-
+    
     for( int i = 0; i < NPoints; i++ )
     {   
         
         input.getline(line, 500, '\n');
-        float value=0;
+        double value=0;
         std::string proc_string = line;
         std::istringstream iss(proc_string);
-        float *tuple = new float[NDimension];
+        double *tuple = new double[NDimension];
         int count = 0 ;
         do
         {

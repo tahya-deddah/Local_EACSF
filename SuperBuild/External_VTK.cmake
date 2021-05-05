@@ -24,7 +24,7 @@ ProjectDependancyPush(CACHED_proj ${proj})
 set(extProjName VTK) #The find_package known name
 set(proj        VTK) #This local name
 
-set(${extProjName}_REQUIRED_VERSION "9.0.0")  #If a required version is necessary, then set this, else leave blank
+set(${extProjName}_REQUIRED_VERSION "")  #If a required version is necessary, then set this, else leave blank
 
 # Set dependency list
 set(${proj}_DEPENDENCIES "Qt5")

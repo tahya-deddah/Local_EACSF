@@ -300,7 +300,7 @@ int main ( int argc, char *argv[] )
             }
   Result2.close();
 
-  ofstream Result3;
+  /*ofstream Result3;
   std::string Result3FileName = NewFileName + "NormalizedCSFDensityMagGradient.txt";
   Result3.open (Result3FileName.c_str());
   Result3 << "NUMBER_OF_POINTS=" << inputPolyData->GetNumberOfPoints() << endl; 
@@ -310,7 +310,7 @@ int main ( int argc, char *argv[] )
       {
                 Result3 << ArrayMagGradientNormalized->GetValue(vertex) << endl;
             }
-  Result3.close();
+  Result3.close();*/
 
   std::string outputSurfaceFileName = OutputSurfacename;
   vtkSmartPointer<vtkPolyDataWriter> polywriter = vtkSmartPointer<vtkPolyDataWriter>::New();

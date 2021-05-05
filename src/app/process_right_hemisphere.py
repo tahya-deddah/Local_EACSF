@@ -1,3 +1,6 @@
+#!/tools/Python/Python-3.8.0/bin/python3
+##	by Tahya Deddah, Martin Styner, Juan Prieto
+#########################################################################################################
 import argparse
 import time
 import sys
@@ -7,6 +10,7 @@ from shutil import copyfile
 import subprocess
 from subprocess import Popen
 from multiprocessing import Process
+from decimal import *
 
 
 def call_and_print(args):
@@ -30,8 +34,9 @@ def call_and_print(args):
 	if status_code != 0:
 	   	print("return code:",check_returncode, flush=True)
 
-def ComputeInterpolatedCSFDensity(EACSFMaxValueFile, EACSFMinValueFile , EACSFInterpolatedFile):
+def Interpolation(EACSFMaxValueFile, EACSFMinValueFile , EACSFInterpolatedFile):
 
+	print("Interpolating ", flush=True)
 	EACSFDensityMax = open(EACSFMaxValueFile, "r")
 	EACSFDensityMin = open(EACSFMinValueFile, "r")
 	EACSFDensityInterpolated = open(EACSFInterpolatedFile, "w")
@@ -56,10 +61,12 @@ def ComputeInterpolatedCSFDensity(EACSFMaxValueFile, EACSFMinValueFile , EACSFIn
 		EACSFDensityInterpolated.write(str( mu ) + "\n" ) 
 	EACSFDensityMax.close()
 	EACSFDensityMin.close()
-	EACSFDensityInterpolated.close() 
+	EACSFDensityInterpolated.close()
+	print("Interpolating done ", flush=True) 
 
 def AbsoluteDifference(EACSFInterpolatedValueFile, EACSFFile, AbsoluteDifferenceFile):
 
+	print("Computing absolute difference  ", flush=True)
 	EACSFInterpolated = open(EACSFInterpolatedValueFile, "r")
 	EACSF = open(EACSFFile, "r")
 	AbsoluteDifference = open( AbsoluteDifferenceFile, "w")
@@ -85,17 +92,19 @@ def AbsoluteDifference(EACSFInterpolatedValueFile, EACSFFile, AbsoluteDifference
 	EACSF.close()
 	EACSFInterpolated.close()
 	AbsoluteDifference.close() 
+	print("Computing done  ", flush=True)
 
-def clean_up(RH_Directory):
+def clean_up(Directory):
 
 	print("Cleaning the right hemisphere output directory", flush=True)
-	for i in os.listdir(RH_Directory):
+	for i in os.listdir(Directory):
 		if i.endswith('.vtp') or i.endswith('.vts'):
 			os.remove(i)
 	print("Cleaning the right hemisphere output directory done", flush=True)
 
 def CSFDensity_Sum (CSF_Density_txtFile, CSF_Volume_txtFile):
 
+	print("Computing the CSf density sum   ", flush=True)
 	data = []
 	with open(CSF_Density_txtFile) as inputfile:
 		number_of_points = inputfile.readline()
@@ -107,80 +116,63 @@ def CSFDensity_Sum (CSF_Density_txtFile, CSF_Volume_txtFile):
 			data.extend(rowdata)
 	CSFDensity_Sum = sum(data)
 	with open(CSF_Volume_txtFile, "a") as outputfile:
-		outputfile.write("Sum of EACSF Density = " + str(CSFDensity_Sum))
+		outputfile.write("Sum of EACSF Density = " + str("%.0f" % CSFDensity_Sum))
+	print("Computing the CSf density sum   ", flush=True)
 
 def main_loop(args):
 
 	start = time.time()
 	print ("Processing Right Side", flush=True)
 
-	RH_Directory = os.path.join(args.Output_Directory, "LocalEACSF", "RH_Directory") 
-	isDir = os.path.isdir(RH_Directory)
-	if isDir==False :
-		os.mkdir(RH_Directory) 
-		print("RH Directory created", flush=True) 
-	else :
-		print ("Dirctory exist", flush=True)
+	ImageSizes = [@imagedimension@, int(@imagedimension@) + 20, int(@imagedimension@) - 20 ]
+	DirectoriesNames = ["RH_Directory", "RH_InterpolationMaxValue_Directory", "RH_InterpolationMinValue_Directory" ]
+	procs = []
+	for i in range(len(ImageSizes)):
+		process = Process(target=processing, args=(args, DirectoriesNames[i], str(ImageSizes[i]),))
+		process.start()
+		procs.append(process) 
+	for process in procs:
+		process.join() 
 
-	CSFDensdity_Path=os.path.join(RH_Directory,"RH_MID.CSFDensity.txt")
-	CSFDensityExistenceTest = os.path.isfile(CSFDensdity_Path)
-	if CSFDensityExistenceTest==True :
-		print('Computing RH EACSF Done', flush=True)
-	else :
-		InterpolationMaxValue_Directory = os.path.join(RH_Directory, "InterpolationMaxValue") 
-		InterpolationMinValue_Directory = os.path.join(RH_Directory, "InterpolationMinValue") 
-		if os.path.isdir(InterpolationMaxValue_Directory)==False :
-			os.mkdir(InterpolationMaxValue_Directory)
-		if os.path.isdir(InterpolationMinValue_Directory)==False :
-			os.mkdir(InterpolationMinValue_Directory)
+	EACSFFile = os.path.join( args.Output_Directory, "LocalEACSF", "RH_Directory", "RH_MID.CSFDensity.txt")
+	EACSFMaxValueFile = os.path.join( args.Output_Directory, "LocalEACSF", "RH_InterpolationMaxValue_Directory", "RH_MID.CSFDensity.txt")
+	EACSFMinValueFile = os.path.join( args.Output_Directory, "LocalEACSF", "RH_InterpolationMinValue_Directory", "RH_MID.CSFDensity.txt") 
+	EACSFInterpolatedFile = os.path.join( args.Output_Directory, "LocalEACSF", "RH_Directory", "RH_MID.CSFDensityInterpolated.txt")	
 
-		ImageSize = @imagedimension@
-		ImageSizeMax = int(ImageSize) + 20
-		ImageSizeMin = int(ImageSize) - 20
-		procs = []
-		ProcessingWithoutInterpolation = Process(target=processing, args=(args, RH_Directory, str(ImageSize),))
-		ProcessingWithoutInterpolation.start()   
-		procs.append(ProcessingWithoutInterpolation)               
-		InterpolationMaxValueProcessing = Process(target=processing, args=(args,InterpolationMaxValue_Directory, str(ImageSizeMax),))
-		InterpolationMaxValueProcessing.start()
-		procs.append(InterpolationMaxValueProcessing) 
-		InterpolationMinValueProcessing = Process(target=processing, args=(args, InterpolationMinValue_Directory, str(ImageSizeMin),))
-		InterpolationMinValueProcessing.start()
-		procs.append(InterpolationMinValueProcessing)
-		for process in procs:
-			process.join() 
-		EACSFMaxValueFile = os.path.join( InterpolationMaxValue_Directory, "RH_MID.CSFDensity.txt")
-		EACSFMinValueFile = os.path.join( InterpolationMinValue_Directory, "RH_MID.CSFDensity.txt") 
-		EACSFInterpolatedFile = os.path.join( RH_Directory, "RH_MID.CSFDensityInterpolated.txt")
-		EACSFFile = os.path.join( RH_Directory, "RH_MID.CSFDensity.txt")
-		AbsoluteDifferenceFile = os.path.join( RH_Directory, "RH_absolute_difference.txt" )
-		ComputeInterpolatedCSFDensity(EACSFMaxValueFile, EACSFMinValueFile , EACSFInterpolatedFile)
-		AbsoluteDifference(EACSFInterpolatedFile, EACSFFile, AbsoluteDifferenceFile)
-		shutil.rmtree(InterpolationMaxValue_Directory)
-		shutil.rmtree(InterpolationMinValue_Directory)
-		
-		AddScalarstoPolyData = args.AddScalarstoPolyData
-		HeatKernelSmoothing = args.HeatKernelSmoothing
-		ComputeCSFVolume = args.ComputeCSFVolume
-		os.chdir(RH_Directory)
-		if(args.Interpolation) :
-			if os.path.isfile(EACSFFile)==True :
-				os.remove(EACSFFile)
-			os.rename(EACSFInterpolatedFile, EACSFFile)
-			call_and_print([AddScalarstoPolyData, "--InputFile", "RH_CSF_Density.vtk", "--OutputFile", "RH_CSF_Density.vtk", "--ScalarsFile", \
-			"RH_MID.CSFDensity.txt", "--Scalars_Name", 'CSFDensity'])
-		if(args.Smooth) :
-				call_and_print([HeatKernelSmoothing , "--InputSurface", "RH_CSF_Density.vtk", "--NumberIter", "@NumberIter@", "--sigma", "@Bandwith@",\
-				"--OutputSurface", "RH_CSF_Density.vtk"])
-		if(args.Clean_up) :
-		 	clean_up(RH_Directory)
-		call_and_print([ComputeCSFVolume, "--VisitingMap", "RH__Visitation.nrrd", "--CSFProb", "CSF_Probability_Map.nrrd"])
-		CSFDensity_Sum ("RH_MID.CSFDensity.txt", "RH_CSFVolume.txt")
-		call_and_print([AddScalarstoPolyData, "--InputFile", "RH_GM.vtk", "--OutputFile", "RH_GM.vtk", "--ScalarsFile", "RH_absolute_difference.txt", "--Scalars_Name", 'Delta'])
+	EACSFMagGradientMaxValueFile = os.path.join( args.Output_Directory, "LocalEACSF", "RH_InterpolationMaxValue_Directory", "RH_MID.CSFDensityMagGradient.txt")
+	EACSFMagGradientMinValueFile = os.path.join( args.Output_Directory, "LocalEACSF", "RH_InterpolationMinValue_Directory", "RH_MID.CSFDensityMagGradient.txt") 
+	EACSFMagGradientInterpolatedFile = os.path.join( args.Output_Directory, "LocalEACSF", "RH_Directory", "RH_MID.CSFDensityMagGradientInterpolated.txt")
+
+	AbsoluteDifferenceFile = os.path.join( args.Output_Directory, "LocalEACSF", "RH_Directory", "RH_absolute_difference.txt" )
+
+	Interpolation(EACSFMaxValueFile, EACSFMinValueFile , EACSFInterpolatedFile)
+	Interpolation(EACSFMagGradientMaxValueFile, EACSFMagGradientMinValueFile , EACSFMagGradientInterpolatedFile)
+	AbsoluteDifference(EACSFInterpolatedFile, EACSFFile, AbsoluteDifferenceFile)
+
+
+	### Interpolate the csf density
+	os.chdir(os.path.join( args.Output_Directory, "LocalEACSF", "RH_Directory"))
+	if(args.Interpolation) :
+		call_and_print([args.AddScalarstoPolyData, "--InputFile", "RH_CSF_Density.vtk", "--OutputFile", "RH_CSF_Density.vtk", "--ScalarsFile", "RH_MID.CSFDensity.txt", "--Scalars_Name", 'CSFDensity'])
+		call_and_print([args.AddScalarstoPolyData, "--InputFile", "RH_CSF_Density.vtk", "--OutputFile", "RH_CSF_Density.vtk", "--ScalarsFile", "RH_MID.CSFDensityMagGradient.txt", "--Scalars_Name", 'CSFDensityGradient'])
+	######
+
+	call_and_print([args.ComputeCSFVolume, "--VisitingMap", "RH__Visitation.nrrd", "--CSFProb", "CSF_Probability_Map.nrrd"])
+	CSFDensity_Sum ("RH_MID.CSFDensity.txt", "RH_CSFVolume.txt")
+	call_and_print([args.AddScalarstoPolyData, "--InputFile", "RH_GM.vtk", "--OutputFile", "RH_GM.vtk", "--ScalarsFile", "RH_absolute_difference.txt", "--Scalars_Name", 'Delta'])
+	
 	end = time.time()
 	print("time for RH:",end - start, flush=True)
 
-def processing(args, Directory, ImageDimension):
+def processing(args, DirectoryName, ImageDimension):
+
+	Directory = os.path.join(args.Output_Directory, "LocalEACSF", DirectoryName) 
+	isDir = os.path.isdir(Directory)
+	if isDir==False :
+		os.mkdir(Directory) 
+		print("{} created".format(DirectoryName), flush=True) 
+	else :
+		print ("{} exist".format(DirectoryName), flush=True)
 
 	T1 = os.path.join(Directory, "T1.nrrd")
 	Data_existence_test =os.path.isfile(T1) 
@@ -201,6 +193,8 @@ def processing(args, Directory, ImageDimension):
 	EditPolyData = args.EditPolyData
 	klaplace = args.klaplace
 	EstimateCortexStreamlinesDensity = args.EstimateCortexStreamlinesDensity
+	AddScalarstoPolyData = args.AddScalarstoPolyData
+	HeatKernelSmoothing = args.HeatKernelSmoothing
 	
 	###
 	os.chdir(Directory)
@@ -237,6 +231,13 @@ def processing(args, Directory, ImageDimension):
 		call_and_print([EstimateCortexStreamlinesDensity, "--InputSurface" ,"RH_MID.vtk", "--InputOuterStreamlines",  "RH_Outer_streamlines.vtk",\
 			"--InputSegmentation", "CSF_Probability_Map.nrrd", "--InputMask", "RH_GM_Dilated.nrrd", "--OutputSurface", "RH_CSF_Density.vtk", "--VisitingMap",\
 			"RH__Visitation.nrrd"])
+		if(args.Smooth) :
+				call_and_print([HeatKernelSmoothing , "--InputSurface", "RH_CSF_Density.vtk", "--NumberIter", "@NumberIter@", "--sigma", "@Bandwith@", "--OutputSurface", "RH_CSF_Density.vtk"])
+		call_and_print([AddScalarstoPolyData, "--InputFile", "RH_GM.vtk", "--OutputFile", "RH_GM.vtk", "--ScalarsFile", "RH_MID.CSFDensity.txt", "--Scalars_Name", 'EACSF'])
+	if(args.Clean_up) :
+	 	clean_up(Directory)
+
+
 
 parser = argparse.ArgumentParser(description='EACSF Density Quantification')
 parser.add_argument("--T1",type=str, help='T1 Image', default="@T1_IMAGE@")
