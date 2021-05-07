@@ -10,6 +10,7 @@
 #include <QTextStream>
 #include <QPixmap>
 
+
 #ifndef Local_EACSF_TITLE
 #define Local_EACSF_TITLE "Local_EACSF"
 #endif
@@ -83,7 +84,6 @@ bool CSFWindow::writeConfig(QString filename)
         std::cout<<"Couldn't open save file."<<std::endl;
         return false;
     }
-
     QJsonDocument saveDoc(getConfig());
     saveFile.write(saveDoc.toJson());
 
@@ -122,8 +122,11 @@ void CSFWindow::setConfig(QJsonObject root_obj)
     DilationRadius->setValue(param_obj["Dilation_radius"].toInt());
     IterationsNumber->setValue(param_obj["Iterations_number"].toInt());
     ImageDimension->setText(param_obj["Image_dimension"].toString());
+    InterpolationMargin->setText(param_obj["Interpolation_margin"].toString());
 
-    checkBox_Interpolation->setChecked(param_obj["Interpolation"].toBool());
+    radioButton_Interpolated->setChecked(param_obj["Interpolated"].toBool());
+    radioButton_notInterpolated->setChecked(param_obj["NotInterpolated"].toBool());
+
 
     QJsonArray exe_array = root_obj["executables"].toArray();
     foreach (const QJsonValue exe_val, exe_array)
@@ -133,7 +136,6 @@ void CSFWindow::setConfig(QJsonObject root_obj)
 
         this->updateExecutables(exe_obj["name"].toString(), exe_obj["path"].toString());
     }
-
 }
 
 QJsonObject CSFWindow::getConfig(){
@@ -168,8 +170,10 @@ QJsonObject CSFWindow::getConfig(){
     param_obj["Dilation_radius"] = DilationRadius->value();
     param_obj["Iterations_number"] = IterationsNumber->value();
     param_obj["Image_dimension"] = ImageDimension->text();
+    param_obj["Interpolation_margin"] = InterpolationMargin->text();
 
-    param_obj["Interpolation"] = checkBox_Interpolation->isChecked();
+    param_obj["Interpolated"] = radioButton_Interpolated->isChecked();
+    param_obj["NotInterpolated"] = radioButton_notInterpolated->isChecked();
 
     QJsonObject root_obj;
     root_obj["data"] = data_obj;
@@ -701,7 +705,6 @@ void CSFWindow::on_smooth_stateChanged(int state)
     NumberIter_lineEdit->setEnabled(enab);
     Smoothing_Bandwith->setEnabled(enab);
     Bandwith_lineEdit->setEnabled(enab);
-
 }
 
 
@@ -854,9 +857,7 @@ void CSFWindow::run_Local_EACSF(int row)
         prc->start(QString("sbatch"), params);
       
     }  
-
 }
-
 //6th QC 
 
 void CSFWindow::on_output_path_clicked()
@@ -876,50 +877,12 @@ void CSFWindow::on_visualize_clicked()
     QString OutputDirectory =lineEdit_output_path->text();
     QString LH_Directory = QDir::cleanPath(OutputDirectory + QString("/LocalEACSF") + QString("/LH_Directory"));
     QString RH_Directory = QDir::cleanPath(OutputDirectory + QString("/LocalEACSF") + QString("/RH_Directory"));
+    QString CSF_Probability_Map = LH_Directory + QString("/CSF_Probability_Map.nrrd");
 
-
-    if (VisualiseVisitationMAp->isChecked())
-    {
-        QString LH_visitation_map = LH_Directory + QString("/LH__Visitation.nrrd");
-        QString RH_visitation_map = RH_Directory + QString("/RH__Visitation.nrrd");
-        QStringList arguments = QStringList()<< QString("-g") << LH_visitation_map << QString("-s") << RH_visitation_map;
-        visualization->setWorkingDirectory(OutputDirectory);
-        visualization->start(QString("itksnap"),arguments);
-        QMessageBox::information(
-            this,
-            tr("Visualization"),
-            tr("Is running.")
-        );
-    }
     if (VisualiseCSFDensity->isChecked())
     {
         QString LH_CSFDensity = LH_Directory + QString("/LH_CSF_Density.vtk");
         QString RH_CSFDensity  = RH_Directory + QString("/RH_CSF_Density.vtk");
-        QStringList arguments = QStringList() << QString("-v") << LH_CSFDensity  << QString("-v")<< RH_CSFDensity ;
-        visualization->setWorkingDirectory(OutputDirectory);
-        visualization->start(QString("ShapePopulationViewer"),arguments);
-        QMessageBox::information(
-            this,
-            tr("Visualization"),
-            tr("Is running.")
-        );
-    }
-    if (VisualiseCSFPorbMAp->isChecked())
-    {
-        QString CSF_Probability_Map = LH_Directory + QString("/CSF_Probability_Map.nrrd");
-        QStringList arguments = QStringList() <<  CSF_Probability_Map  ;
-        visualization->setWorkingDirectory(OutputDirectory);
-        visualization->start(QString("itksnap"),arguments);
-        QMessageBox::information(
-            this,
-            tr("Visualization"),
-            tr("Is running.")
-        );
-    }
-    if (VisualiseDelta->isChecked())
-    {
-        QString LH_CSFDensity = LH_Directory + QString("/LH_GM.vtk");
-        QString RH_CSFDensity  = RH_Directory + QString("/RH_GM.vtk");
         QStringList arguments = QStringList() << QString("-v") << LH_CSFDensity  << QString("-v")<< RH_CSFDensity ;
         visualization->setWorkingDirectory(OutputDirectory);
         visualization->start(QString("ShapePopulationViewer"), arguments);
@@ -929,6 +892,30 @@ void CSFWindow::on_visualize_clicked()
             tr("Is running.")
         );
     }
+    if (VisualiseRightVisitation->isChecked())
+    {
+        QString RH_visitation_map = RH_Directory + QString("/RH__Visitation.nrrd");
+        QStringList arguments = QStringList()<< QString("-g") << RH_visitation_map << QString("-s") << CSF_Probability_Map;
+        visualization->setWorkingDirectory(OutputDirectory);
+        visualization->start(QString("itksnap"), arguments);
+        QMessageBox::information(
+            this,
+            tr("Visualization"),
+            tr("Is running.")
+        );
+    }
+    if (VisualiseLeftVisitation->isChecked())
+    {
+        QString LH_visitation_map = LH_Directory + QString("/LH__Visitation.nrrd");    
+        QStringList arguments = QStringList()<< QString("-g") << LH_visitation_map << QString("-s") << CSF_Probability_Map;
+        visualization->setWorkingDirectory(OutputDirectory);
+        visualization->start(QString("itksnap"), arguments);
+        QMessageBox::information(
+            this,
+            tr("Visualization"),
+            tr("Is running.")
+        );
+    }    
 }
 
 void CSFWindow::on_Compare_clicked()
@@ -946,9 +933,9 @@ void CSFWindow::on_Compare_clicked()
     {
         QString line_LH = fileLH.readLine();
         QString line_RH = fileRH.readLine();
-        QStringList splitline_LH = line_LH.split(QString(" ="));
+        QStringList splitline_LH = line_LH.split(QString(" = "));
         QString result_LH = splitline_LH.at(1);
-        QStringList splitline_RH = line_RH.split(QString(" ="));
+        QStringList splitline_RH = line_RH.split(QString(" = "));
         QString result_RH = splitline_RH.at(1);
         tableWidget->setItem( row , 0, new QTableWidgetItem( result_LH.remove(QChar('\n'), Qt::CaseInsensitive) ));
         tableWidget->setItem( row, 1, new QTableWidgetItem( result_RH.remove(QChar('\n'), Qt::CaseInsensitive) ));
@@ -957,23 +944,18 @@ void CSFWindow::on_Compare_clicked()
             QString left = tableWidget->item(row,0)->text();
             QString right = tableWidget->item(row,1)->text();
             float difference = (left.toFloat() - right.toFloat())/ (left.toFloat() + right.toFloat());
-            tableWidget->setItem( row, 2, new QTableWidgetItem( QString::number( difference))); 
+            tableWidget->setItem( row, 2, new QTableWidgetItem( QString::number( difference * 100, 'f' , 2 ))); 
         }                
         row = row  + 1;
     }
-    for(int i = 0; i<tableWidget->columnCount()-1; i++)
+    for(int i = 0; i<tableWidget->columnCount() ; i++)
     {
         if(tableWidget->item(0,i) != 0 && tableWidget->item(1,i) != 0)
         {
             float diff = tableWidget->item(1,i)->text().toFloat() - tableWidget->item(0,i)->text().toFloat();
             if (diff > 0 || diff == 0)
-            {  
-                tableWidget->item(0,i)->setBackground(Qt::green);
-                tableWidget->item(1,i)->setBackground(Qt::green);
-            }else{
-                tableWidget->item(0,i)->setBackground(Qt::red);
-                tableWidget->item(1,i)->setBackground(Qt::red);
-            }
+            { tableWidget->item(1,i)->setBackground(Qt::green); }
+            else{ tableWidget->item(1,i)->setBackground(Qt::red); }
         }        
     }
 }

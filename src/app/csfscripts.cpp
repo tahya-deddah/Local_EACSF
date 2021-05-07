@@ -121,12 +121,14 @@ void CSFScripts::write_process_left_hemisphere()
     script_left_hemisphere.replace("@imagedimension@", checkStringValue(param_obj["Image_dimension"]));
     script_left_hemisphere.replace("@NumberIter@", checkStringValue(param_obj["Smoothing_numberIter"]));
     script_left_hemisphere.replace("@Bandwith@", checkStringValue(param_obj["Smoothing_bandwith"]));
+    script_left_hemisphere.replace("@interpolationMargin@", checkStringValue(param_obj["Interpolation_margin"]));
 
     script_left_hemisphere.replace("@Clean@", checkBoolValue(param_obj["Clean"]));
     script_left_hemisphere.replace("@Smooth@", checkBoolValue(param_obj["Smooth"]));
-    script_left_hemisphere.replace("@Interpolation@", checkBoolValue(param_obj["Interpolation"]));
 
-    
+    script_left_hemisphere.replace("@Interpolated@", checkBoolValue(param_obj["Interpolated"]));
+    script_left_hemisphere.replace("@NotInterpolated@", checkBoolValue(param_obj["NotInterpolated"]));
+   
     QString scripts_dir = QDir::cleanPath(checkStringValue(data_obj["Output_Directory"]) + QString("/LocalEACSF") + m_PythonScripts);
     
     QString left_hemisphere_script = QDir::cleanPath(scripts_dir + QString("/process_left_hemisphere.py"));
@@ -173,19 +175,18 @@ void CSFScripts::write_process_right_hemisphere()
     script_right_hemisphere.replace("@HeatKernelSmoothing_PATH@", checkStringValue(m_Executables["HeatKernelSmoothing"]));
     script_right_hemisphere.replace("@ComputeCSFVolume_PATH@", checkStringValue(m_Executables["ComputeCSFVolume"]));
 
-
-
     script_right_hemisphere.replace("@closingradius@", QString::number(param_obj["Closing_radius"].toInt()));
     script_right_hemisphere.replace("@dilationradius@", QString::number(param_obj["Dilation_radius"].toInt()));
     script_right_hemisphere.replace("@NumberIterations@", QString::number(param_obj["Iterations_number"].toInt()));
     script_right_hemisphere.replace("@imagedimension@", checkStringValue(param_obj["Image_dimension"]));
     script_right_hemisphere.replace("@NumberIter@", checkStringValue(param_obj["Smoothing_numberIter"]));
     script_right_hemisphere.replace("@Bandwith@", checkStringValue(param_obj["Smoothing_bandwith"]));
-
+    script_right_hemisphere.replace("@interpolationMargin@", checkStringValue(param_obj["Interpolation_margin"]));
 
     script_right_hemisphere.replace("@Clean@", checkBoolValue(param_obj["Clean"]));
     script_right_hemisphere.replace("@Smooth@", checkBoolValue(param_obj["Smooth"]));
-    script_right_hemisphere.replace("@Interpolation@", checkBoolValue(param_obj["Interpolation"]));
+    script_right_hemisphere.replace("@Interpolated@", checkBoolValue(param_obj["Interpolated"]));
+    script_right_hemisphere.replace("@NotInterpolated@", checkBoolValue(param_obj["NotInterpolated"]));
 
   
     QString scripts_dir = QDir::cleanPath(checkStringValue(data_obj["Output_Directory"]) + QString("/LocalEACSF") + m_PythonScripts);

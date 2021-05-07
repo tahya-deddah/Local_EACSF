@@ -20,8 +20,8 @@
     </property>
     <property name="geometry">
      <rect>
-      <x>20</x>
-      <y>10</y>
+      <x>10</x>
+      <y>0</y>
       <width>951</width>
       <height>671</height>
      </rect>
@@ -39,7 +39,7 @@
      <string/>
     </property>
     <property name="currentIndex">
-     <number>3</number>
+     <number>6</number>
     </property>
     <widget class="QWidget" name="tab_batch">
      <attribute name="title">
@@ -754,7 +754,7 @@
         <x>40</x>
         <y>420</y>
         <width>511</width>
-        <height>91</height>
+        <height>81</height>
        </rect>
       </property>
       <property name="text">
@@ -802,20 +802,49 @@ p, li { white-space: pre-wrap; }
        </rect>
       </property>
       <property name="text">
-       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt; (+/- 20)&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;(+/-)&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
       </property>
      </widget>
-     <widget class="QCheckBox" name="checkBox_Interpolation">
+     <widget class="QLineEdit" name="InterpolationMargin">
       <property name="geometry">
        <rect>
-        <x>40</x>
-        <y>530</y>
-        <width>471</width>
+        <x>750</x>
+        <y>450</y>
+        <width>41</width>
+        <height>32</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>20</string>
+      </property>
+     </widget>
+     <widget class="QRadioButton" name="radioButton_Interpolated">
+      <property name="geometry">
+       <rect>
+        <x>50</x>
+        <y>510</y>
+        <width>381</width>
         <height>25</height>
        </rect>
       </property>
       <property name="text">
-       <string>Keep the interpolated CSF density </string>
+       <string>Use the interpolated CSF density as the final one</string>
+      </property>
+      <property name="checked">
+       <bool>true</bool>
+      </property>
+     </widget>
+     <widget class="QRadioButton" name="radioButton_notInterpolated">
+      <property name="geometry">
+       <rect>
+        <x>50</x>
+        <y>540</y>
+        <width>381</width>
+        <height>25</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Use the not interplated CSF density as the final one </string>
       </property>
      </widget>
     </widget>
@@ -1225,8 +1254,8 @@ p, li { white-space: pre-wrap; }
      <widget class="QPushButton" name="visualize">
       <property name="geometry">
        <rect>
-        <x>570</x>
-        <y>160</y>
+        <x>590</x>
+        <y>140</y>
         <width>231</width>
         <height>41</height>
        </rect>
@@ -1261,30 +1290,30 @@ p, li { white-space: pre-wrap; }
        <string>Visualize the CSF density for both hemispheres in ShapePopulationViewer </string>
       </property>
      </widget>
-     <widget class="QRadioButton" name="VisualiseVisitationMAp">
+     <widget class="QRadioButton" name="VisualiseLeftVisitation">
       <property name="geometry">
        <rect>
         <x>20</x>
         <y>150</y>
-        <width>441</width>
+        <width>541</width>
         <height>25</height>
        </rect>
       </property>
       <property name="text">
-       <string>Visualize the visitation map for both hemispheres in itksnap</string>
+       <string>Visualize the visitation map and the CSF probability for left side in  itksnap</string>
       </property>
      </widget>
-     <widget class="QRadioButton" name="VisualiseCSFPorbMAp">
+     <widget class="QRadioButton" name="VisualiseRightVisitation">
       <property name="geometry">
        <rect>
         <x>20</x>
         <y>190</y>
-        <width>441</width>
+        <width>531</width>
         <height>25</height>
        </rect>
       </property>
       <property name="text">
-       <string>Visualize the CSF Probability  map  in itksnap</string>
+       <string>Visualize the visitation map and the CSF probability for right side in  itksnap</string>
       </property>
      </widget>
      <widget class="QLabel" name="label">
@@ -1298,19 +1327,6 @@ p, li { white-space: pre-wrap; }
       </property>
       <property name="text">
        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Compare the EACSF Density sum with the EACSF Volume :&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-      </property>
-     </widget>
-     <widget class="QRadioButton" name="VisualiseDelta">
-      <property name="geometry">
-       <rect>
-        <x>20</x>
-        <y>230</y>
-        <width>601</width>
-        <height>25</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>Visualise the absolute difference between interpolated and not interploted CSF density</string>
       </property>
      </widget>
      <widget class="QTableWidget" name="tableWidget">
@@ -1344,9 +1360,55 @@ p, li { white-space: pre-wrap; }
       </column>
       <column>
        <property name="text">
-        <string>Left - Right</string>
+        <string>L-R /L+R</string>
        </property>
       </column>
+      <item row="0" column="0">
+       <property name="text">
+        <string/>
+       </property>
+       <property name="font">
+        <font>
+         <pointsize>15</pointsize>
+         <weight>75</weight>
+         <bold>true</bold>
+        </font>
+       </property>
+      </item>
+      <item row="0" column="1">
+       <property name="text">
+        <string/>
+       </property>
+       <property name="font">
+        <font>
+         <pointsize>15</pointsize>
+         <weight>75</weight>
+         <bold>true</bold>
+        </font>
+       </property>
+      </item>
+      <item row="1" column="0">
+       <property name="text">
+        <string/>
+       </property>
+       <property name="font">
+        <font>
+         <pointsize>15</pointsize>
+        </font>
+       </property>
+      </item>
+      <item row="1" column="1">
+       <property name="text">
+        <string/>
+       </property>
+       <property name="font">
+        <font>
+         <pointsize>15</pointsize>
+         <weight>75</weight>
+         <bold>true</bold>
+        </font>
+       </property>
+      </item>
      </widget>
     </widget>
    </widget>

@@ -20,9 +20,7 @@
 int  main(int argc, char** argv) 
 {
     PARSE_ARGS;
-    //std::string inputSurfaceFilename = InputSurface;
 	vtkSmartPointer<vtkPolyDataReader> surfacereader = vtkSmartPointer<vtkPolyDataReader>::New();
-	//surfacereader->SetFileName(inputSurfaceFilename.c_str());
 	surfacereader->SetFileName(InputSurface.c_str());
 	surfacereader->Update();
 
