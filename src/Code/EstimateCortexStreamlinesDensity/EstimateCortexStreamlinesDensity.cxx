@@ -245,10 +245,6 @@ int main ( int argc, char *argv[] )
   ArrayMagGradient->SetNumberOfComponents(1);
   ArrayMagGradient->SetName("CSFDensityMagGradient");
 
-  vtkSmartPointer<vtkDoubleArray> ArrayMagGradientNormalized = vtkSmartPointer<vtkDoubleArray>::New();
-  ArrayMagGradientNormalized->SetNumberOfComponents(1);
-  ArrayMagGradientNormalized->SetName("CSFDensityMagGradientNormalized");
-
   for(vtkIdType vertex = 0; vertex < inputPolyData->GetNumberOfPoints(); vertex++)
   {
      double g[3]; 
@@ -256,23 +252,16 @@ int main ( int argc, char *argv[] )
      g[1] = ArrayGradient->GetComponent(vertex,1);
      g[2] = ArrayGradient->GetComponent(vertex,2);
      double MagGradient = vtkMath::Norm(g);
-     double MagGradientNormalized = MagGradient/ArrayCSFDensity->GetValue(vertex);
+     
 
-
-     if (MagGradient == 0.0 || isnan(MagGradient) || isnan(MagGradientNormalized))
-     {
+    if (MagGradient == 0.0 || isnan(MagGradient) )
+    {
      MagGradient = 0;
-     MagGradientNormalized = 0;
-     }
-
-
-     ArrayMagGradient->InsertNextValue(MagGradient);
-     ArrayMagGradientNormalized->InsertNextValue(MagGradientNormalized);
-
+    }
+    ArrayMagGradient->InsertNextValue(MagGradient);
   }
   inputPolyData->GetPointData()->AddArray(ArrayMagGradient);
-  inputPolyData->GetPointData()->AddArray(ArrayMagGradientNormalized);
-
+ 
 //-----------------------------------------------Output Results------------------------------------------------------------------
   std::string FileName = InputSurfaceFileName;
   std::string NewFileName = FileName.substr(0, FileName.size()-3);
@@ -300,17 +289,6 @@ int main ( int argc, char *argv[] )
             }
   Result2.close();
 
-  /*ofstream Result3;
-  std::string Result3FileName = NewFileName + "NormalizedCSFDensityMagGradient.txt";
-  Result3.open (Result3FileName.c_str());
-  Result3 << "NUMBER_OF_POINTS=" << inputPolyData->GetNumberOfPoints() << endl; 
-  Result3 << "DIMENSION=1"  << endl;
-  Result3 << "TYPE=Scalar" << endl;
-  for(vtkIdType vertex = 0; vertex < inputPolyData->GetNumberOfPoints(); vertex++)
-      {
-                Result3 << ArrayMagGradientNormalized->GetValue(vertex) << endl;
-            }
-  Result3.close();*/
 
   std::string outputSurfaceFileName = OutputSurfacename;
   vtkSmartPointer<vtkPolyDataWriter> polywriter = vtkSmartPointer<vtkPolyDataWriter>::New();

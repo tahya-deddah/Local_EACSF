@@ -1,10 +1,10 @@
 #include "HeatKernelSmoothingCLP.h"
 #include <vtkGenericDataObjectReader.h>
+#include <vtkFloatArray.h>
+#include <vtkDoubleArray.h>
 #include <vtkPolyDataReader.h>
 #include <vtkPolyDataWriter.h>
 #include <vtkSmartPointer.h>
-#include <vtkDoubleArray.h>
-#include <vtkFloatArray.h>
 #include <vtkPolyData.h>
 #include <vtkPointData.h>
 #include <vtkGradientFilter.h>
@@ -20,13 +20,19 @@
 int  main(int argc, char** argv) 
 {
     PARSE_ARGS;
-	vtkSmartPointer<vtkPolyDataReader> surfacereader = vtkSmartPointer<vtkPolyDataReader>::New();
+    std::string inputSurfaceFilename = InputSurface;
+  	vtkSmartPointer<vtkPolyDataReader> surfacereader = vtkSmartPointer<vtkPolyDataReader>::New();
+  	surfacereader->SetFileName(inputSurfaceFilename.c_str());
+  	surfacereader->Update();
+
+	/*vtkSmartPointer<vtkPolyDataReader> surfacereader = vtkSmartPointer<vtkPolyDataReader>::New();
 	surfacereader->SetFileName(InputSurface.c_str());
-	surfacereader->Update();
+	surfacereader->Update();*/
 
 	vtkPolyData* inputPolyData = surfacereader->GetOutput();
+	//vtkSmartPointer<vtkPolyData> inputPolyData = surfacereader->GetOutput();
 
-	//- - -------------------------------------------  Smoothed CSF Density ----------------------------------------------------------- //
+	//- - -------------------------------------------  Smooth the  CSF Density ----------------------------------------------------------- //
 
 	for (int iter = 0; iter < Numberofiterations; iter++)
 	{	
@@ -117,9 +123,6 @@ int  main(int argc, char** argv)
 	ArrayMagGradient->SetNumberOfComponents(1);
 	ArrayMagGradient->SetName("CSFDensityMagGradient");
 
-	vtkSmartPointer<vtkDoubleArray> ArrayMagGradientNormalized = vtkSmartPointer<vtkDoubleArray>::New();
-	ArrayMagGradientNormalized->SetNumberOfComponents(1);
-	ArrayMagGradientNormalized->SetName("CSFDensityMagGradientNormalized");
 	for(vtkIdType vertex = 0; vertex < inputPolyData->GetNumberOfPoints(); vertex++)
 	{
 	    double g[3]; 
@@ -128,7 +131,6 @@ int  main(int argc, char** argv)
 	    g[2] = ArrayGradient->GetComponent(vertex,2);
 	    double MagGradient = vtkMath::Norm(g);
 	   
-
 	    if (MagGradient == 0.0 || isnan(MagGradient))
 	    {
 	    	MagGradient = 0;

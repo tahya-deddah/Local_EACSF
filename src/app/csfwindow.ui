@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1000</width>
-    <height>727</height>
+    <width>994</width>
+    <height>720</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -20,7 +20,7 @@
     </property>
     <property name="geometry">
      <rect>
-      <x>10</x>
+      <x>20</x>
       <y>0</y>
       <width>951</width>
       <height>671</height>
@@ -39,7 +39,7 @@
      <string/>
     </property>
     <property name="currentIndex">
-     <number>6</number>
+     <number>3</number>
     </property>
     <widget class="QWidget" name="tab_batch">
      <attribute name="title">
@@ -706,7 +706,10 @@
        </rect>
       </property>
       <property name="specialValueText">
-       <string>15</string>
+       <string/>
+      </property>
+      <property name="value">
+       <number>15</number>
       </property>
      </widget>
      <widget class="QSpinBox" name="DilationRadius">
@@ -719,7 +722,10 @@
        </rect>
       </property>
       <property name="specialValueText">
-       <string>2</string>
+       <string/>
+      </property>
+      <property name="value">
+       <number>2</number>
       </property>
      </widget>
      <widget class="QLabel" name="Number_iterations">
@@ -745,7 +751,10 @@
        </rect>
       </property>
       <property name="specialValueText">
-       <string>1</string>
+       <string/>
+      </property>
+      <property name="value">
+       <number>1</number>
       </property>
      </widget>
      <widget class="QLabel" name="image_dimension">
@@ -823,12 +832,12 @@ p, li { white-space: pre-wrap; }
        <rect>
         <x>50</x>
         <y>510</y>
-        <width>381</width>
+        <width>431</width>
         <height>25</height>
        </rect>
       </property>
       <property name="text">
-       <string>Use the interpolated CSF density as the final one</string>
+       <string>Use optimal CSF density (image size +/- margin value )</string>
       </property>
       <property name="checked">
        <bool>true</bool>
@@ -844,7 +853,7 @@ p, li { white-space: pre-wrap; }
        </rect>
       </property>
       <property name="text">
-       <string>Use the not interplated CSF density as the final one </string>
+       <string>always use CSF density at image size</string>
       </property>
      </widget>
     </widget>
@@ -1267,8 +1276,8 @@ p, li { white-space: pre-wrap; }
      <widget class="QPushButton" name="Compare">
       <property name="geometry">
        <rect>
-        <x>130</x>
-        <y>320</y>
+        <x>120</x>
+        <y>280</y>
         <width>161</width>
         <height>41</height>
        </rect>
@@ -1320,7 +1329,7 @@ p, li { white-space: pre-wrap; }
       <property name="geometry">
        <rect>
         <x>20</x>
-        <y>280</y>
+        <y>240</y>
         <width>431</width>
         <height>31</height>
        </rect>
@@ -1333,9 +1342,9 @@ p, li { white-space: pre-wrap; }
       <property name="geometry">
        <rect>
         <x>20</x>
-        <y>370</y>
-        <width>401</width>
-        <height>91</height>
+        <y>340</y>
+        <width>491</width>
+        <height>121</height>
        </rect>
       </property>
       <row>
@@ -1345,7 +1354,12 @@ p, li { white-space: pre-wrap; }
       </row>
       <row>
        <property name="text">
-        <string>Density Sum</string>
+        <string>Interpolated Density Sum</string>
+       </property>
+      </row>
+      <row>
+       <property name="text">
+        <string>Original Density Sum</string>
        </property>
       </row>
       <column>
@@ -1418,7 +1432,7 @@ p, li { white-space: pre-wrap; }
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1000</width>
+     <width>994</width>
      <height>28</height>
     </rect>
    </property>

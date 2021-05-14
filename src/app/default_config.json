@@ -11,10 +11,6 @@
 	},
 
 
-
-
-
-
 "parameters": {
 
         "Slurm_nodes": "1",

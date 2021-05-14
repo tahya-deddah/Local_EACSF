@@ -895,7 +895,7 @@ void CSFWindow::on_visualize_clicked()
     if (VisualiseRightVisitation->isChecked())
     {
         QString RH_visitation_map = RH_Directory + QString("/RH__Visitation.nrrd");
-        QStringList arguments = QStringList()<< QString("-g") << RH_visitation_map << QString("-s") << CSF_Probability_Map;
+        QStringList arguments = QStringList()<< QString("-s") << RH_visitation_map << QString("-g") << CSF_Probability_Map;
         visualization->setWorkingDirectory(OutputDirectory);
         visualization->start(QString("itksnap"), arguments);
         QMessageBox::information(
@@ -907,7 +907,7 @@ void CSFWindow::on_visualize_clicked()
     if (VisualiseLeftVisitation->isChecked())
     {
         QString LH_visitation_map = LH_Directory + QString("/LH__Visitation.nrrd");    
-        QStringList arguments = QStringList()<< QString("-g") << LH_visitation_map << QString("-s") << CSF_Probability_Map;
+        QStringList arguments = QStringList()<< QString("-s") << LH_visitation_map << QString("-g") << CSF_Probability_Map;
         visualization->setWorkingDirectory(OutputDirectory);
         visualization->start(QString("itksnap"), arguments);
         QMessageBox::information(
@@ -948,14 +948,32 @@ void CSFWindow::on_Compare_clicked()
         }                
         row = row  + 1;
     }
-    for(int i = 0; i<tableWidget->columnCount() ; i++)
+
+    //radioButton_Interpolated radioButton_notInterpolated
+    if(radioButton_Interpolated)
     {
-        if(tableWidget->item(0,i) != 0 && tableWidget->item(1,i) != 0)
+        for(int i = 0; i<tableWidget->columnCount() -1 ; i++)
         {
-            float diff = tableWidget->item(1,i)->text().toFloat() - tableWidget->item(0,i)->text().toFloat();
-            if (diff > 0 || diff == 0)
-            { tableWidget->item(1,i)->setBackground(Qt::green); }
-            else{ tableWidget->item(1,i)->setBackground(Qt::red); }
-        }        
+            if(tableWidget->item(0,i) != 0 && tableWidget->item(1,i) != 0)
+            {
+                float diff = tableWidget->item(1,i)->text().toFloat() - tableWidget->item(0,i)->text().toFloat();
+                if (diff > 0 || diff == 0)
+                { 
+                    tableWidget->item(1,i)->setBackground(Qt::green);
+                    tableWidget->item(1,2)->setBackground(Qt::green);
+                }
+                else{ 
+                    tableWidget->item(1,i)->setBackground(Qt::red);
+                    tableWidget->item(1,2)->setBackground(Qt::red); 
+                }
+            } 
+        }
+        for(int i = 0; i<tableWidget->columnCount() ; i++)
+        {
+            QFont font;
+            font.setStrikeOut(true);
+            tableWidget->item(2,i)->setFont(font);
+        }
     }
 }
+
