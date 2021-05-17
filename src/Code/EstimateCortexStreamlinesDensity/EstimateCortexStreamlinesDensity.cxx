@@ -147,7 +147,7 @@ int main ( int argc, char *argv[] )
                    Line_idlist_outer_final = Line_Outer_idlist;
         }
     }
- 
+
     typedef itk::LinearInterpolateImageFunction<ImageType, double> InterpolatorType;
                   InterpolatorType::Pointer Interpolator = InterpolatorType::New();
                   Interpolator->SetInputImage(inputimage);

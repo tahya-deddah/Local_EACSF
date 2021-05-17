@@ -211,7 +211,9 @@ def processing(args, DirectoryName, ImageDimension):
 		copyfile(args.LH_GM_surface, os.path.join(Directory,"LH_GM.vtk"))
 		print("Copying Done", flush=True)
 	else :
-		print("Data Exists", flush=True)	
+		print("Data Exists", flush=True)
+
+
 
 	#Executables:
 	CreateOuterImage = args.CreateOuterImage
@@ -221,8 +223,15 @@ def processing(args, DirectoryName, ImageDimension):
 	EstimateCortexStreamlinesDensity = args.EstimateCortexStreamlinesDensity
 	AddScalarstoPolyData = args.AddScalarstoPolyData
 	HeatKernelSmoothing = args.HeatKernelSmoothing
+	ComputeAverageMesh = args.ComputeAverageMesh
 	
 	os.chdir(Directory)
+	if(args.Use_MID_Surface):
+		InputSurface = 	os.path.join(Directory, "LH_GM.vtk")
+	if(args.Use_75P_Surface):
+		call_and_print([ComputeAverageMesh, "--inputFilename1", "LH_GM.vtk", "--inputFilename2", "LH_MID.vtk", "--outputFilename", "LH_75P_Surface.vtk"])
+		InputSurface = 	os.path.join(Directory, "LH_75P_Surface.vtk")
+	
 	Streamline_Path = os.path.join(Directory,"LH_Outer_streamlines.vtk")
 	StreamlinesExistenceTest = os.path.isfile(Streamline_Path)
 	if StreamlinesExistenceTest ==True :
@@ -238,9 +247,9 @@ def processing(args, DirectoryName, ImageDimension):
 
 		print('Creating LH streamlines', flush=True)
 		print('CEstablishing Surface Correspondance', flush=True)
-		call_and_print([klaplace,'-dims', ImageDimension,"LH_MID.vtk", "LH_GM_Outer_MC.vtk",'-surfaceCorrespondence',"LH_Outer.corr"])
+		call_and_print([klaplace,'-dims', ImageDimension, InputSurface, "LH_GM_Outer_MC.vtk",'-surfaceCorrespondence',"LH_Outer.corr"])
 		print('CEstablishing Streamlines', flush=True)
-		call_and_print([klaplace, '-traceStream',"LH_Outer.corr_field.vts","LH_MID.vtk", "LH_GM_Outer_MC.vtk", "LH_Outer_streamlines.vtp", \
+		call_and_print([klaplace, '-traceStream',"LH_Outer.corr_field.vts", InputSurface, "LH_GM_Outer_MC.vtk", "LH_Outer_streamlines.vtp", \
 									"LH_Outer_points.vtp",'-traceDirection','forward'])
 		call_and_print([klaplace, '-conv',"LH_Outer_streamlines.vtp", "LH_Outer_streamlines.vtk"])
 		print('Creating LH streamlines Done!', flush=True)
@@ -251,7 +260,7 @@ def processing(args, DirectoryName, ImageDimension):
 		print('Computing LH EACSF Done', flush=True)
 	else :
 		print('Computing LH EACSF  ', flush=True)
-		call_and_print([EstimateCortexStreamlinesDensity, "--InputSurface" ,"LH_MID.vtk", "--InputOuterStreamlines",  "LH_Outer_streamlines.vtk",\
+		call_and_print([EstimateCortexStreamlinesDensity, "--InputSurface" , InputSurface, "--InputOuterStreamlines",  "LH_Outer_streamlines.vtk",\
 			"--InputSegmentation", "CSF_Probability_Map.nrrd", "--InputMask", "LH_GM_Dilated.nrrd", "--OutputSurface", "LH_CSF_Density.vtk", "--VisitingMap",\
 			"LH__Visitation.nrrd"])
 		if(args.Smooth) :
@@ -275,10 +284,13 @@ parser.add_argument('--EstimateCortexStreamlinesDensity', type=str, help='Estima
 parser.add_argument('--AddScalarstoPolyData', type=str, help='AddScalarstoPolyData executable path', default='@AddScalarstoPolyData_PATH@')
 parser.add_argument('--HeatKernelSmoothing', type=str, help='HeatKernelSmoothing executable path', default='@HeatKernelSmoothing_PATH@')
 parser.add_argument('--ComputeCSFVolume', type=str, help='ComputeCSFVolume executable path', default='@ComputeCSFVolume_PATH@')
+parser.add_argument('--ComputeAverageMesh', type=str, help='ComputeAverageMesh executable path', default='@ComputeAverageMesh_PATH@')
 parser.add_argument('--Smooth', type=bool, help='Smooth the CSF Density with a heat kernel smoothing', default=@Smooth@)
 parser.add_argument('--Clean_up', type=bool, help='Clean the output directory of intermediate outputs', default=@Clean@)
-parser.add_argument('--Interpolated', type=bool, help='use the interpolated CSF density as the final one', default=@Interpolated@)
-parser.add_argument('--NotInterpolated', type=bool, help='use the not interpolated CSF density as the final one', default=@NotInterpolated@)
+parser.add_argument('--Interpolated', type=bool, help='Compute  the optimal CSF density ( Interpolated)', default=@Interpolated@)
+parser.add_argument('--NotInterpolated', type=bool, help='Compute CSF density without optimisation (Interpolation)', default=@NotInterpolated@)
+parser.add_argument('--Use_MID_Surface', type=bool, help='use the MID surface as the input surface', default=@Use_MID_Surface@)
+parser.add_argument('--Use_75P_Surface', type=bool, help='use the 75P Surface as the input surface', default=@Use_75P_Surface@)
 args = parser.parse_args()
 
 main_loop(args)

@@ -127,6 +127,8 @@ void CSFWindow::setConfig(QJsonObject root_obj)
     radioButton_Interpolated->setChecked(param_obj["Interpolated"].toBool());
     radioButton_notInterpolated->setChecked(param_obj["NotInterpolated"].toBool());
 
+    radioButton_MID->setChecked(param_obj["Use_MID_Surface"].toBool());
+    radioButton_75P->setChecked(param_obj["Use_75P_Surface"].toBool());
 
     QJsonArray exe_array = root_obj["executables"].toArray();
     foreach (const QJsonValue exe_val, exe_array)
@@ -174,6 +176,9 @@ QJsonObject CSFWindow::getConfig(){
 
     param_obj["Interpolated"] = radioButton_Interpolated->isChecked();
     param_obj["NotInterpolated"] = radioButton_notInterpolated->isChecked();
+
+    param_obj["Use_MID_Surface"] = radioButton_MID->isChecked();
+    param_obj["Use_75P_Surface"] = radioButton_75P->isChecked();
 
     QJsonObject root_obj;
     root_obj["data"] = data_obj;

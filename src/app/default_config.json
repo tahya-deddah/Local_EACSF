@@ -62,6 +62,10 @@
             "path": ""
         },
         {
+            "name": "ComputeAverageMesh",
+            "path": ""
+        },
+        {
             "name": "HeatKernelSmoothing",
             "path": ""
         },

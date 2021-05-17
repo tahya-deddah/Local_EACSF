@@ -65,6 +65,7 @@ if(NOT ( DEFINED "USE_SYSTEM_${extProjName}" AND "${USE_SYSTEM_${extProjName}}" 
       -DModule_ITKVtkGlue:BOOL=ON
       -DModule_ITKIODCMTK:BOOL=ON
       -DModule_MGHIO:BOOL=ON
+      -DModule_Thickness3D:BOOL=ON 
       -DITK_BUILD_DEFAULT_MODULES:BOOL=ON
       -DKWSYS_USE_MD5:BOOL=ON # Required by SlicerExecutionModel
       -DITK_WRAPPING:BOOL=OFF #${BUILD_SHARED_LIBS} ## HACK:  QUICK CHANGE

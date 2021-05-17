@@ -39,7 +39,7 @@
      <string/>
     </property>
     <property name="currentIndex">
-     <number>3</number>
+     <number>1</number>
     </property>
     <widget class="QWidget" name="tab_batch">
      <attribute name="title">
@@ -398,8 +398,8 @@
      <widget class="QLabel" name="input_images">
       <property name="geometry">
        <rect>
-        <x>20</x>
-        <y>30</y>
+        <x>10</x>
+        <y>10</y>
         <width>121</width>
         <height>31</height>
        </rect>
@@ -411,8 +411,8 @@
      <widget class="QPushButton" name="T1">
       <property name="geometry">
        <rect>
-        <x>30</x>
-        <y>60</y>
+        <x>20</x>
+        <y>40</y>
         <width>231</width>
         <height>31</height>
        </rect>
@@ -425,7 +425,7 @@
       <property name="geometry">
        <rect>
         <x>290</x>
-        <y>60</y>
+        <y>40</y>
         <width>531</width>
         <height>31</height>
        </rect>
@@ -434,8 +434,8 @@
      <widget class="QPushButton" name="Segmentation">
       <property name="geometry">
        <rect>
-        <x>30</x>
-        <y>110</y>
+        <x>20</x>
+        <y>80</y>
         <width>231</width>
         <height>31</height>
        </rect>
@@ -448,7 +448,7 @@
       <property name="geometry">
        <rect>
         <x>290</x>
-        <y>110</y>
+        <y>80</y>
         <width>531</width>
         <height>31</height>
        </rect>
@@ -457,8 +457,8 @@
      <widget class="QPushButton" name="CSF_Probability_Map">
       <property name="geometry">
        <rect>
-        <x>30</x>
-        <y>160</y>
+        <x>20</x>
+        <y>120</y>
         <width>231</width>
         <height>31</height>
        </rect>
@@ -471,7 +471,7 @@
       <property name="geometry">
        <rect>
         <x>290</x>
-        <y>160</y>
+        <y>120</y>
         <width>531</width>
         <height>31</height>
        </rect>
@@ -481,7 +481,7 @@
       <property name="geometry">
        <rect>
         <x>10</x>
-        <y>220</y>
+        <y>160</y>
         <width>301</width>
         <height>31</height>
        </rect>
@@ -493,8 +493,8 @@
      <widget class="QPushButton" name="LH_MID_Surface">
       <property name="geometry">
        <rect>
-        <x>30</x>
-        <y>250</y>
+        <x>20</x>
+        <y>190</y>
         <width>231</width>
         <height>31</height>
        </rect>
@@ -507,7 +507,7 @@
       <property name="geometry">
        <rect>
         <x>290</x>
-        <y>250</y>
+        <y>190</y>
         <width>531</width>
         <height>31</height>
        </rect>
@@ -516,8 +516,8 @@
      <widget class="QPushButton" name="LH_GM_Surface">
       <property name="geometry">
        <rect>
-        <x>30</x>
-        <y>300</y>
+        <x>20</x>
+        <y>230</y>
         <width>231</width>
         <height>31</height>
        </rect>
@@ -530,7 +530,7 @@
       <property name="geometry">
        <rect>
         <x>290</x>
-        <y>300</y>
+        <y>230</y>
         <width>531</width>
         <height>31</height>
        </rect>
@@ -539,8 +539,8 @@
      <widget class="QLabel" name="right_hemisphere">
       <property name="geometry">
        <rect>
-        <x>20</x>
-        <y>360</y>
+        <x>10</x>
+        <y>270</y>
         <width>281</width>
         <height>31</height>
        </rect>
@@ -552,8 +552,8 @@
      <widget class="QPushButton" name="RH_MID_Surface">
       <property name="geometry">
        <rect>
-        <x>30</x>
-        <y>390</y>
+        <x>20</x>
+        <y>310</y>
         <width>231</width>
         <height>31</height>
        </rect>
@@ -566,7 +566,7 @@
       <property name="geometry">
        <rect>
         <x>290</x>
-        <y>390</y>
+        <y>310</y>
         <width>531</width>
         <height>31</height>
        </rect>
@@ -575,8 +575,8 @@
      <widget class="QPushButton" name="RH_GM_Surface">
       <property name="geometry">
        <rect>
-        <x>30</x>
-        <y>440</y>
+        <x>20</x>
+        <y>350</y>
         <width>231</width>
         <height>31</height>
        </rect>
@@ -589,7 +589,7 @@
       <property name="geometry">
        <rect>
         <x>290</x>
-        <y>440</y>
+        <y>350</y>
         <width>531</width>
         <height>31</height>
        </rect>
@@ -629,6 +629,35 @@
         <width>531</width>
         <height>31</height>
        </rect>
+      </property>
+     </widget>
+     <widget class="QRadioButton" name="radioButton_MID">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>410</y>
+        <width>201</width>
+        <height>25</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Use the MID Surface</string>
+      </property>
+      <property name="checked">
+       <bool>true</bool>
+      </property>
+     </widget>
+     <widget class="QRadioButton" name="radioButton_75P">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>440</y>
+        <width>371</width>
+        <height>25</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Compute and use 3/4 Surface ( (MID + Gray)/2 ) </string>
       </property>
      </widget>
     </widget>

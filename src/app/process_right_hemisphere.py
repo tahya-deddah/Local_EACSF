@@ -220,9 +220,16 @@ def processing(args, DirectoryName, ImageDimension):
 	EstimateCortexStreamlinesDensity = args.EstimateCortexStreamlinesDensity
 	AddScalarstoPolyData = args.AddScalarstoPolyData
 	HeatKernelSmoothing = args.HeatKernelSmoothing
+	ComputeAverageMesh = args.ComputeAverageMesh
 	
 	###
 	os.chdir(Directory)
+	if(args.Use_MID_Surface):
+		InputSurface = 	os.path.join(Directory, "RH_GM.vtk")
+	if(args.Use_75P_Surface):
+		call_and_print([ComputeAverageMesh, "--inputFilename1", "RH_GM.vtk", "--inputFilename2", "RH_MID.vtk", "--outputFilename", "RH_75P_Surface.vtk"])
+		InputSurface = 	os.path.join(Directory, "RH_75P_Surface.vtk")
+
 	Streamline_Path = os.path.join(Directory,"RH_Outer_streamlines.vtk")
 	StreamlinesExistenceTest = os.path.isfile(Streamline_Path)
 	if StreamlinesExistenceTest ==True :
@@ -238,10 +245,10 @@ def processing(args, DirectoryName, ImageDimension):
 
 		print('Creating RH streamlines', flush=True)
 		print('CEstablishing Surface Correspondance', flush=True)
-		call_and_print([klaplace,'-dims', ImageDimension,"RH_MID.vtk", "RH_GM_Outer_MC.vtk",'-surfaceCorrespondence',"RH_Outer.corr"])
+		call_and_print([klaplace,'-dims', ImageDimension, InputSurface, "RH_GM_Outer_MC.vtk",'-surfaceCorrespondence',"RH_Outer.corr"])
 
 		print('CEstablishing Streamlines', flush=True)
-		call_and_print([klaplace, '-traceStream',"RH_Outer.corr_field.vts","RH_MID.vtk", "RH_GM_Outer_MC.vtk", "RH_Outer_streamlines.vtp", \
+		call_and_print([klaplace, '-traceStream',"RH_Outer.corr_field.vts", InputSurface, "RH_GM_Outer_MC.vtk", "RH_Outer_streamlines.vtp", \
 									"RH_Outer_points.vtp",'-traceDirection','forward'])
 		call_and_print([klaplace, '-conv',"RH_Outer_streamlines.vtp", "RH_Outer_streamlines.vtk"])
 		print('Creating RH streamlines Done!', flush=True)
@@ -252,7 +259,7 @@ def processing(args, DirectoryName, ImageDimension):
 		print('Computing RH EACSF Done', flush=True)
 	else :
 		print('Computing RH EACSF  ')
-		call_and_print([EstimateCortexStreamlinesDensity, "--InputSurface" ,"RH_MID.vtk", "--InputOuterStreamlines",  "RH_Outer_streamlines.vtk",\
+		call_and_print([EstimateCortexStreamlinesDensity, "--InputSurface" , InputSurface, "--InputOuterStreamlines",  "RH_Outer_streamlines.vtk",\
 			"--InputSegmentation", "CSF_Probability_Map.nrrd", "--InputMask", "RH_GM_Dilated.nrrd", "--OutputSurface", "RH_CSF_Density.vtk", "--VisitingMap",\
 			"RH__Visitation.nrrd"])
 		if(args.Smooth) :
@@ -276,9 +283,12 @@ parser.add_argument('--EstimateCortexStreamlinesDensity', type=str, help='Estima
 parser.add_argument('--AddScalarstoPolyData', type=str, help='AddScalarstoPolyData executable path', default='@AddScalarstoPolyData_PATH@')
 parser.add_argument('--HeatKernelSmoothing', type=str, help='HeatKernelSmoothing executable path', default='@HeatKernelSmoothing_PATH@')
 parser.add_argument('--ComputeCSFVolume', type=str, help='ComputeCSFVolume executable path', default='@ComputeCSFVolume_PATH@')
+parser.add_argument('--ComputeAverageMesh', type=str, help='ComputeAverageMesh executable path', default='@ComputeAverageMesh_PATH@')
 parser.add_argument('--Smooth', type=bool, help='Smooth the CSF Density with a heat kernel smoothing', default=@Smooth@)
 parser.add_argument('--Clean_up', type=bool, help='Clean the output directory of intermediate outputs', default=@Clean@)
-parser.add_argument('--Interpolated', type=bool, help='use the interpolated CSF density as the final one', default=@Interpolated@)
-parser.add_argument('--NotInterpolated', type=bool, help='use the not interpolated CSF density as the final one', default=@NotInterpolated@)
+parser.add_argument('--Interpolated', type=bool, help='Compute  the optimal CSF density ( Interpolated) ', default=@Interpolated@)
+parser.add_argument('--NotInterpolated', type=bool, help='Compute CSF density without optimisation (Interpolation) ', default=@NotInterpolated@)
+parser.add_argument('--Use_MID_Surface', type=bool, help='use the MID surface as the input surface', default=@Use_MID_Surface@)
+parser.add_argument('--Use_75P_Surface', type=bool, help='use the 75P Surface as the input surface', default=@Use_75P_Surface@)
 args = parser.parse_args()
 main_loop(args)
