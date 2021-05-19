@@ -7,10 +7,19 @@ set(CMAKE_CXX_STANDARD_REQUIRED True)
 SET(APP_NAME CreateOuterSurface)
 set_property(SOURCE CreateOuterSurfaceCLP.h PROPERTY SKIP_AUTOMOC ON)
 
-SET(${APP_NAME}_LIBRARIES ${ITK_LIBRARIES} ${VTK_LIBRARIES})
-
 find_package(SlicerExecutionModel)
 include(${SlicerExecutionModel_USE_FILE})
+
+find_package(ITK REQUIRED)
+include(${ITK_USE_FILE})
+
+find_package(VTK REQUIRED)
+include(${VTK_USE_FILE})
+
+
+
+SET(${APP_NAME}_LIBRARIES ${ITK_LIBRARIES} ${VTK_LIBRARIES})
+
 
 SEMMacroBuildCLI(
 	NAME ${APP_NAME}

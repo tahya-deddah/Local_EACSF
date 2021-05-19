@@ -774,6 +774,7 @@ void CSFWindow::disp_output(QProcess *prc, QString outlog_filename)
 
     if (file.open(QIODevice::WriteOnly | QIODevice::Append)) {
     QTextStream out(&file); out <<output_log;
+    //output->setText(output_log);
     output->append(output_log);
     file.close();}  
 }
@@ -886,8 +887,15 @@ void CSFWindow::on_visualize_clicked()
 
     if (VisualiseCSFDensity->isChecked())
     {
-        QString LH_CSFDensity = LH_Directory + QString("/LH_CSF_Density.vtk");
-        QString RH_CSFDensity  = RH_Directory + QString("/RH_CSF_Density.vtk");
+    
+        QString LH_CSFDensity = LH_Directory + QString("/LH_MID_CSF_Density.vtk");
+        QString RH_CSFDensity  = RH_Directory + QString("/RH_MID_CSF_Density.vtk");
+        QFileInfo check_file(LH_CSFDensity);
+        if(!check_file.exists())
+        {
+            LH_CSFDensity = LH_Directory + QString("/LH_75P_CSF_Density.vtk");
+            RH_CSFDensity  = RH_Directory + QString("/RH_75P_CSF_Density.vtk");     
+        }
         QStringList arguments = QStringList() << QString("-v") << LH_CSFDensity  << QString("-v")<< RH_CSFDensity ;
         visualization->setWorkingDirectory(OutputDirectory);
         visualization->start(QString("ShapePopulationViewer"), arguments);

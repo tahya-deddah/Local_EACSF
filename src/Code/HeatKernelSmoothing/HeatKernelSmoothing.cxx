@@ -25,10 +25,6 @@ int  main(int argc, char** argv)
   	surfacereader->SetFileName(inputSurfaceFilename.c_str());
   	surfacereader->Update();
 
-	/*vtkSmartPointer<vtkPolyDataReader> surfacereader = vtkSmartPointer<vtkPolyDataReader>::New();
-	surfacereader->SetFileName(InputSurface.c_str());
-	surfacereader->Update();*/
-
 	vtkPolyData* inputPolyData = surfacereader->GetOutput();
 	//vtkSmartPointer<vtkPolyData> inputPolyData = surfacereader->GetOutput();
 
@@ -144,9 +140,9 @@ int  main(int argc, char** argv)
 
 	vtkSmartPointer<vtkDoubleArray> array = vtkDoubleArray::SafeDownCast(inputPolyData->GetPointData()->GetArray("CSFDensity"));
 	std::string FileName = InputSurface;
-	
-	std::string NewFileName = FileName.substr(0, 3);
-	std::string ResultFileName = NewFileName + "MID.CSFDensity.txt";
+
+	std::string NewFileName = FileName.substr(0,6);
+	std::string ResultFileName = NewFileName + ".CSFDensity.txt";
 	ofstream Result;
 	Result.open(ResultFileName.c_str(), ofstream::trunc);
 	Result << "NUMBER_OF_POINTS=" << inputPolyData->GetNumberOfPoints() << endl; 
@@ -159,7 +155,7 @@ int  main(int argc, char** argv)
 	Result.close();
 
 	ofstream Result2;
-	std::string Result2FileName = NewFileName + "MID.CSFDensityMagGradient.txt";
+	std::string Result2FileName = NewFileName + ".CSFDensityMagGradient.txt";
 	Result2.open (Result2FileName.c_str(), ofstream::trunc);
 	Result2 << "NUMBER_OF_POINTS=" << inputPolyData->GetNumberOfPoints() << endl; 
 	Result2 << "DIMENSION=1"  << endl;
