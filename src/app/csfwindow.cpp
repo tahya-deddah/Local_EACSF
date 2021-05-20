@@ -956,37 +956,27 @@ void CSFWindow::on_Compare_clicked()
         {
             QString left = tableWidget->item(row,0)->text();
             QString right = tableWidget->item(row,1)->text();
-            float difference = (left.toFloat() - right.toFloat())/ (left.toFloat() + right.toFloat());
+            float difference = (left.toFloat() - right.toFloat())/ (left.toFloat() + right.toFloat())/2;
             tableWidget->setItem( row, 2, new QTableWidgetItem( QString::number( difference * 100, 'f' , 2 ))); 
         }                
         row = row  + 1;
     }
-
-    //radioButton_Interpolated radioButton_notInterpolated
-    if(radioButton_Interpolated)
+  
+    for( int i = 0; i<tableWidget->columnCount() -1 ; i++)
     {
-        for(int i = 0; i<tableWidget->columnCount() -1 ; i++)
+        if(tableWidget->item(0,i) != 0 && tableWidget->item(1,i) != 0)
         {
-            if(tableWidget->item(0,i) != 0 && tableWidget->item(1,i) != 0)
-            {
-                float diff = tableWidget->item(1,i)->text().toFloat() - tableWidget->item(0,i)->text().toFloat();
-                if (diff > 0 || diff == 0)
-                { 
-                    tableWidget->item(1,i)->setBackground(Qt::green);
-                    tableWidget->item(1,2)->setBackground(Qt::green);
-                }
-                else{ 
-                    tableWidget->item(1,i)->setBackground(Qt::red);
-                    tableWidget->item(1,2)->setBackground(Qt::red); 
-                }
-            } 
-        }
-        for(int i = 0; i<tableWidget->columnCount() ; i++)
-        {
-            QFont font;
-            font.setStrikeOut(true);
-            tableWidget->item(2,i)->setFont(font);
-        }
-    }
+            float diff = tableWidget->item(1,i)->text().toFloat() - tableWidget->item(0,i)->text().toFloat();
+            if (diff > 0 || diff == 0)
+            { 
+                tableWidget->item(1,i)->setBackground(Qt::green);
+                tableWidget->item(1,2)->setBackground(Qt::green);
+            }
+            else{ 
+                tableWidget->item(1,i)->setBackground(Qt::red);
+                tableWidget->item(1,2)->setBackground(Qt::red); 
+            }
+        } 
+    }   
 }
 

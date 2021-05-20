@@ -123,11 +123,11 @@ int main ( int argc, char *argv[] )
 
   for(vtkIdType Vertex_ID = 0; Vertex_ID < inputPolyData->GetNumberOfPoints(); Vertex_ID++)
   {
-    std::cout << "Vertex ID " << Vertex_ID << std::endl;
+    //std::cout << "Vertex ID " << Vertex_ID << std::endl;
     double Vertex_p[3];
     inputPolyData->GetPoint(Vertex_ID,Vertex_p);
     Outer_Line_ID+= 1;
-    std::cout << "Outer Line ID " << Outer_Line_ID << std::endl;
+    //std::cout << "Outer Line ID " << Outer_Line_ID << std::endl;
 
     vtkIdType Line_Outer_cellLocation = 0;
     OuterLinearray->InitTraversal();
