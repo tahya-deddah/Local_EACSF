@@ -73,11 +73,11 @@ if(NOT ( DEFINED "USE_SYSTEM_${extProjName}" AND "${USE_SYSTEM_${extProjName}}" 
     )
   ### --- End Project specific additions
   set(${proj}_REPOSITORY https://github.com/Kitware/ITK.git)
-  set(${proj}_GIT_TAG "v5.1.1")
-  set(ITK_VERSION_ID ITK-5.1.1)
+  #set(${proj}_GIT_TAG "v5.1.1")
+  #set(ITK_VERSION_ID ITK-5.1.1)
 
-  #set(${proj}_GIT_TAG "release-4.13")
-  #set(ITK_VERSION_ID ITK-4.13)
+  set(${proj}_GIT_TAG "release-4.13")
+  set(ITK_VERSION_ID ITK-4.13)
 
   ExternalProject_Add(${proj}
     GIT_REPOSITORY ${${proj}_REPOSITORY}

@@ -39,7 +39,6 @@ int main(int argc, char *argv[])
   ImageType::Pointer image = thresholdFilter->GetOutput();
 
 
-
   ImageType::SizeType regionSize;
   regionSize[0] = int(image->GetLargestPossibleRegion().GetSize()[0]/2);
   regionSize[1] = image->GetLargestPossibleRegion().GetSize()[1];
@@ -61,10 +60,10 @@ int main(int argc, char *argv[])
   itk::ImageRegionIterator<ImageType> imageIterator(image,region);
  
   while(!imageIterator.IsAtEnd())
-    {
+  {
     imageIterator.Set(0);
     ++imageIterator;
-    }
+  }
  
 
   typedef itk::BinaryBallStructuringElement<
@@ -92,7 +91,6 @@ int main(int argc, char *argv[])
   radius = dilationradius/Spacing[0];
   structuringElement.SetRadius(radius);
   structuringElement.CreateStructuringElement();
-
 
 
 typedef itk::BinaryDilateImageFilter <ImageType, ImageType, StructuringElementType>
