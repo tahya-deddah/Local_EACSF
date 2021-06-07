@@ -38,65 +38,31 @@ def call_and_print(args):
 	if status_code != 0:
 	   	print("return code:",check_returncode, flush=True)
 
-def Interpolation(EACSFMaxValueFile, EACSFMinValueFile , EACSFInterpolatedFile):
+def average(file):
 
-	print("interpolating ", flush=True)
-	EACSFDensityMax = open(EACSFMaxValueFile, "r")
-	EACSFDensityMin = open(EACSFMinValueFile, "r")
-	EACSFDensityInterpolated = open(EACSFInterpolatedFile, "w")
+	data = []
+	with open(file) as f:
+		number_of_points = f.readline()
+		dimension = f.readline()
+		Type = f.readline()
+		for line in f:
+			fields = line.split()
+			rowdata = map(float, fields)
+			data.extend(rowdata)
+	average = sum(data)/len(data)
+	return (average)
 
-	##### read and write the first lines
-	number_of_points = EACSFDensityMax.readline()
-	dimension = EACSFDensityMax.readline()
-	Type = EACSFDensityMax.readline()
+def avoid_double_counting(Directory):
 
-	EACSFDensityMin.readline()
-	EACSFDensityMin.readline()
-	EACSFDensityMin.readline()
+	#Executables:
+	CreateOuterImage = args.CreateOuterImage
+	FitPlane = args.FitPlane
 
-	EACSFDensityInterpolated.write(number_of_points)
-	EACSFDensityInterpolated.write(dimension)
-	EACSFDensityInterpolated.write(Type)
-	
-	for line in EACSFDensityMax.readlines():
-		valueMax = line
-		valueMin = Decimal(EACSFDensityMin.readline())
-		mu = (Decimal(valueMax) + valueMin)/2
-		EACSFDensityInterpolated.write(str(mu) + "\n" ) 
-	EACSFDensityMax.close()
-	EACSFDensityMin.close()
-	EACSFDensityInterpolated.close() 
-	print("Interpolation done ", flush=True)
-
-def AbsoluteDifference(EACSFInterpolatedValueFile, EACSFFile, AbsoluteDifferenceFile):
-
-	print("Computing absolute difference  ", flush=True)
-	EACSFInterpolated = open(EACSFInterpolatedValueFile, "r")
-	EACSF = open(EACSFFile, "r")
-	AbsoluteDifference = open( AbsoluteDifferenceFile, "w")
-
-	##### read and write the first lines
-	number_of_points = EACSF.readline()
-	dimension = EACSF.readline()
-	Type = EACSF.readline()
-
-	EACSFInterpolated.readline()
-	EACSFInterpolated.readline()
-	EACSFInterpolated.readline()
-
-	AbsoluteDifference.write(number_of_points)
-	AbsoluteDifference.write(dimension)
-	AbsoluteDifference.write(Type)
-	
-	for line in EACSF.readlines():
-		EACSFvalue = line
-		EACSFInterpolatedvalue = float(EACSFInterpolated.readline())
-		delta = EACSFInterpolatedvalue - float(EACSFvalue)
-		AbsoluteDifference.write(str("%.4f" % delta) + "\n" ) 
-	EACSF.close()
-	EACSFInterpolated.close()
-	AbsoluteDifference.close() 
-	print("Computing done ", flush=True)
+	os.chdir(Directory)
+	call_and_print([CreateOuterImage,"--InputImg", "Tissu_Segmentation.nrrd", "--OutputImg", "RH_GM_Dilated.nrrd", "--closingradius", "@closingradius@",\
+	 "--dilationradius", "@dilationradius@", "--Reverse", '1'])
+	call_and_print([FitPlane,"--input1", "LH_GM_Dilated.nrrd", "--input2", "RH_GM_Dilated.nrrd", "--output1", "LH_GM_Dilated.nrrd", "--output2", "RH_GM_Dilated.nrrd"])
+	os.remove("RH_GM_Dilated.nrrd")
 
 def clean_up(Directory):
 
@@ -105,62 +71,56 @@ def clean_up(Directory):
 		if i.endswith('.vtp') or i.endswith('.vts'):
 			os.remove(i)
 	print("Cleaning directory done", flush=True)
+	
+def interpolation(EACSFMaxValueFile, EACSFMinValueFile , EACSFInterpolatedFile, EACSFFile, AbsoluteDifferenceFile):
 
-def CSFDensity_Sum (CSF_Density_txtFile, CSF_Volume_txtFile):
+	print("interpolating ", flush=True)
+	EACSFDensityMax = open(EACSFMaxValueFile, "r")
+	EACSFDensityMin = open(EACSFMinValueFile, "r")
+	EACSF = open(EACSFFile, "r")
+	EACSFDensityInterpolated = open(EACSFInterpolatedFile, "w")
+	AbsoluteDifference = open( AbsoluteDifferenceFile, "w")
 
-	print("Computing the CSf density sum   ", flush=True)
-	data = []
-	with open(CSF_Density_txtFile) as inputfile:
-		number_of_points = inputfile.readline()
-		dimension = inputfile.readline()
-		Type = inputfile.readline()
-		for line in inputfile:
-			fields = line.split()
-			rowdata = map(float, fields)
-			data.extend(rowdata)
-	CSFDensity_Sum = sum(data)
-	with open(CSF_Volume_txtFile, "a") as outputfile:
-		outputfile.write("Sum of EACSF Density = " + str("%.0f" % CSFDensity_Sum) + "\n")
-	print("Computing done   ", flush=True)
+	InputFiles = [EACSFDensityMax, EACSFDensityMin, EACSF ]
+	for i in InputFiles :
+		number_of_points = EACSFDensityMax.readline()
+		dimension = EACSFDensityMax.readline()
+		Type = EACSFDensityMax.readline()
+	
+	for line in EACSFDensityMax.readlines():
+		valueMax = line
+		valueMin = Decimal(EACSFDensityMin.readline())
+		value = Decimal(EACSF.readline())
+		mu = (Decimal(valueMax) + valueMin)/2
+		delta = mu - Decimal(value)
+		EACSFDensityInterpolated.write(str(mu) + "\n" )
+		AbsoluteDifference.write(str("%.4f" % delta) + "\n" )  
+	EACSFDensityMax.close()
+	EACSFDensityMin.close()
+	EACSF.close()
+	EACSFDensityInterpolated.close() 
+	AbsoluteDifference.close()
+	print("Interpolation done ", flush=True)
 
-def CSFDensity_average (LH_MID_CSF_Density):
-
-	data_LH = []
-	with open(LH_MID_CSF_Density) as LH:
-		number_of_points_LH = LH.readline()
-		dimension_LH = LH.readline()
-		Type_LH = LH.readline()
-		for line in LH:
-			fields_LH = line.split()
-			rowdata_LH = map(float, fields_LH)
-			data_LH.extend(rowdata_LH)
-	LH_average = sum(data_LH)/len(data_LH)
-	return (LH_average)
-
-def Optimise_CSFDensity (surface):
+def optimize_csfdensity (surface): ## optimize
 
 	EACSFFile = os.path.join( args.Output_Directory, "LocalEACSF", "LH_Directory", "LH_" + surface + ".CSFDensity.txt")
 	EACSFMaxValueFile = os.path.join( args.Output_Directory, "LocalEACSF", "LH_InterpolationMaxValue_Directory", "LH_" + surface + ".CSFDensity.txt")
 	EACSFMinValueFile = os.path.join( args.Output_Directory, "LocalEACSF", "LH_InterpolationMinValue_Directory", "LH_" + surface + ".CSFDensity.txt") 
 	EACSFInterpolatedFile = os.path.join( args.Output_Directory, "LocalEACSF", "LH_Directory", "LH_" + surface + ".CSFDensityInterpolated.txt")	
-	EACSFFinalFile = os.path.join( args.Output_Directory, "LocalEACSF", "LH_Directory", "LH_" + surface + ".CSFDensityFinal.txt")
 	AbsoluteDifferenceFile = os.path.join( args.Output_Directory, "LocalEACSF", "LH_Directory", "LH_absolute_difference.txt" )
 
-	Interpolation(EACSFMaxValueFile, EACSFMinValueFile , EACSFInterpolatedFile)
-	AbsoluteDifference(EACSFInterpolatedFile, EACSFFile, AbsoluteDifferenceFile)
+	interpolation(EACSFMaxValueFile, EACSFMinValueFile , EACSFInterpolatedFile, EACSFFile, AbsoluteDifferenceFile)
 	os.chdir(os.path.join( args.Output_Directory, "LocalEACSF", "LH_Directory"))
 	call_and_print([args.AddScalarstoPolyData, "--InputFile", "LH_" + surface + "_CSF_Density.vtk", "--OutputFile", "LH_" + surface + "_CSF_Density.vtk",\
 	"--ScalarsFile", "LH_absolute_difference.txt", "--Scalars_Name", 'Difference'])
 
-	original_density_average = CSFDensity_average(EACSFFile)
-	optimal_density_average = CSFDensity_average(EACSFInterpolatedFile)
-	if(original_density_average > optimal_density_average):
-		copyfile(EACSFFile, EACSFFinalFile)
+	original_density_average = average(EACSFFile)
+	optimal_density_average = average(EACSFInterpolatedFile)
+	if(original_density_average > optimal_density_average or original_density_average == optimal_density_average):
+		os.remove(InterpolatedFile)
 	if(optimal_density_average > original_density_average):
-		copyfile(EACSFInterpolatedFile, EACSFFinalFile)
-	os.remove(EACSFFile)
-	os.remove(EACSFInterpolatedFile)
-	os.rename(EACSFFinalFile, EACSFFile)		
+		os.replace(EACSFInterpolatedFile, EACSFFile)		
 	call_and_print([args.AddScalarstoPolyData, "--InputFile", "LH_" + surface + "_CSF_Density.vtk", "--OutputFile",  "LH_" + surface + "_CSF_Density.vtk",\
 	 "--ScalarsFile", EACSFFile, "--Scalars_Name", 'CSFDensity'])	
 	if(args.Clean_up):
@@ -184,13 +144,12 @@ def main_loop(args):
 			pool.apply_async(processing, args = (args, DirectoriesNames[i], surface, str(ImageSizes[i]),))
 		pool.close()
 		pool.join()
-		Optimise_CSFDensity (surface)			
+		optimize_csfdensity(surface)			
 	if(args.NotInterpolated):
 		processing(args, "LH_Directory", surface, str(@imagedimension@))
 
 	os.chdir(os.path.join( args.Output_Directory, "LocalEACSF", "LH_Directory"))
-	call_and_print([args.ComputeCSFVolume, "--VisitingMap", "LH__Visitation.nrrd", "--CSFProb", "CSF_Probability_Map.nrrd"])	
-	CSFDensity_Sum ("LH_" + surface + ".CSFDensity.txt", "LH_CSFVolume.txt")
+	call_and_print([args.ComputeCSFVolume, "--VisitingMap", "LH__Visitation.nrrd", "--CSFProb", "CSF_Probability_Map.nrrd", "--CSFFile",EACSFFile])	
 		
 	end = time.time()
 	print("time for LH:",end - start, flush=True)
@@ -244,7 +203,7 @@ def processing(args, DirectoryName, Surface, ImageDimension):
 		call_and_print([CreateOuterSurface,"--InputBinaryImg","LH_GM_Dilated.nrrd", "--OutputSurface","LH_GM_Outer_MC.vtk", "--NumberIterations", "@NumberIterations@"])
 		call_and_print([EditPolyData, "--InputSurface","LH_GM_Outer_MC.vtk", "--OutputSurface","LH_GM_Outer_MC.vtk", "--flipx", ' -1', "--flipy", ' -1', "--flipz", '1'])
 		print('Creating Outer LH Convex Hull Surface Done!', flush=True)
-
+	
 		print('Creating LH streamlines', flush=True)
 		print('CEstablishing Surface Correspondance', flush=True)
 		call_and_print([klaplace,'-dims', ImageDimension, "LH_" + Surface + ".vtk", "LH_GM_Outer_MC.vtk",'-surfaceCorrespondence',"LH_Outer.corr"])
@@ -254,6 +213,7 @@ def processing(args, DirectoryName, Surface, ImageDimension):
 		call_and_print([klaplace, '-conv',"LH_Outer_streamlines.vtp", "LH_Outer_streamlines.vtk"])
 		print('Creating LH streamlines Done!', flush=True)
 
+	avoid_double_counting(Directory)
 	CSFDensdityTxtFile = os.path.join(Directory,"LH_" + Surface + ".CSFDensity.txt")
 	CSFDensityExistenceTest = os.path.isfile(CSFDensdityTxtFile)
 	if CSFDensityExistenceTest==True :
@@ -285,6 +245,7 @@ parser.add_argument('--AddScalarstoPolyData', type=str, help='AddScalarstoPolyDa
 parser.add_argument('--HeatKernelSmoothing', type=str, help='HeatKernelSmoothing executable path', default='@HeatKernelSmoothing_PATH@')
 parser.add_argument('--ComputeCSFVolume', type=str, help='ComputeCSFVolume executable path', default='@ComputeCSFVolume_PATH@')
 parser.add_argument('--ComputeAverageMesh', type=str, help='ComputeAverageMesh executable path', default='@ComputeAverageMesh_PATH@')
+parser.add_argument('--FitPlane', type=str, help='FitPlane executable path', default='@FitPlane_PATH@')
 parser.add_argument('--Smooth', type=bool, help='Smooth the CSF Density with a heat kernel smoothing', default=@Smooth@)
 parser.add_argument('--Clean_up', type=bool, help='Clean the output directory of intermediate outputs', default=@Clean@)
 parser.add_argument('--Interpolated', type=bool, help='Compute  the optimal CSF density ( Interpolated)', default=@Interpolated@)

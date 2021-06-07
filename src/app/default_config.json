@@ -70,6 +70,10 @@
             "path": ""
         },
         {
+            "name": "FitPlane",
+            "path": ""
+        },
+        {
             "name": "python3",
             "path": ""
         }

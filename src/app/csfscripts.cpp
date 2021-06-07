@@ -115,6 +115,7 @@ void CSFScripts::write_process_left_hemisphere()
     script_left_hemisphere.replace("@HeatKernelSmoothing_PATH@", checkStringValue(m_Executables["HeatKernelSmoothing"]));
     script_left_hemisphere.replace("@ComputeCSFVolume_PATH@", checkStringValue(m_Executables["ComputeCSFVolume"]));
     script_left_hemisphere.replace("@ComputeAverageMesh_PATH@", checkStringValue(m_Executables["ComputeAverageMesh"]));
+    script_left_hemisphere.replace("@FitPlane_PATH@", checkStringValue(m_Executables["FitPlane"]));
 
 
     script_left_hemisphere.replace("@closingradius@", QString::number(param_obj["Closing_radius"].toInt()));
@@ -180,6 +181,7 @@ void CSFScripts::write_process_right_hemisphere()
     script_right_hemisphere.replace("@HeatKernelSmoothing_PATH@", checkStringValue(m_Executables["HeatKernelSmoothing"]));
     script_right_hemisphere.replace("@ComputeCSFVolume_PATH@", checkStringValue(m_Executables["ComputeCSFVolume"]));
     script_right_hemisphere.replace("@ComputeAverageMesh_PATH@", checkStringValue(m_Executables["ComputeAverageMesh"]));
+    script_right_hemisphere.replace("@FitPlane_PATH@", checkStringValue(m_Executables["FitPlane"]));
 
     script_right_hemisphere.replace("@closingradius@", QString::number(param_obj["Closing_radius"].toInt()));
     script_right_hemisphere.replace("@dilationradius@", QString::number(param_obj["Dilation_radius"].toInt()));

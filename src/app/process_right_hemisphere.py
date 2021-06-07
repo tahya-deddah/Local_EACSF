@@ -36,6 +36,20 @@ def call_and_print(args):
 	if status_code != 0:
 	   	print("return code:",check_returncode, flush=True)
 
+
+def AvoidDoubleCounting(Directory):
+
+	#Executables:
+	CreateOuterImage = args.CreateOuterImage
+	FitPlane = args.FitPlane
+
+	os.chdir(Directory)
+	call_and_print([CreateOuterImage,"--InputImg", "Tissu_Segmentation.nrrd", "--OutputImg", "LH_GM_Dilated.nrrd", "--closingradius", "@closingradius@", "--dilationradius", "@dilationradius@", "--Reverse", '0'])
+	call_and_print([FitPlane,"--input1", "LH_GM_Dilated.nrrd", "--input2", "RH_GM_Dilated.nrrd", "--output1", \
+		"LH_GM_Dilated.nrrd", "--output2", "RH_GM_Dilated.nrrd"])
+	os.remove("LH_GM_Dilated.nrrd")
+
+
 def Interpolation(EACSFMaxValueFile, EACSFMinValueFile , EACSFInterpolatedFile):
 
 	print("Interpolating ", flush=True)
@@ -188,6 +202,8 @@ def main_loop(args):
 
 	if(args.NotInterpolated):
 		processing(args, "RH_Directory", surface, str(@imagedimension@))	
+
+
 	os.chdir(os.path.join( args.Output_Directory, "LocalEACSF", "RH_Directory"))
 	call_and_print([args.ComputeCSFVolume, "--VisitingMap", "RH__Visitation.nrrd", "--CSFProb", "CSF_Probability_Map.nrrd"])	
 	CSFDensity_Sum ("RH_" + surface + ".CSFDensity.txt", "RH_CSFVolume.txt")
@@ -247,7 +263,7 @@ def processing(args, DirectoryName, Surface, ImageDimension):
 		call_and_print([CreateOuterSurface, "--InputBinaryImg", "RH_GM_Dilated.nrrd", "--OutputSurface", "RH_GM_Outer_MC.vtk", "--NumberIterations", "@NumberIterations@"])
 		call_and_print([EditPolyData, "--InputSurface", "RH_GM_Outer_MC.vtk", "--OutputSurface", "RH_GM_Outer_MC.vtk", "--flipx", ' -1', "--flipy", ' -1', "--flipz", '1'])
 		print('Creating Outer RH Convex Hull Surface Done!', flush=True)
-
+	
 		print('Creating RH streamlines', flush=True)
 		print('CEstablishing Surface Correspondance', flush=True)
 		call_and_print([klaplace,'-dims', ImageDimension, "RH_" + Surface + ".vtk", "RH_GM_Outer_MC.vtk",'-surfaceCorrespondence',"RH_Outer.corr"])
@@ -258,6 +274,7 @@ def processing(args, DirectoryName, Surface, ImageDimension):
 		call_and_print([klaplace, '-conv',"RH_Outer_streamlines.vtp", "RH_Outer_streamlines.vtk"])
 		print('Creating RH streamlines Done!', flush=True)
 
+	AvoidDoubleCounting(Directory)
 	CSFDensdityTxtFile = os.path.join(Directory,"RH_" + Surface + ".CSFDensity.txt")
 	CSFDensityExistenceTest = os.path.isfile(CSFDensdityTxtFile)
 	if CSFDensityExistenceTest==True :
@@ -289,6 +306,7 @@ parser.add_argument('--AddScalarstoPolyData', type=str, help='AddScalarstoPolyDa
 parser.add_argument('--HeatKernelSmoothing', type=str, help='HeatKernelSmoothing executable path', default='@HeatKernelSmoothing_PATH@')
 parser.add_argument('--ComputeCSFVolume', type=str, help='ComputeCSFVolume executable path', default='@ComputeCSFVolume_PATH@')
 parser.add_argument('--ComputeAverageMesh', type=str, help='ComputeAverageMesh executable path', default='@ComputeAverageMesh_PATH@')
+parser.add_argument('--FitPlane', type=str, help='FitPlane executable path', default='@FitPlane_PATH@')
 parser.add_argument('--Smooth', type=bool, help='Smooth the CSF Density with a heat kernel smoothing', default=@Smooth@)
 parser.add_argument('--Clean_up', type=bool, help='Clean the output directory of intermediate outputs', default=@Clean@)
 parser.add_argument('--Interpolated', type=bool, help='Compute  the optimal CSF density ( Interpolated) ', default=@Interpolated@)
