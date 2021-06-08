@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<executable>
+  <category></category>
+  <title>FitPlane</title>
+  <description></description>
+  <version>0.1</version>
+   <parameters advanced="false">
+	   	<file>
+	   		<name>input1</name>
+	   		<longflag>input1</longflag>
+          	<flag>l</flag>
+          	<description></description>
+	    </file>
+		<file>
+			<name>input2</name>
+			<longflag>input2</longflag>
+          	<flag>r</flag>
+          	<description></description>
+		</file>
+		<file>
+			<name>output1</name>
+			<longflag>output1</longflag>
+          	<flag>L</flag>
+          	<description> </description>
+		</file>
+		<file>
+			<name>output2</name>
+			<longflag>output2</longflag>
+          	<flag>R</flag>
+          	<description> </description>
+		</file>
+	</parameters>
+</executable>

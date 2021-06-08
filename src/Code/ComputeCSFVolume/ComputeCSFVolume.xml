@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<executable>
+  <category></category>
+  <title>ComputeCSFVolume</title>
+  <description>Compute The CSF Volume From Visiatation map </description>
+  <version>0.1</version>
+   <parameters advanced="false">
+	   	<file>
+	   		<name>VisitationMap</name>
+	   		<longflag>VisitingMap</longflag>
+          	<flag>V</flag>
+          	<description>Visitation map a binary file </description>
+	    </file>
+		<file>
+			<name>CSFProbabiltyMap</name>
+			<longflag>CSFProb</longflag>
+          	<flag>C</flag>
+          	<description>CSF Proabability Map a nrrd file </description>
+		</file>
+		<file>
+			<name>CSFDenistytxtfile</name>
+			<longflag>CSFFile</longflag>
+      		<flag>F</flag>
+      		<description> txt file containing The CSF density</description>
+		</file>
+	</parameters>
+</executable>
