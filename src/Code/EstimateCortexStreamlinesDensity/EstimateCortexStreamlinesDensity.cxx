@@ -185,8 +185,8 @@ int main ( int argc, char *argv[] )
       point_next[2] =  p[2];    // z coordinate
 
       ImageType::IndexType pixelIndex;
-      //const bool isInside = inputimage->TransformPhysicalPointToIndex( point, pixelIndex );
-      //ImageType::PixelType Visited = outputimage->GetPixel(pixelIndex);
+      const bool isInside = inputimage->TransformPhysicalPointToIndex( point, pixelIndex );
+      ImageType::PixelType Visited = outputimage->GetPixel(pixelIndex);
       ImageType::IndexType pixelIndex1;
       const bool isInside1 = inputMask->TransformPhysicalPointToIndex( point, pixelIndex1 );
                   ImageType::PixelType label = inputMask->GetPixel(pixelIndex1);
@@ -195,13 +195,13 @@ int main ( int argc, char *argv[] )
       if(label > 0)
       {
         CSFDensity += ((Propability + Propability_next)*step)/2.0;  
-        //outputimage->SetPixel(pixelIndex, Outer_Line_ID); // Mark this pixel visited in current vertex
+        outputimage->SetPixel(pixelIndex, Outer_Line_ID); // Mark this pixel visited in current vertex
 
         //new 
-        const bool isInside = inputimage->TransformPhysicalPointToIndex( point, pixelIndex );
+        /*const bool isInside = inputimage->TransformPhysicalPointToIndex( point, pixelIndex );
         ImageType::PixelType number_of_visitation = outputimage->GetPixel(pixelIndex);
         number_of_visitation = number_of_visitation + 1;
-        outputimage->SetPixel(pixelIndex, number_of_visitation );
+        outputimage->SetPixel(pixelIndex, number_of_visitation );*/
         //std::cout << "pixelIndex = " << pixelIndex << std::endl;
         //std::cout << "number_of_visitation = " << number_of_visitation << std::endl;
       }
@@ -318,8 +318,8 @@ int main ( int argc, char *argv[] )
 
   typedef itk::ImageFileWriter< ImageType > WriterType;
   WriterType::Pointer Imagewriter = WriterType::New();
-  //Imagewriter->SetInput(thresholdFilter->GetOutput());
-  Imagewriter->SetInput(outputimage);
+  Imagewriter->SetInput(thresholdFilter->GetOutput());
+  //Imagewriter->SetInput(outputimage);
   Imagewriter->SetFileName(OutputVoxelVistitingMap);
   Imagewriter->Update();
 

@@ -109,7 +109,7 @@ void CSFScripts::write_process_left_hemisphere()
     script_left_hemisphere.replace("@CreateOuterImage_PATH@", checkStringValue(m_Executables["CreateOuterImage"]));
     script_left_hemisphere.replace("@CreateOuterSurface_PATH@", checkStringValue(m_Executables["CreateOuterSurface"]));
     script_left_hemisphere.replace("@EditPolyData_PATH@", checkStringValue(m_Executables["EditPolyData"]));
-    script_left_hemisphere.replace("@klaplace_PATH@", checkStringValue(m_Executables["klaplace"]));
+    script_left_hemisphere.replace("@klaplace_PATH@", checkStringValue(m_Executables["EACSFKlaplace"]));
     script_left_hemisphere.replace("@EstimateCortexStreamlinesDensity_PATH@", checkStringValue(m_Executables["EstimateCortexStreamlinesDensity"]));
     script_left_hemisphere.replace("@AddScalarstoPolyData_PATH@", checkStringValue(m_Executables["AddScalarstoPolyData"]));
     script_left_hemisphere.replace("@HeatKernelSmoothing_PATH@", checkStringValue(m_Executables["HeatKernelSmoothing"]));
@@ -175,7 +175,7 @@ void CSFScripts::write_process_right_hemisphere()
     script_right_hemisphere.replace("@CreateOuterImage_PATH@", checkStringValue(m_Executables["CreateOuterImage"]));
     script_right_hemisphere.replace("@CreateOuterSurface_PATH@", checkStringValue(m_Executables["CreateOuterSurface"]));
     script_right_hemisphere.replace("@EditPolyData_PATH@", checkStringValue(m_Executables["EditPolyData"]));
-    script_right_hemisphere.replace("@klaplace_PATH@", checkStringValue(m_Executables["klaplace"]));
+    script_right_hemisphere.replace("@klaplace_PATH@", checkStringValue(m_Executables["EACSFKlaplace"]));
     script_right_hemisphere.replace("@EstimateCortexStreamlinesDensity_PATH@", checkStringValue(m_Executables["EstimateCortexStreamlinesDensity"]));
     script_right_hemisphere.replace("@AddScalarstoPolyData_PATH@", checkStringValue(m_Executables["AddScalarstoPolyData"]));
     script_right_hemisphere.replace("@HeatKernelSmoothing_PATH@", checkStringValue(m_Executables["HeatKernelSmoothing"]));

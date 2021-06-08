@@ -21,7 +21,7 @@ def main(args):
 	process_right_hemisphere = os.path.join(scripts_prefix,"process_right_hemisphere.py")
 	####
 	Process_Left_Side = subprocess.call([python, process_left_hemisphere])
-	#Process_Right_Side = subprocess.call([python, process_right_hemisphere])
+	Process_Right_Side = subprocess.call([python, process_right_hemisphere])
 	print("Local_EACSF finished",flush=True)
 	sys.exit(0)
 
