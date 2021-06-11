@@ -116,7 +116,8 @@ int main ( int argc, char *argv[] )
 
   vtkSmartPointer<vtkDoubleArray> Array = vtkSmartPointer<vtkDoubleArray>::New();
   Array->SetNumberOfComponents(1);
-  Array->SetName("CSFDensity");
+  //Array->SetName("CSFDensity");
+  Array->SetName("CSF_Density_Final");
 
   vtkSmartPointer<vtkCellArray> OuterLinearray = outerstreamlinesPolyData->GetLines();
   vtkIdType Outer_Line_ID = -1;
@@ -240,18 +241,21 @@ int main ( int argc, char *argv[] )
   vtkSmartPointer<vtkGradientFilter> gradients =
     vtkSmartPointer<vtkGradientFilter>::New();
   gradients->SetInputData(unstructuredGrid);
-  gradients->SetInputScalars(0,"CSFDensity");
-  gradients->SetResultArrayName("CSFDensityGradient");
+ /* gradients->SetInputScalars(0,"CSFDensity");
+  gradients->SetResultArrayName("CSFDensityGradient");*/
+  gradients->SetInputScalars(0,"CSF_Density_Final");
+  gradients->SetResultArrayName("CSF_Density_Gradient");
   gradients->Update();  
 
-  vtkSmartPointer<vtkDoubleArray> ArrayCSFDensity = vtkDoubleArray::SafeDownCast(inputPolyData->GetPointData()->GetArray("CSFDensity"));
+  vtkSmartPointer<vtkDoubleArray> ArrayCSFDensity = vtkDoubleArray::SafeDownCast(inputPolyData->GetPointData()->GetArray("CSF_Density_Final"));
 
-  vtkSmartPointer<vtkDoubleArray> ArrayGradient = vtkDoubleArray::SafeDownCast(gradients->GetOutput()->GetPointData()->GetArray("CSFDensityGradient"));
+  vtkSmartPointer<vtkDoubleArray> ArrayGradient = vtkDoubleArray::SafeDownCast(gradients->GetOutput()->GetPointData()->GetArray("CSF_Density_Gradient"));
 
  
   vtkSmartPointer<vtkDoubleArray> ArrayMagGradient = vtkSmartPointer<vtkDoubleArray>::New();
   ArrayMagGradient->SetNumberOfComponents(1);
-  ArrayMagGradient->SetName("CSFDensityMagGradient");
+  //ArrayMagGradient->SetName("CSFDensityMagGradient");
+  ArrayMagGradient->SetName("CSF_Density_Mag_Gradient");
 
   for(vtkIdType vertex = 0; vertex < inputPolyData->GetNumberOfPoints(); vertex++)
   {
@@ -272,14 +276,18 @@ int main ( int argc, char *argv[] )
  
 //-----------------------------------------------Output Results------------------------------------------------------------------
   std::string FileName = InputSurfaceFileName;
-  std::string NewFileName = FileName.substr(0, FileName.size()-3);
-  std::string ResultFileName = NewFileName + "CSFDensity.txt";
+  //std::string NewFileName = FileName.substr(0, FileName.size()-3);
+  std::string NewFileName = FileName.substr(0, FileName.size()-4);
+  //std::string ResultFileName = NewFileName + "CSFDensity.txt";
+  std::string ResultFileName = NewFileName + "_CSF_Density.txt";
   ofstream Result;
   Result.open (ResultFileName.c_str());
   Result << "NUMBER_OF_POINTS=" << inputPolyData->GetNumberOfPoints() << endl; 
   Result << "DIMENSION=1" << endl;
   Result << "TYPE=Scalar" << endl;
-  for(vtkIdType vertex = 0; vertex < inputPolyData->GetNumberOfPoints(); vertex++)
+
+
+  /*for(vtkIdType vertex = 0; vertex < inputPolyData->GetNumberOfPoints(); vertex++)
       {
                 Result << ArrayCSFDensity->GetValue(vertex) << endl;
             }
@@ -296,7 +304,7 @@ int main ( int argc, char *argv[] )
                 Result2 << ArrayMagGradient->GetValue(vertex) << endl;
             }
   Result2.close();
-
+*/
 
   std::string outputSurfaceFileName = OutputSurfacename;
   vtkSmartPointer<vtkPolyDataWriter> polywriter = vtkSmartPointer<vtkPolyDataWriter>::New();

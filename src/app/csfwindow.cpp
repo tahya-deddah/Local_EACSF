@@ -885,25 +885,37 @@ void CSFWindow::on_visualize_clicked()
     QString RH_Directory = QDir::cleanPath(OutputDirectory + QString("/LocalEACSF") + QString("/RH_Directory"));
     QString CSF_Probability_Map = LH_Directory + QString("/CSF_Probability_Map.nrrd");
 
-    if (VisualiseCSFDensity->isChecked())
+    if (VisualiserawCSFDensity->isChecked())
     {
     
-        QString LH_CSFDensity = LH_Directory + QString("/LH_MID_CSF_Density.vtk");
-        QString RH_CSFDensity  = RH_Directory + QString("/RH_MID_CSF_Density.vtk");
+        QString LH_CSFDensity = LH_Directory + QString("/LH_MID_CSF_Density_Raw.vtk");
+        QString RH_CSFDensity  = RH_Directory + QString("/RH_MID_CSF_Density_Raw.vtk");
         QFileInfo check_file(LH_CSFDensity);
         if(!check_file.exists())
         {
-            LH_CSFDensity = LH_Directory + QString("/LH_75P_CSF_Density.vtk");
-            RH_CSFDensity  = RH_Directory + QString("/RH_75P_CSF_Density.vtk");     
+            LH_CSFDensity = LH_Directory + QString("/LH_75P_CSF_Density_Raw.vtk");
+            RH_CSFDensity  = RH_Directory + QString("/RH_75P_CSF_Density_Raw.vtk");
         }
         QStringList arguments = QStringList() << QString("-v") << LH_CSFDensity  << QString("-v")<< RH_CSFDensity ;
         visualization->setWorkingDirectory(OutputDirectory);
         visualization->start(QString("ShapePopulationViewer"), arguments);
-        QMessageBox::information(
-            this,
-            tr("Visualization"),
-            tr("Is running.")
-        );
+
+    }
+    if (VisualisesmoothedCSFDensity->isChecked())
+    {
+
+        QString LH_CSFDensity = LH_Directory + QString("/LH_MID_CSF_Density_Smoothed.vtk");
+        QString RH_CSFDensity  = RH_Directory + QString("/RH_MID_CSF_Density_Smoothed.vtk");
+        QFileInfo check_file(LH_CSFDensity);
+        if(!check_file.exists())
+        {
+            LH_CSFDensity = LH_Directory + QString("/LH_75P_CSF_Density_Smoothed.vtk");
+            RH_CSFDensity  = RH_Directory + QString("/RH_75P_CSF_Density_Smoothed.vtk");
+        }
+        QStringList arguments = QStringList() << QString("-v") << LH_CSFDensity  << QString("-v")<< RH_CSFDensity ;
+        visualization->setWorkingDirectory(OutputDirectory);
+        visualization->start(QString("ShapePopulationViewer"), arguments);
+
     }
     if (VisualiseRightVisitation->isChecked())
     {
@@ -911,11 +923,6 @@ void CSFWindow::on_visualize_clicked()
         QStringList arguments = QStringList()<< QString("-s") << RH_visitation_map << QString("-g") << CSF_Probability_Map;
         visualization->setWorkingDirectory(OutputDirectory);
         visualization->start(QString("itksnap"), arguments);
-        QMessageBox::information(
-            this,
-            tr("Visualization"),
-            tr("Is running.")
-        );
     }
     if (VisualiseLeftVisitation->isChecked())
     {
@@ -923,11 +930,6 @@ void CSFWindow::on_visualize_clicked()
         QStringList arguments = QStringList()<< QString("-s") << LH_visitation_map << QString("-g") << CSF_Probability_Map;
         visualization->setWorkingDirectory(OutputDirectory);
         visualization->start(QString("itksnap"), arguments);
-        QMessageBox::information(
-            this,
-            tr("Visualization"),
-            tr("Is running.")
-        );
     }    
 }
 
@@ -979,4 +981,5 @@ void CSFWindow::on_Compare_clicked()
         } 
     }   
 }
+
 

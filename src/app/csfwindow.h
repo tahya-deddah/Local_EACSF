@@ -40,6 +40,7 @@ public:
     QJsonObject getConfig();
     void setConfig(QJsonObject root_obj);
 
+
 private:
 
     QString OpenFile();
