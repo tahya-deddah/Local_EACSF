@@ -40,7 +40,6 @@ public:
     QJsonObject getConfig();
     void setConfig(QJsonObject root_obj);
 
-
 private:
 
     QString OpenFile();
@@ -94,8 +93,10 @@ private slots:
     void on_CSF_Probability_Map_clicked();
     void on_LH_MID_Surface_clicked();
     void on_LH_GM_Surface_clicked();
+    void on_LH_Inflating_Template_clicked();
     void on_RH_MID_Surface_clicked();
     void on_RH_GM_Surface_clicked();
+    void on_RH_Inflating_Template_clicked();
     void on_output_directory_clicked();
 
     //3rd tab

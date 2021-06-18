@@ -13,12 +13,21 @@ include(${SlicerExecutionModel_USE_FILE})
 find_package(ITK REQUIRED)
 include(${ITK_USE_FILE})
 
-find_package(VTK REQUIRED)
-include(${VTK_USE_FILE})
+#find_package(VTK REQUIRED)
+#include(${VTK_USE_FILE})
 
 
+if (ITKVtkGlue_LOADED)
+  find_package(VTK REQUIRED)
+  include(${VTK_USE_FILE})
+else()
+  find_package(ItkVtkGlue REQUIRED)
+  include(${ItkVtkGlue_USE_FILE})
+  set(Glue ItkVtkGlue)
+endif()
 
-SET(${APP_NAME}_LIBRARIES ${ITK_LIBRARIES} ${VTK_LIBRARIES})
+
+SET(${APP_NAME}_LIBRARIES ${Glue} ${ITK_LIBRARIES} ${VTK_LIBRARIES} ${QT_LIBRARIES})
 
 
 SEMMacroBuildCLI(

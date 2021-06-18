@@ -5,8 +5,10 @@
 		"CSF_Probability_Map": "/work/tahya/Data/local_EACSf_Extraction/Ben_Test/101247/101247_CSF_Prop.nrrd",
 		"LH_MID_surface": "/work/tahya/Data/local_EACSf_Extraction/Ben_Test/101247/101247_LH_MID.vtk",
 		"LH_GM_surface": "/work/tahya/Data/local_EACSf_Extraction/Ben_Test/101247/101247_LH_GM.vtk",
+        "LH_Inflating_Template": "",
 		"RH_MID_surface": "/work/tahya/Data/local_EACSf_Extraction/Ben_Test/101247/101247_RH_MID.vtk",
         "RH_GM_surface": "/work/tahya/Data/local_EACSf_Extraction/Ben_Test/101247/101247_RH_GM.vtk",
+        "RH_Inflating_Template": "",
 		"Output_Directory": "/work/tahya/Test/101247"
 	},
 

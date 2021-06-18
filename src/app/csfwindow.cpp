@@ -101,8 +101,10 @@ void CSFWindow::setConfig(QJsonObject root_obj)
     lineEdit_CSF_Probability_Map->setText(data_obj["CSF_Probability_Map"].toString());
     lineEdit_LH_MID_Surface->setText(data_obj["LH_MID_surface"].toString());
     lineEdit_LH_GM_Surface->setText(data_obj["LH_GM_surface"].toString());
+    lineEdit_LH_Inflating_Template->setText(data_obj["LH_Inflating_Template"].toString());
     lineEdit_RH_MID_Surface->setText(data_obj["RH_MID_surface"].toString());
     lineEdit_RH_GM_Surface->setText(data_obj["RH_GM_surface"].toString());
+    lineEdit_RH_Inflating_Template->setText(data_obj["RH_Inflating_Template"].toString());
     lineEdit_Output_Directory->setText(data_obj["Output_Directory"].toString());
 
     QJsonObject param_obj = root_obj["parameters"].toObject();
@@ -148,8 +150,11 @@ QJsonObject CSFWindow::getConfig(){
     data_obj["CSF_Probability_Map"]=lineEdit_CSF_Probability_Map->text();
     data_obj["LH_MID_surface"]=lineEdit_LH_MID_Surface->text();
     data_obj["LH_GM_surface"]=lineEdit_LH_GM_Surface->text();
+    data_obj["LH_Inflating_Template"]=lineEdit_LH_Inflating_Template->text();
     data_obj["RH_MID_surface"]=lineEdit_RH_MID_Surface->text();
     data_obj["RH_GM_surface"]=lineEdit_RH_GM_Surface->text();
+    data_obj["RH_Inflating_Template"]=lineEdit_RH_Inflating_Template->text();
+    data_obj["RH_Inflating_Template"]=lineEdit_RH_Inflating_Template->text();
     data_obj["Output_Directory"]=lineEdit_Output_Directory->text();
 
     QJsonObject param_obj;
@@ -638,6 +643,16 @@ void CSFWindow::on_LH_GM_Surface_clicked()
     }
 }
 
+void CSFWindow::on_LH_Inflating_Template_clicked()
+{
+
+    QString path=OpenFile();
+    if (!path.isEmpty())
+    {
+        lineEdit_LH_Inflating_Template->setText(path);
+    }
+}
+
 void CSFWindow::on_RH_MID_Surface_clicked()
 {
 
@@ -658,6 +673,17 @@ void CSFWindow::on_RH_GM_Surface_clicked()
     }
 
 }
+
+void CSFWindow::on_RH_Inflating_Template_clicked()
+{
+    QString path=OpenFile();
+    if (!path.isEmpty())
+    {
+       lineEdit_RH_Inflating_Template->setText(path);
+    }
+
+}
+
 void CSFWindow::on_output_directory_clicked()
 {
    QString path=OpenDir();
@@ -748,13 +774,13 @@ void CSFWindow::prc_finished(QProcess *prc, QString outlog_filename, QString err
         if (row < (model->rowCount()-1))
         {
             lineEdit_T1img->setText(data[row + 1]->value("T1"));
-                lineEdit_Segmentation->setText(data[row + 1]->value("Tissu Segmentation"));
-                lineEdit_CSF_Probability_Map->setText(data[row + 1]->value("CSF Probability Map"));
-                lineEdit_LH_MID_Surface->setText(data[row + 1]->value("LH MID Surface")); 
-                lineEdit_LH_GM_Surface->setText(data[row + 1]->value("LH GM Surface"));
-                lineEdit_RH_MID_Surface->setText(data[row + 1]->value("RH MID Surface"));
-                lineEdit_RH_GM_Surface->setText(data[row + 1]->value("RH GM Surface"));
-                lineEdit_Output_Directory->setText(data[row + 1]->value("Output Directory"));
+            lineEdit_Segmentation->setText(data[row + 1]->value("Tissu Segmentation"));
+            lineEdit_CSF_Probability_Map->setText(data[row + 1]->value("CSF Probability Map"));
+            lineEdit_LH_MID_Surface->setText(data[row + 1]->value("LH MID Surface")); 
+            lineEdit_LH_GM_Surface->setText(data[row + 1]->value("LH GM Surface"));
+            lineEdit_RH_MID_Surface->setText(data[row + 1]->value("RH MID Surface"));
+            lineEdit_RH_GM_Surface->setText(data[row + 1]->value("RH GM Surface"));
+            lineEdit_Output_Directory->setText(data[row + 1]->value("Output Directory"));
             run_Local_EACSF(row+1);
         }
     }
@@ -842,26 +868,34 @@ void CSFWindow::run_Local_EACSF(int row)
     
     if (radioButton_slurm->isChecked())
     {
-        QString slurm_script = QDir::cleanPath(scripts_dir + QString("/slurm-job"));
-        QString time = QString("--time=") + param_obj["Slurm_time"].toString();
-        QString memory = QString("--mem=") + param_obj["Slurm_memory"].toString();
-        QString core = QString("--ntasks=") + param_obj["Slurm_cores"].toString();
-        QString node = QString("--nodes=") + param_obj["Slurm_nodes"].toString();
-        QString output_file = QString("--output=") + outlog_filename ;
-        QString error_file = QString("--error=") + errlog_filename ;
+        QString CSF_volume_filename = QDir::cleanPath(output_dir + QString("/LocalEACSF") + QString("/CSFVolume.txt"));
+        QFile volume_file(CSF_volume_filename);
+        if(volume_file.exists()) 
+        {       
+            output->append(QString("Compute Local EACSF Density already done"));
+        } 
+        else
+        {
+            QString slurm_script = QDir::cleanPath(scripts_dir + QString("/slurm-job"));
+            QString time = QString("--time=") + param_obj["Slurm_time"].toString();
+            QString memory = QString("--mem=") + param_obj["Slurm_memory"].toString();
+            QString core = QString("--ntasks=") + param_obj["Slurm_cores"].toString();
+            QString node = QString("--nodes=") + param_obj["Slurm_nodes"].toString();
+            QString output_file = QString("--output=") + outlog_filename ;
+            QString error_file = QString("--error=") + errlog_filename ;
 
-        QStringList params = QStringList() << time << memory << core << node << output_file << error_file << slurm_script;
-        prc->setWorkingDirectory(output_dir);
-        connect(prc, &QProcess::readyReadStandardOutput, [prc, outlog_filename, this](){
-            QString output_log(prc->readAllStandardOutput()); 
-            output->append(output_log);
-        });
-        connect(prc, &QProcess::readyReadStandardError, [prc, errlog_filename, this](){
-            QString error_log(prc->readAllStandardError());
-            error->append(error_log);
-        });
-        prc->start(QString("sbatch"), params);
-      
+            QStringList params = QStringList() << time << memory << core << node << output_file << error_file << slurm_script;
+            prc->setWorkingDirectory(output_dir);
+            connect(prc, &QProcess::readyReadStandardOutput, [prc, outlog_filename, this](){
+                QString output_log(prc->readAllStandardOutput()); 
+                output->append(output_log);
+            });
+            connect(prc, &QProcess::readyReadStandardError, [prc, errlog_filename, this](){
+                QString error_log(prc->readAllStandardError());
+                error->append(error_log);
+            });
+            prc->start(QString("sbatch"), params);
+        }       
     }  
 }
 //6th QC 
@@ -885,32 +919,17 @@ void CSFWindow::on_visualize_clicked()
     QString RH_Directory = QDir::cleanPath(OutputDirectory + QString("/LocalEACSF") + QString("/RH_Directory"));
     QString CSF_Probability_Map = LH_Directory + QString("/CSF_Probability_Map.nrrd");
 
-    if (VisualiserawCSFDensity->isChecked())
-    {
     
-        QString LH_CSFDensity = LH_Directory + QString("/LH_MID_CSF_Density_Raw.vtk");
-        QString RH_CSFDensity  = RH_Directory + QString("/RH_MID_CSF_Density_Raw.vtk");
-        QFileInfo check_file(LH_CSFDensity);
-        if(!check_file.exists())
-        {
-            LH_CSFDensity = LH_Directory + QString("/LH_75P_CSF_Density_Raw.vtk");
-            RH_CSFDensity  = RH_Directory + QString("/RH_75P_CSF_Density_Raw.vtk");
-        }
-        QStringList arguments = QStringList() << QString("-v") << LH_CSFDensity  << QString("-v")<< RH_CSFDensity ;
-        visualization->setWorkingDirectory(OutputDirectory);
-        visualization->start(QString("ShapePopulationViewer"), arguments);
-
-    }
-    if (VisualisesmoothedCSFDensity->isChecked())
+    if (VisualiseCSFDensity->isChecked())
     {
 
-        QString LH_CSFDensity = LH_Directory + QString("/LH_MID_CSF_Density_Smoothed.vtk");
-        QString RH_CSFDensity  = RH_Directory + QString("/RH_MID_CSF_Density_Smoothed.vtk");
+        QString LH_CSFDensity = LH_Directory + QString("/LH_MID_CSF_Density.vtk");
+        QString RH_CSFDensity  = RH_Directory + QString("/RH_MID_CSF_Density.vtk");
         QFileInfo check_file(LH_CSFDensity);
         if(!check_file.exists())
         {
-            LH_CSFDensity = LH_Directory + QString("/LH_75P_CSF_Density_Smoothed.vtk");
-            RH_CSFDensity  = RH_Directory + QString("/RH_75P_CSF_Density_Smoothed.vtk");
+            LH_CSFDensity = LH_Directory + QString("/LH_75P_CSF_Density.vtk");
+            RH_CSFDensity  = RH_Directory + QString("/RH_75P_CSF_Density.vtk");
         }
         QStringList arguments = QStringList() << QString("-v") << LH_CSFDensity  << QString("-v")<< RH_CSFDensity ;
         visualization->setWorkingDirectory(OutputDirectory);
@@ -936,50 +955,53 @@ void CSFWindow::on_visualize_clicked()
 void CSFWindow::on_Compare_clicked()
 {
     QString OutputDirectory =lineEdit_output_path->text();
-    QString LH_CSFVolume = QDir::cleanPath(OutputDirectory + QString("/LocalEACSF") + QString("/LH_Directory") + QString("/LH_CSFVolume.txt"));
-    QString RH_CSFVolume = QDir::cleanPath(OutputDirectory + QString("/LocalEACSF") + QString("/RH_Directory") + QString("/RH_CSFVolume.txt"));
-
-    QFile fileLH(LH_CSFVolume);
-    fileLH.open(QIODevice::ReadOnly | QIODevice::Text);
-    QFile fileRH(RH_CSFVolume);
-    fileRH.open(QIODevice::ReadOnly | QIODevice::Text);
-    int row  = 0;
-    while (!fileLH.atEnd())
+    QString CSFVolume = QDir::cleanPath(OutputDirectory + QString("/LocalEACSF")  + QString("/CSFVolume.txt"));   
+    QFile file(CSFVolume);    
+    if(!file.exists()) 
+    {infoMsgBox(QString(" No volume file found") , QMessageBox::Warning);} 
+    else
     {
-        QString line_LH = fileLH.readLine();
-        QString line_RH = fileRH.readLine();
-        QStringList splitline_LH = line_LH.split(QString(" = "));
-        QString result_LH = splitline_LH.at(1);
-        QStringList splitline_RH = line_RH.split(QString(" = "));
-        QString result_RH = splitline_RH.at(1);
-        tableWidget->setItem( row , 0, new QTableWidgetItem( result_LH.remove(QChar('\n'), Qt::CaseInsensitive) ));
-        tableWidget->setItem( row, 1, new QTableWidgetItem( result_RH.remove(QChar('\n'), Qt::CaseInsensitive) ));
-        if(tableWidget->item(row,0) != 0 && tableWidget->item(row,1) != 0)
+        vector< vector <int> > tableau{{0,0},{1,0},{0,1},{1,1}};
+        int i =0;
+        file.open(QIODevice::ReadOnly | QIODevice::Text);
+        while (!file.atEnd())
+        {            
+            QString line = file.readLine();
+            QStringList splitline = line.split(QString(" = "));
+            QString result = splitline.at(1);  
+            tableWidget->setItem( tableau[i][0] ,tableau[i][1], new QTableWidgetItem( result.remove(QChar('\n'), Qt::CaseInsensitive) ));
+            i=i+1;
+        } 
+        for(int row =0; row <2; row++)
         {
             QString left = tableWidget->item(row,0)->text();
             QString right = tableWidget->item(row,1)->text();
             float difference = (left.toFloat() - right.toFloat())/ (left.toFloat() + right.toFloat())/2;
             tableWidget->setItem( row, 2, new QTableWidgetItem( QString::number( difference * 100, 'f' , 2 ))); 
-        }                
-        row = row  + 1;
+        }                   
     }
-  
+
     for( int i = 0; i<tableWidget->columnCount() -1 ; i++)
     {
         if(tableWidget->item(0,i) != 0 && tableWidget->item(1,i) != 0)
         {
             float diff = tableWidget->item(1,i)->text().toFloat() - tableWidget->item(0,i)->text().toFloat();
-            if (diff > 0 || diff == 0)
+            if (diff > 0 )
             { 
                 tableWidget->item(1,i)->setBackground(Qt::green);
-                tableWidget->item(1,2)->setBackground(Qt::green);
             }
-            else{ 
-                tableWidget->item(1,i)->setBackground(Qt::red);
-                tableWidget->item(1,2)->setBackground(Qt::red); 
+            if (diff < 0 ){ 
+                tableWidget->item(1,i)->setBackground(Qt::red);               
             }
         } 
     }   
+
+
 }
+
+
+
+
+
 
 

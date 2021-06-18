@@ -23,17 +23,9 @@ ProjectDependancyPush(CACHED_proj ${proj})
 # SlicerMacroCheckExternalProjectDependency
 set(extProjName ITK) #The find_package known name
 set(proj      ITK) #This local name
-#set(${extProjName}_REQUIRED_VERSION "ITKv5.1.1")
 set(${extProjName}_REQUIRED_VERSION ${${extProjName}_VERSION_MAJOR})  #If a required version is necessary, then set this, else leave blank
 
-#if(${USE_SYSTEM_${extProjName}})
-#  unset(${extProjName}_DIR CACHE)
-#endif()
 
-# Sanity checks
-#if(DEFINED ${extProjName}_DIR AND NOT EXISTS ${${extProjName}_DIR})
-#  message(FATAL_ERROR "${extProjName}_DIR variable is defined but corresponds to non-existing directory (${${extProjName}_DIR})")
-#endif()
 set(${proj}_DEPENDENCIES VTK)
 
 if(NOT ( DEFINED "USE_SYSTEM_${extProjName}" AND "${USE_SYSTEM_${extProjName}}" ) )
@@ -73,11 +65,10 @@ if(NOT ( DEFINED "USE_SYSTEM_${extProjName}" AND "${USE_SYSTEM_${extProjName}}" 
     )
   ### --- End Project specific additions
   set(${proj}_REPOSITORY https://github.com/Kitware/ITK.git)
-  #set(${proj}_GIT_TAG "v5.1.1")
-  #set(ITK_VERSION_ID ITK-5.1.1)
-
   set(${proj}_GIT_TAG "release-4.13")
   set(ITK_VERSION_ID ITK-4.13)
+  #set(${proj}_GIT_TAG "release-5.1")
+  #set(ITK_VERSION_ID ITK-5.1)
 
   ExternalProject_Add(${proj}
     GIT_REPOSITORY ${${proj}_REPOSITORY}

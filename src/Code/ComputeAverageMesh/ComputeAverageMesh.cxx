@@ -26,7 +26,7 @@ int  main(int argc, char** argv)
 
 	vtkSmartPointer<vtkPolyData> polydata = meshin1->GetOutput();
     vtkSmartPointer<vtkPoints> avgPoints = vtkSmartPointer<vtkPoints>::New();
-	for( unsigned int pointID = 0; pointID < meshPoints1->GetNumberOfPoints(); pointID++ )
+	for( unsigned int pointID = 0; pointID < meshPoints2->GetNumberOfPoints(); pointID++ )
 	{
 		double avgPoint[3];
 		double Point1[3];
@@ -35,13 +35,12 @@ int  main(int argc, char** argv)
 	    meshPoints2->GetPoint(pointID, Point2);
         for( unsigned int dim = 0; dim < 3; dim++ )
         {
-		    avgPoint[dim] = ( Point1[dim] + Point2[dim] ) / 2 ;
+		    avgPoint[dim] = ( Point1[dim] + Point2[dim] ) / 2.0 ;
 	    }
 	    avgPoints->InsertPoint(pointID, avgPoint);
 	}
 
     polydata->SetPoints(avgPoints);
-	// polydata->Update();//no more Update() function for vtkPolyData: http://www.vtk.org/Wiki/VTK/VTK_6_Migration/Removal_of_Update
     vtkSmartPointer<vtkPolyDataWriter> SurfaceWriter = vtkSmartPointer<vtkPolyDataWriter>::New();
     SurfaceWriter->SetInputData(polydata);
     SurfaceWriter->SetFileName(outputFilename.c_str());

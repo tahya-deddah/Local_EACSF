@@ -540,7 +540,7 @@
       <property name="geometry">
        <rect>
         <x>10</x>
-        <y>270</y>
+        <y>310</y>
         <width>281</width>
         <height>31</height>
        </rect>
@@ -553,7 +553,7 @@
       <property name="geometry">
        <rect>
         <x>20</x>
-        <y>310</y>
+        <y>340</y>
         <width>231</width>
         <height>31</height>
        </rect>
@@ -566,7 +566,7 @@
       <property name="geometry">
        <rect>
         <x>290</x>
-        <y>310</y>
+        <y>340</y>
         <width>531</width>
         <height>31</height>
        </rect>
@@ -576,7 +576,7 @@
       <property name="geometry">
        <rect>
         <x>20</x>
-        <y>350</y>
+        <y>380</y>
         <width>231</width>
         <height>31</height>
        </rect>
@@ -589,7 +589,7 @@
       <property name="geometry">
        <rect>
         <x>290</x>
-        <y>350</y>
+        <y>380</y>
         <width>531</width>
         <height>31</height>
        </rect>
@@ -599,7 +599,7 @@
       <property name="geometry">
        <rect>
         <x>20</x>
-        <y>490</y>
+        <y>520</y>
         <width>171</width>
         <height>31</height>
        </rect>
@@ -611,8 +611,8 @@
      <widget class="QPushButton" name="output_directory">
       <property name="geometry">
        <rect>
-        <x>30</x>
-        <y>530</y>
+        <x>20</x>
+        <y>560</y>
         <width>231</width>
         <height>31</height>
        </rect>
@@ -625,7 +625,7 @@
       <property name="geometry">
        <rect>
         <x>290</x>
-        <y>530</y>
+        <y>560</y>
         <width>531</width>
         <height>31</height>
        </rect>
@@ -635,7 +635,7 @@
       <property name="geometry">
        <rect>
         <x>10</x>
-        <y>410</y>
+        <y>460</y>
         <width>201</width>
         <height>25</height>
        </rect>
@@ -651,13 +651,59 @@
       <property name="geometry">
        <rect>
         <x>10</x>
-        <y>440</y>
+        <y>490</y>
         <width>371</width>
         <height>25</height>
        </rect>
       </property>
       <property name="text">
        <string>Compute and use 3/4 Surface ( (MID + Gray)/2 ) </string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="LH_Inflating_Template">
+      <property name="geometry">
+       <rect>
+        <x>20</x>
+        <y>270</y>
+        <width>231</width>
+        <height>31</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>LH Inflating Template (Optional)</string>
+      </property>
+     </widget>
+     <widget class="QLineEdit" name="lineEdit_LH_Inflating_Template">
+      <property name="geometry">
+       <rect>
+        <x>290</x>
+        <y>270</y>
+        <width>531</width>
+        <height>31</height>
+       </rect>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="RH_Inflating_Template">
+      <property name="geometry">
+       <rect>
+        <x>20</x>
+        <y>420</y>
+        <width>231</width>
+        <height>31</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>RH Inflating Template (Optional)</string>
+      </property>
+     </widget>
+     <widget class="QLineEdit" name="lineEdit_RH_Inflating_Template">
+      <property name="geometry">
+       <rect>
+        <x>290</x>
+        <y>420</y>
+        <width>531</width>
+        <height>31</height>
+       </rect>
       </property>
      </widget>
     </widget>
@@ -1304,7 +1350,7 @@ p, li { white-space: pre-wrap; }
      <widget class="QPushButton" name="visualize">
       <property name="geometry">
        <rect>
-        <x>590</x>
+        <x>570</x>
         <y>140</y>
         <width>231</width>
         <height>41</height>
@@ -1318,7 +1364,7 @@ p, li { white-space: pre-wrap; }
       <property name="geometry">
        <rect>
         <x>110</x>
-        <y>310</y>
+        <y>280</y>
         <width>161</width>
         <height>41</height>
        </rect>
@@ -1327,7 +1373,7 @@ p, li { white-space: pre-wrap; }
        <string>Compare</string>
       </property>
      </widget>
-     <widget class="QRadioButton" name="VisualiserawCSFDensity">
+     <widget class="QRadioButton" name="VisualiseCSFDensity">
       <property name="geometry">
        <rect>
         <x>20</x>
@@ -1337,7 +1383,7 @@ p, li { white-space: pre-wrap; }
        </rect>
       </property>
       <property name="text">
-       <string>Visualize the raw CSF density for both hemispheres in ShapePopulationViewer </string>
+       <string>Visualize the CSF density for both hemispheres in ShapePopulationViewer </string>
       </property>
      </widget>
      <widget class="QRadioButton" name="VisualiseLeftVisitation">
@@ -1370,7 +1416,7 @@ p, li { white-space: pre-wrap; }
       <property name="geometry">
        <rect>
         <x>20</x>
-        <y>270</y>
+        <y>240</y>
         <width>431</width>
         <height>31</height>
        </rect>
@@ -1383,7 +1429,7 @@ p, li { white-space: pre-wrap; }
       <property name="geometry">
        <rect>
         <x>10</x>
-        <y>370</y>
+        <y>340</y>
         <width>401</width>
         <height>81</height>
        </rect>
@@ -1410,7 +1456,7 @@ p, li { white-space: pre-wrap; }
       </column>
       <column>
        <property name="text">
-        <string>L-R / ((L+R)/2)</string>
+        <string>Asymmetry(%)</string>
        </property>
       </column>
       <item row="0" column="0">
@@ -1460,7 +1506,7 @@ p, li { white-space: pre-wrap; }
        </property>
       </item>
      </widget>
-     <widget class="QRadioButton" name="VisualisesmoothedCSFDensity">
+     <widget class="QRadioButton" name="VisualiseCSFDensityinflating">
       <property name="geometry">
        <rect>
         <x>20</x>
@@ -1470,7 +1516,7 @@ p, li { white-space: pre-wrap; }
        </rect>
       </property>
       <property name="text">
-       <string>Visualize the smoothed CSF density for both hemispheres in ShapePopulationViewer </string>
+       <string>Visualize the CSF density for both hemispheres in ShapePopulationViewer </string>
       </property>
      </widget>
     </widget>

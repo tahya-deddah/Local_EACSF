@@ -101,13 +101,14 @@ int  main(int argc, char** argv)
 	sum = int(sum);
 
 	// put the volume and CSF density sum in a txt file
-	std::string FileName = VisitationMap;
-  	std::string NewFileName = FileName.substr(0, FileName.size()-16);
-  	std::string ResultFileName = NewFileName + "CSFVolume.txt";
+	//std::string FileName = VisitationMap;
+  	//std::string NewFileName = FileName.substr(0, FileName.size()-16);
+  	//std::string ResultFileName = NewFileName + "CSFVolume.txt";
+  	std::string ResultFileName = "CSFVolume.txt";
   	ofstream Result;
-  	Result.open (ResultFileName.c_str());
-  	Result << "EACSF Volume = " << TotalVolume << endl; 
-  	Result << "EACSF Density Sum = " << sum << endl;
+  	Result.open (ResultFileName.c_str(), std::ios_base::app); 
+  	Result << Side << " EACSF Volume  = " << TotalVolume << endl; 
+  	Result << Side <<" EACSF Density Sum = " << sum << endl;
   	Result.close();
   	return EXIT_SUCCESS;
 }

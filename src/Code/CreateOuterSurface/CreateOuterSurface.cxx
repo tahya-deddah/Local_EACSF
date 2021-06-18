@@ -56,10 +56,10 @@ int main(int argc, char ** argv)
   vtkSmartPointer<vtkSmoothPolyDataFilter> smoothFilter =
   vtkSmartPointer<vtkSmoothPolyDataFilter>::New();
   smoothFilter->SetInputConnection( decimate->GetOutputPort());
-    smoothFilter->SetNumberOfIterations(NumberOfIterations);
-    smoothFilter->SetRelaxationFactor(0.5);
-    smoothFilter->FeatureEdgeSmoothingOff();
-    smoothFilter->BoundarySmoothingOn();
+  smoothFilter->SetNumberOfIterations(NumberOfIterations);
+  smoothFilter->SetRelaxationFactor(0.5);
+  smoothFilter->FeatureEdgeSmoothingOff();
+  smoothFilter->BoundarySmoothingOn();
   smoothFilter->Update();
   std::cout << "VTK Smoothing mesh finished...." << std::endl;
   vtkPolyData* SmoothedPolyData = smoothFilter->GetOutput();

@@ -23,5 +23,11 @@
       		<flag>F</flag>
       		<description> txt file containing The CSF density</description>
 		</file>
+		<string>
+			<name>Side</name>
+			<longflag>Side</longflag>
+      		<flag>S</flag>
+      		<description> Left or right hemisphere</description>
+		</string>
 	</parameters>
 </executable>
