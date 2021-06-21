@@ -40,6 +40,9 @@ public:
     QJsonObject getConfig();
     void setConfig(QJsonObject root_obj);
 
+private slots:
+    void on_radioButton_75P_clicked(bool checked);
+
 private:
 
     QString OpenFile();
@@ -88,7 +91,6 @@ private slots:
     
     //2nd tab
    
-    void on_T1_clicked();
     void on_Segmentation_clicked();
     void on_CSF_Probability_Map_clicked();
     void on_LH_MID_Surface_clicked();

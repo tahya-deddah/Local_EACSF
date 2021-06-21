@@ -36,11 +36,11 @@ def call_and_print(args):
 
 
 def main(args):
-
-	if(args.Use_MID_Surface):
-		surface = "MID"
+		
 	if(args.Use_75P_Surface):
 		surface = "75P"
+	else :
+		surface = "MID"
 
 	#Executables
 	python = args.python3
@@ -51,10 +51,10 @@ def main(args):
 	scripts_prefix = os.path.join(OUT_PATH, "PythonScripts")
 	process_left_hemisphere = os.path.join(scripts_prefix,"process_left_hemisphere.py")
 	process_right_hemisphere = os.path.join(scripts_prefix,"process_right_hemisphere.py")
-	LH_CSFDensity_Path = os.path.join(args.Output_Directory, "LocalEACSF", "LH_Directory","LH_" + surface + "_CSF_Density_Final.txt")
-	RH_CSFDensity_Path = os.path.join(args.Output_Directory, "LocalEACSF", "RH_Directory","RH_" + surface + "_CSF_Density_Final.txt")
+	LH_CSFDensity_Path = os.path.join(args.Output_Directory, "LocalEACSF", "LH_Directory", args.Label + "_LH_" + surface + "_CSF_Density_Final.txt")
+	RH_CSFDensity_Path = os.path.join(args.Output_Directory, "LocalEACSF", "RH_Directory", args.Label + "_RH_" + surface + "_CSF_Density_Final.txt")
 	####
-	if(path.exists(os.path.join(OUT_PATH, "CSFVolume.txt"))):
+	if(path.exists(os.path.join(OUT_PATH, args.Label + "_CSFVolume.txt"))):
 		print("Compute Local EACSF Density already done",flush=True)
 	else :
 		Process_Left_Side = subprocess.call([python, process_left_hemisphere])
@@ -63,15 +63,22 @@ def main(args):
 		if (os.path.isfile(LH_CSFDensity_Path) and os.path.isfile(RH_CSFDensity_Path)):
 			os.chdir(OUT_PATH)
 			if(args.Smooth) :
-				call_and_print([ComputeCSFVolume, "--VisitingMap", "LH_Directory/LH__Visitation.nrrd", "--CSFProb", "LH_Directory/CSF_Probability_Map.nrrd",\
-				"--CSFFile","LH_Directory/LH_" + surface + "_CSF_Density_Final_Smoothed.txt", "--Side", "Left"])
-				call_and_print([ComputeCSFVolume, "--VisitingMap", "RH_Directory/RH__Visitation.nrrd", "--CSFProb", "RH_Directory/CSF_Probability_Map.nrrd",\
-				"--CSFFile","RH_Directory/RH_" + surface + "_CSF_Density_Final_Smoothed.txt", "--Side", "Right"])
+				call_and_print([ComputeCSFVolume, "--VisitingMap", os.path.join("LH_Directory", args.Label + "_LH_Visitation.nrrd"), "--CSFProb",\
+				os.path.join("LH_Directory", args.Label + "_CSF_Probability_Map.nrrd"),"--CSFFile", os.path.join("LH_Directory", args.Label\
+				+ "_LH_" + surface + "_CSF_Density_Final_Smoothed.txt") , "--Side", "Left", "--Label", args.Label])
+
+				call_and_print([ComputeCSFVolume, "--VisitingMap", os.path.join("RH_Directory", args.Label + "_RH_Visitation.nrrd"), "--CSFProb",\
+				os.path.join("RH_Directory", args.Label + "_CSF_Probability_Map.nrrd"),"--CSFFile", os.path.join("RH_Directory", args.Label\
+				+ "_RH_" + surface + "_CSF_Density_Final_Smoothed.txt") , "--Side", "Right", "--Label", args.Label])
 			else :
-				call_and_print([ComputeCSFVolume, "--VisitingMap", "LH_Directory/LH__Visitation.nrrd", "--CSFProb", "LH_Directory/CSF_Probability_Map.nrrd",\
-				"--CSFFile","LH_Directory/LH_" + surface + "_CSF_Density_Final.txt", "--Side", "Left"])
-				call_and_print([ComputeCSFVolume, "--VisitingMap", "RH_Directory/RH__Visitation.nrrd", "--CSFProb", "RH_Directory/CSF_Probability_Map.nrrd",\
-				"--CSFFile","RH_Directory/RH_" + surface + "_CSF_Density_Final.txt", "--Side", "Right"])	
+				call_and_print([ComputeCSFVolume, "--VisitingMap", os.path.join("LH_Directory", args.Label + "_LH_Visitation.nrrd"), "--CSFProb",\
+				os.path.join("LH_Directory", args.Label + "_CSF_Probability_Map.nrrd"),"--CSFFile", os.path.join("LH_Directory", args.Label\
+				+ "_LH_" + surface + "_CSF_Density_Final.txt") , "--Side", "Left"])
+
+				call_and_print([ComputeCSFVolume, "--VisitingMap", os.path.join("RH_Directory", args.Label + "_RH_Visitation.nrrd"), "--CSFProb",\
+				os.path.join("RH_Directory", args.Label + "_CSF_Probability_Map.nrrd"),"--CSFFile", os.path.join("RH_Directory", args.Label\
+				+ "_RH_" + surface + "_CSF_Density_Final.txt") , "--Side", "Right"])
+
 	print("Local_EACSF finished",flush=True)
 	sys.exit(0)
 
@@ -81,12 +88,10 @@ if (__name__ == "__main__"):
 	parser.add_argument('--ComputeCSFVolume', type=str, help='ComputeCSFVolume executable path', default='@ComputeCSFVolume_PATH@')
 	parser.add_argument("--Output_Directory",type=str, help='Output Directory', default="@Output_Directory@")
 	parser.add_argument('--python3', type=str, help='Python3 Executable Path', default='@python3_PATH@')
-	parser.add_argument('--Use_MID_Surface', type=bool, help='use the MID surface as the input surface', default=@Use_MID_Surface@)
 	parser.add_argument('--Use_75P_Surface', type=bool, help='use the 75P Surface as the input surface', default=@Use_75P_Surface@)
 	parser.add_argument('--Smooth', type=bool, help='Smooth the CSF Density with a heat kernel smoothing', default=@Smooth@)
+	parser.add_argument("--Label",type=str, help='Label of the case , ID for example', default="@Label@")
 
 	args = parser.parse_args()
 	main(args)
-
-
 

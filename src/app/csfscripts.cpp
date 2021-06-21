@@ -68,8 +68,8 @@ void CSFScripts::write_main_script()
     script.replace("@python3_PATH@", checkStringValue(m_Executables["python3"]));
     script.replace("@ComputeCSFVolume_PATH@", checkStringValue(m_Executables["ComputeCSFVolume"]));
     script.replace("@Smooth@", checkBoolValue(param_obj["Smooth"]));
-    script.replace("@Use_MID_Surface@", checkBoolValue(param_obj["Use_MID_Surface"]));
     script.replace("@Use_75P_Surface@", checkBoolValue(param_obj["Use_75P_Surface"]));
+    script.replace("@Label@", checkStringValue(data_obj["Label"]));
 
     QString scripts_dir = QDir::cleanPath(checkStringValue(data_obj["Output_Directory"]) + QString("/LocalEACSF") + m_PythonScripts);
     
@@ -94,17 +94,16 @@ void CSFScripts::write_process_left_hemisphere()
     QString script_left_hemisphere = file_left_hemisphere.readAll();
     file_left_hemisphere.close();
 
-    script_left_hemisphere.replace("@T1_IMAGE@", checkStringValue(data_obj["T1"]));
     script_left_hemisphere.replace("@Tissu_Segmentation@", checkStringValue(data_obj["Tissu_Segmentation"]));
     script_left_hemisphere.replace("@CSF_Probability_Map@", checkStringValue(data_obj["CSF_Probability_Map"]));
     script_left_hemisphere.replace("@LH_MID_surface@", checkStringValue(data_obj["LH_MID_surface"]));
     script_left_hemisphere.replace("@LH_GM_surface@", checkStringValue(data_obj["LH_GM_surface"]));
     script_left_hemisphere.replace("@LH_Inflating_Template@", checkStringValue(data_obj["LH_Inflating_Template"]));
     script_left_hemisphere.replace("@Output_Directory@", checkStringValue(data_obj["Output_Directory"]));
+    script_left_hemisphere.replace("@Label@", checkStringValue(data_obj["Label"]));
 
 
-
-    QJsonArray exe_array = m_Root_obj["executables"].toArray();
+   QJsonArray exe_array = m_Root_obj["executables"].toArray();
     foreach (const QJsonValue exe_val, exe_array)
     {
         QJsonObject exe_obj = exe_val.toObject();
@@ -118,7 +117,6 @@ void CSFScripts::write_process_left_hemisphere()
     script_left_hemisphere.replace("@EstimateCortexStreamlinesDensity_PATH@", checkStringValue(m_Executables["EstimateCortexStreamlinesDensity"]));
     script_left_hemisphere.replace("@AddScalarstoPolyData_PATH@", checkStringValue(m_Executables["AddScalarstoPolyData"]));
     script_left_hemisphere.replace("@HeatKernelSmoothing_PATH@", checkStringValue(m_Executables["HeatKernelSmoothing"]));
-    //script_left_hemisphere.replace("@ComputeCSFVolume_PATH@", checkStringValue(m_Executables["ComputeCSFVolume"]));
     script_left_hemisphere.replace("@ComputeAverageMesh_PATH@", checkStringValue(m_Executables["ComputeAverageMesh"]));
     script_left_hemisphere.replace("@FitPlane_PATH@", checkStringValue(m_Executables["FitPlane"]));
 
@@ -137,9 +135,9 @@ void CSFScripts::write_process_left_hemisphere()
     script_left_hemisphere.replace("@Interpolated@", checkBoolValue(param_obj["Interpolated"]));
     script_left_hemisphere.replace("@NotInterpolated@", checkBoolValue(param_obj["NotInterpolated"]));
 
-    script_left_hemisphere.replace("@Use_MID_Surface@", checkBoolValue(param_obj["Use_MID_Surface"]));
+
     script_left_hemisphere.replace("@Use_75P_Surface@", checkBoolValue(param_obj["Use_75P_Surface"]));
-   
+
     QString scripts_dir = QDir::cleanPath(checkStringValue(data_obj["Output_Directory"]) + QString("/LocalEACSF") + m_PythonScripts);
     
     QString left_hemisphere_script = QDir::cleanPath(scripts_dir + QString("/process_left_hemisphere.py"));
@@ -162,13 +160,13 @@ void CSFScripts::write_process_right_hemisphere()
     QString script_right_hemisphere = file_right_hemisphere.readAll();
     file_right_hemisphere.close();
 
-    script_right_hemisphere.replace("@T1_IMAGE@", checkStringValue(data_obj["T1"]));
     script_right_hemisphere.replace("@Tissu_Segmentation@", checkStringValue(data_obj["Tissu_Segmentation"]));
     script_right_hemisphere.replace("@CSF_Probability_Map@", checkStringValue(data_obj["CSF_Probability_Map"]));
     script_right_hemisphere.replace("@RH_MID_surface@", checkStringValue(data_obj["RH_MID_surface"]));
     script_right_hemisphere.replace("@RH_GM_surface@", checkStringValue(data_obj["RH_GM_surface"]));
     script_right_hemisphere.replace("@RH_Inflating_Template@", checkStringValue(data_obj["RH_Inflating_Template"]));
     script_right_hemisphere.replace("@Output_Directory@", checkStringValue(data_obj["Output_Directory"]));
+    script_right_hemisphere.replace("@Label@", checkStringValue(data_obj["Label"]));
 
 
     QJsonArray exe_array = m_Root_obj["executables"].toArray();
@@ -185,7 +183,6 @@ void CSFScripts::write_process_right_hemisphere()
     script_right_hemisphere.replace("@EstimateCortexStreamlinesDensity_PATH@", checkStringValue(m_Executables["EstimateCortexStreamlinesDensity"]));
     script_right_hemisphere.replace("@AddScalarstoPolyData_PATH@", checkStringValue(m_Executables["AddScalarstoPolyData"]));
     script_right_hemisphere.replace("@HeatKernelSmoothing_PATH@", checkStringValue(m_Executables["HeatKernelSmoothing"]));
-    //script_right_hemisphere.replace("@ComputeCSFVolume_PATH@", checkStringValue(m_Executables["ComputeCSFVolume"]));
     script_right_hemisphere.replace("@ComputeAverageMesh_PATH@", checkStringValue(m_Executables["ComputeAverageMesh"]));
     script_right_hemisphere.replace("@FitPlane_PATH@", checkStringValue(m_Executables["FitPlane"]));
 
@@ -201,7 +198,6 @@ void CSFScripts::write_process_right_hemisphere()
     script_right_hemisphere.replace("@Smooth@", checkBoolValue(param_obj["Smooth"]));
     script_right_hemisphere.replace("@Interpolated@", checkBoolValue(param_obj["Interpolated"]));
     script_right_hemisphere.replace("@NotInterpolated@", checkBoolValue(param_obj["NotInterpolated"]));
-    script_right_hemisphere.replace("@Use_MID_Surface@", checkBoolValue(param_obj["Use_MID_Surface"]));
     script_right_hemisphere.replace("@Use_75P_Surface@", checkBoolValue(param_obj["Use_75P_Surface"]));
 
   

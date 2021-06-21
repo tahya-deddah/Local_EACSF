@@ -110,17 +110,26 @@ int  main(int argc, char** argv)
 
                 if(slrum)
                 {
-                    QString slurm_script = QDir::cleanPath(scripts_dir + QString("/slurm-job"));
-                    QJsonObject param_obj = root_obj["parameters"].toObject();
-                    QString time = QString("--time=") + param_obj["Slurm_time"].toString();
-                    QString memory = QString("--mem=") + param_obj["Slurm_memory"].toString();
-                    QString core = QString("--ntasks=") + param_obj["Slurm_cores"].toString();
-                    QString node = QString("--nodes=") + param_obj["Slurm_nodes"].toString();
-                    QString output_file = QString("--output=") + outlog_filename ;
-                    QString error_file = QString("--error=") + errlog_filename ;
+                    QString CSF_volume_filename = QDir::cleanPath(output_dir + QString("/LocalEACSF") + QString("/CSFVolume.txt"));
+                    QFile volume_file(CSF_volume_filename);
+                    if(volume_file.exists()) 
+                    {       
+                        std::cout <<"Compute Local EACSF Density already done" << std::endl;
+                    } 
+                    else
+                    {
+                        QString slurm_script = QDir::cleanPath(scripts_dir + QString("/slurm-job"));
+                        QJsonObject param_obj = root_obj["parameters"].toObject();
+                        QString time = QString("--time=") + param_obj["Slurm_time"].toString();
+                        QString memory = QString("--mem=") + param_obj["Slurm_memory"].toString();
+                        QString core = QString("--ntasks=") + param_obj["Slurm_cores"].toString();
+                        QString node = QString("--nodes=") + param_obj["Slurm_nodes"].toString();
+                        QString output_file = QString("--output=") + outlog_filename ;
+                        QString error_file = QString("--error=") + errlog_filename ;
 
-                    QStringList params = QStringList() << time << memory << core << node << output_file << error_file << slurm_script;
-                    prc->start(QString("sbatch"), params);
+                        QStringList params = QStringList() << time << memory << core << node << output_file << error_file << slurm_script;
+                        prc->start(QString("sbatch"), params);
+                    }
                 }
                 else
                 {

@@ -104,7 +104,7 @@ int  main(int argc, char** argv)
 	//std::string FileName = VisitationMap;
   	//std::string NewFileName = FileName.substr(0, FileName.size()-16);
   	//std::string ResultFileName = NewFileName + "CSFVolume.txt";
-  	std::string ResultFileName = "CSFVolume.txt";
+  	std::string ResultFileName = Label + "_CSFVolume.txt";
   	ofstream Result;
   	Result.open (ResultFileName.c_str(), std::ios_base::app); 
   	Result << Side << " EACSF Volume  = " << TotalVolume << endl; 

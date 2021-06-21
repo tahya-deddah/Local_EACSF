@@ -69,21 +69,29 @@ def interpolation(EACSFMaxValueFile, EACSFMinValueFile , EACSFInterpolatedFile, 
 
 def optimize_csfdensity (surface): ## optimize
 
-	EACSFFile = os.path.join( args.Output_Directory, "LocalEACSF", "LH_Directory", "LH_" + surface + "_CSF_Density.txt")
-	EACSFMaxValueFile = os.path.join( args.Output_Directory, "LocalEACSF", "LH_InterpolationMaxValue_Directory", "LH_" + surface + "_CSF_Density.txt")
-	EACSFMinValueFile = os.path.join( args.Output_Directory, "LocalEACSF", "LH_InterpolationMinValue_Directory", "LH_" + surface + "_CSF_Density.txt") 
-	EACSFInterpolatedFile = os.path.join( args.Output_Directory, "LocalEACSF", "LH_Directory", "LH_" + surface + "_CSF_Density_Interpolated.txt")
-	EACSFFinalFile = os.path.join( args.Output_Directory, "LocalEACSF", "LH_Directory", "LH_" + surface + "_CSF_Density_Final.txt")		
-	AbsoluteDifferenceFile = os.path.join( args.Output_Directory, "LocalEACSF", "LH_Directory", "LH_" + surface + "_CSF_Original_Interpolated_Absolute_Difference.txt" )
+	EACSFFile = os.path.join( args.Output_Directory, "LocalEACSF", "LH_Directory", args.Label + "_LH_" + surface + "_CSF_Density.txt")
+	EACSFMaxValueFile = os.path.join( args.Output_Directory, "LocalEACSF", "LH_InterpolationMaxValue_Directory", args.Label + "_LH_" + surface + "_CSF_Density.txt")
+	EACSFMinValueFile = os.path.join( args.Output_Directory, "LocalEACSF", "LH_InterpolationMinValue_Directory", args.Label + "_LH_" + surface + "_CSF_Density.txt") 
+	EACSFInterpolatedFile = os.path.join( args.Output_Directory, "LocalEACSF", "LH_Directory", args.Label + "_LH_" + surface + "_CSF_Density_Interpolated.txt")
+	EACSFFinalFile = os.path.join( args.Output_Directory, "LocalEACSF", "LH_Directory", args.Label + "_LH_" + surface + "_CSF_Density_Final.txt")		
+	AbsoluteDifferenceFile = os.path.join( args.Output_Directory, "LocalEACSF", "LH_Directory", args.Label + "_LH_" + surface + "_CSF_Original_Interpolated_Absolute_Difference.txt" )
 
 	interpolation(EACSFMaxValueFile, EACSFMinValueFile , EACSFInterpolatedFile, EACSFFile, AbsoluteDifferenceFile)
 	os.chdir(os.path.join( args.Output_Directory, "LocalEACSF", "LH_Directory"))
 
+	### add scalars to csfdensity.vtk
+	call_and_print([args.AddScalarstoPolyData, "--InputFile", args.Label + "_LH_" + surface + "_CSF_Density.vtk", "--OutputFile", "LH_" + surface + "_CSF_Density.vtk",\
+	"--ScalarsFile", args.Label + "_LH_" + surface + "_CSF_Density.txt", "--Scalars_Name", 'CSF_Density_Original'])
+	call_and_print([args.AddScalarstoPolyData, "--InputFile", "LH_" + surface + "_CSF_Density.vtk", "--OutputFile", args.Label + "_LH_" + surface + "_CSF_Density.vtk",\
+	"--ScalarsFile", args.Label + "_LH_" + surface + "_CSF_Density_Interpolated.txt", "--Scalars_Name", 'CSF_Density_Interpolated'])
 
-	call_and_print([args.AddScalarstoPolyData, "--InputFile", "LH_" + surface + "_CSF_Density.vtk", "--OutputFile", "LH_" + surface + "_CSF_Density.vtk",\
-	"--ScalarsFile", "LH_" + surface + "_CSF_Density.txt", "--Scalars_Name", 'CSF_Density_Original'])
-	call_and_print([args.AddScalarstoPolyData, "--InputFile", "LH_" + surface + "_CSF_Density.vtk", "--OutputFile", "LH_" + surface + "_CSF_Density.vtk",\
-	"--ScalarsFile", "LH_" + surface + "_CSF_Density_Interpolated.txt", "--Scalars_Name", 'CSF_Density_Interpolated'])
+	### add scalars to csfdensity_inflating.vtk
+	if(args.LH_Inflating_Template != ""):
+		copyfile(args.LH_Inflating_Template, "LH_" + surface + "_Inflating_Template.vtk")
+		call_and_print([args.AddScalarstoPolyData, "--InputFile", args.Label + "_LH_" + surface + "_Inflating_Template.vtk", "--OutputFile", args.Label + "_LH_" + surface + "_Inflating_Template.vtk",\
+		"--ScalarsFile", args.Label + "_LH_" + surface + "_CSF_Density_Interpolated.txt", "--Scalars_Name", 'CSF_Density_Interpolated'])
+		call_and_print([args.AddScalarstoPolyData, "--InputFile", args.Label + "_LH_" + surface + "_Inflating_Template.vtk", "--OutputFile", args.Label + "_LH_" + surface + "_Inflating_Template.vtk",\
+		"--ScalarsFile", args.Label + "_LH_" + surface + "_CSF_Density.txt", "--Scalars_Name", 'CSF_Density_Original'])
 
 	original_density_average = average(EACSFFile)
 	optimal_density_average = average(EACSFInterpolatedFile)
@@ -93,9 +101,9 @@ def optimize_csfdensity (surface): ## optimize
 	if(optimal_density_average > original_density_average):
 		copyfile(EACSFFile, EACSFFinalFile)	
 
-	os.rename(EACSFFile, os.path.join( args.Output_Directory, "LocalEACSF", "LH_Directory", "LH_" + surface + "_CSF_Density_Original.txt"))	
-	call_and_print([args.AddScalarstoPolyData, "--InputFile", "LH_" + surface + "_CSF_Density.vtk", "--OutputFile", "LH_" + surface + "_CSF_Density.vtk",\
-		"--ScalarsFile", "LH_" + surface + "_CSF_Density_Final.txt", "--Scalars_Name", 'CSF_Density_Final'])
+	os.rename(EACSFFile, os.path.join( args.Output_Directory, "LocalEACSF", "LH_Directory", args.Label + "_LH_" + surface + "_CSF_Density_Original.txt"))	
+	call_and_print([args.AddScalarstoPolyData, "--InputFile", args.Label + "_LH_" + surface + "_CSF_Density.vtk", "--OutputFile", "LH_" + surface + "_CSF_Density.vtk",\
+		"--ScalarsFile", args.Label + "_LH_" + surface + "_CSF_Density_Final.txt", "--Scalars_Name", 'CSF_Density_Final'])
 	
 	if(args.Clean_up):
 		shutil.rmtree("../LH_InterpolationMaxValue_Directory")
@@ -104,12 +112,12 @@ def optimize_csfdensity (surface): ## optimize
 def main_loop(args):
 
 	start = time.time()	
-	if(args.Use_MID_Surface):
-		surface = "MID"
 	if(args.Use_75P_Surface):
 		surface = "75P"
+	else :
+		surface = "MID"
 
-	CSFDensity_Path = os.path.join(args.Output_Directory, "LocalEACSF", "LH_Directory","LH_" + surface + "_CSF_Density_Final.txt")
+	CSFDensity_Path = os.path.join(args.Output_Directory, "LocalEACSF", "LH_Directory", args.Label + "_LH_" + surface + "_CSF_Density_Final.txt")
 	if (os.path.isfile(CSFDensity_Path)):
 		print('Compute local EACSF density for left hemisphere done!', flush=True)
 	else:
@@ -125,13 +133,21 @@ def main_loop(args):
 			optimize_csfdensity(surface)			
 		if(args.NotInterpolated):
 			processing(args, "LH_Directory", surface, str(@imagedimension@))
-			os.rename(os.path.join( args.Output_Directory, "LocalEACSF", "LH_Directory", "LH_" + surface + "_CSF_Density.txt"),\
-					os.path.join( args.Output_Directory, "LocalEACSF", "LH_Directory", "LH_" + surface + "_CSF_Density_Final.txt"))
+			os.rename(os.path.join( args.Output_Directory, "LocalEACSF", "LH_Directory", args.Label +"_LH_" + surface + "_CSF_Density.txt"),\
+					os.path.join( args.Output_Directory, "LocalEACSF", "LH_Directory", args.Label + "_LH_" + surface + "_CSF_Density_Final.txt"))
 
 		os.chdir(os.path.join( args.Output_Directory, "LocalEACSF", "LH_Directory"))
 		if(args.Smooth) :
-			call_and_print([args.HeatKernelSmoothing , "--InputSurface", "LH_" + surface + "_CSF_Density.vtk", "--NumberIter", "@NumberIter@", "--sigma", "@Bandwith@",\
-			"--OutputSurface", "LH_" + surface + "_CSF_Density.vtk"])
+			call_and_print([args.HeatKernelSmoothing , "--InputSurface", args.Label + "_LH_" + surface + "_CSF_Density.vtk", "--NumberIter", "@NumberIter@", "--sigma", "@Bandwith@",\
+			"--OutputSurface", args.Label +"_LH_" + surface + "_CSF_Density.vtk"])
+
+		if(args.LH_Inflating_Template != ""):
+			copyfile(args.LH_Inflating_Template, args.Label + "_LH_" + surface + "_Inflating_Template.vtk")
+			call_and_print([args.AddScalarstoPolyData, "--InputFile", args.Label +"_LH_" + surface + "_Inflating_Template.vtk", "--OutputFile", args.Label + "_LH_" + surface + "_Inflating_Template.vtk",\
+			"--ScalarsFile", args.Label + "_LH_" + surface + "_CSF_Density_Final.txt", "--Scalars_Name", 'CSF_Density_Final'])
+			if(args.Smooth) :
+				call_and_print([args.AddScalarstoPolyData, "--InputFile", args.Label + "_LH_" + surface + "_Inflating_Template.vtk", "--OutputFile", args.Label + "_LH_" + surface + "_Inflating_Template.vtk",\
+				"--ScalarsFile", args.Label + "_LH_" + surface + "_CSF_Density_Final_Smoothed.txt", "--Scalars_Name", 'CSF_Density_Final_Smoothed'])
 	end = time.time()
 	print("time for LH:",end - start, flush=True)
 
@@ -145,15 +161,13 @@ def processing(args, DirectoryName, Surface, ImageDimension):
 	else :
 		print ("{} exist".format(DirectoryName), flush=True)
 
-	T1 = os.path.join(Directory, "T1.nrrd")
-	Data_existence_test =os.path.isfile(T1) 
+	TissuSeg = os.path.join(Directory, args.Label + "_Tissu_Segmentation.nrrd")
+	Data_existence_test =os.path.isfile(TissuSeg) 
 	if Data_existence_test==False:
 		print("Copying Data", flush=True)
-		copyfile(args.T1, os.path.join(Directory,"T1.nrrd"))
-		copyfile(args.Tissu_Segmentation, os.path.join(Directory,"Tissu_Segmentation.nrrd"))
-		copyfile(args.CSF_Probability_Map, os.path.join(Directory,"CSF_Probability_Map.nrrd"))
-		copyfile(args.LH_MID_surface, os.path.join(Directory,"LH_MID.vtk"))
-		copyfile(args.LH_GM_surface, os.path.join(Directory,"LH_GM.vtk"))
+		copyfile(args.Tissu_Segmentation, os.path.join(Directory, args.Label + "_Tissu_Segmentation.nrrd"))
+		copyfile(args.CSF_Probability_Map, os.path.join(Directory, args.Label +  "_CSF_Probability_Map.nrrd"))
+		copyfile(args.LH_MID_surface, os.path.join(Directory, args.Label + "_LH_MID.vtk"))
 		print("Copying Done", flush=True)
 	else :
 		print("Data Exists", flush=True)
@@ -171,58 +185,59 @@ def processing(args, DirectoryName, Surface, ImageDimension):
 	
 	os.chdir(Directory)	
 			
-	Streamline_Path = os.path.join(Directory,"LH_Outer_streamlines.vtk")
+	Streamline_Path = os.path.join(Directory, args.Label + "_LH_Outer_streamlines.vtk")
 	StreamlinesExistenceTest = os.path.isfile(Streamline_Path)
 	if StreamlinesExistenceTest ==True :
 		print('LH streamline computation Done!', flush=True)
 	else:
 		print('Creating Outer LH Convex Hull Surface', flush=True)
 		print('Creating LH Outer Image')
-		call_and_print([CreateOuterImage,"--InputImg", "Tissu_Segmentation.nrrd", "--OutputImg", "LH_GM_Dilated.nrrd", "--closingradius", "@closingradius@", "--dilationradius", "@dilationradius@", "--Reverse", '0'])
+		call_and_print([CreateOuterImage,"--InputImg", args.Label + "_Tissu_Segmentation.nrrd", "--OutputImg", args.Label + "_LH_GM_Dilated.nrrd", "--closingradius", "@closingradius@", "--dilationradius", "@dilationradius@", "--Reverse", '0'])
 		print('Creating LH Outer Surface', flush=True)
-		call_and_print([CreateOuterSurface,"--InputBinaryImg","LH_GM_Dilated.nrrd", "--OutputSurface","LH_GM_Outer_MC.vtk", "--NumberIterations", "@NumberIterations@"])
-		call_and_print([EditPolyData, "--InputSurface","LH_GM_Outer_MC.vtk", "--OutputSurface","LH_GM_Outer_MC.vtk", "--flipx", ' -1', "--flipy", ' -1', "--flipz", '1'])
+		call_and_print([CreateOuterSurface,"--InputBinaryImg", args.Label + "_LH_GM_Dilated.nrrd", "--OutputSurface", args.Label +"_LH_GM_Outer_MC.vtk", "--NumberIterations", "@NumberIterations@"])
+		call_and_print([EditPolyData, "--InputSurface",args.Label + "_LH_GM_Outer_MC.vtk", "--OutputSurface", args.Label + "_LH_GM_Outer_MC.vtk", "--flipx", ' -1', "--flipy", ' -1', "--flipz", '1'])
 		print('Creating Outer LH Convex Hull Surface Done!', flush=True)
 
 		if(args.Use_75P_Surface):
+			copyfile(args.LH_GM_surface, os.path.join(Directory, args.Label + "_LH_GM.vtk"))
 			print('Creating inner surface:', flush=True)
-			call_and_print([ComputeAverageMesh, "--inputFilename1", "LH_MID.vtk", "--inputFilename2", "LH_GM.vtk", "--outputFilename", "LH_75P.vtk"])
+			call_and_print([ComputeAverageMesh, "--inputFilename1", args.Label + "_LH_MID.vtk", "--inputFilename2", args.Label + "_LH_GM.vtk", "--outputFilename", args.Label +"_LH_75P.vtk"])
 	
 		print('Creating LH streamlines', flush=True)
 		print('CEstablishing Surface Correspondance', flush=True)
-		call_and_print([klaplace,'-dims', ImageDimension, "LH_" + Surface + ".vtk", "LH_GM_Outer_MC.vtk",'-surfaceCorrespondence',"LH_Outer.corr"])
+		call_and_print([klaplace,'-dims', ImageDimension, args.Label + "_LH_" + Surface + ".vtk", args.Label + "_LH_GM_Outer_MC.vtk",'-surfaceCorrespondence',args.Label +"_LH_Outer.corr"])
 		print('CEstablishing Streamlines', flush=True)
-		call_and_print([klaplace, '-traceStream',"LH_Outer.corr_field.vts", "LH_" + Surface + ".vtk", "LH_GM_Outer_MC.vtk", "LH_Outer_streamlines.vtp", \
-									"LH_Outer_points.vtp",'-traceDirection','forward'])
-		call_and_print([klaplace, '-conv',"LH_Outer_streamlines.vtp", "LH_Outer_streamlines.vtk"])
+		call_and_print([klaplace, '-traceStream',args.Label +"_LH_Outer.corr_field.vts", args.Label +"_LH_" + Surface + ".vtk", args.Label + "_LH_GM_Outer_MC.vtk", args.Label + "_LH_Outer_streamlines.vtp", \
+									args.Label + "_LH_Outer_points.vtp",'-traceDirection','forward'])
+		call_and_print([klaplace, '-conv', args.Label + "_LH_Outer_streamlines.vtp", args.Label + "_LH_Outer_streamlines.vtk"])
 		print('Creating LH streamlines Done!', flush=True)
 
-	CSFDensdityTxtFile = os.path.join(Directory,"LH_" + Surface + "_CSF_Density.txt")
+	CSFDensdityTxtFile = os.path.join(Directory, args.Label +"_LH_" + Surface + "_CSF_Density.txt")
 	CSFDensityExistenceTest = os.path.isfile(CSFDensdityTxtFile)
 	if CSFDensityExistenceTest==True :
 		print('Computing LH EACSF Done', flush=True)
 	else :
 		print('Computing LH EACSF  ', flush=True)
 		## avoid double counting
-		# call_and_print([CreateOuterImage,"--InputImg", "Tissu_Segmentation.nrrd", "--OutputImg", "RH_GM_Dilated.nrrd", "--closingradius", "@closingradius@",\
+		# call_and_print([CreateOuterImage,"--InputImg", args.Label + "_Tissu_Segmentation.nrrd", "--OutputImg", args.Label + "_RH_GM_Dilated.nrrd", "--closingradius", "@closingradius@",\
 	 # 		"--dilationradius", "@dilationradius@", "--Reverse", '1'])
-		# call_and_print([FitPlane,"--input1", "LH_GM_Dilated.nrrd", "--input2", "RH_GM_Dilated.nrrd", "--output1", "LH_GM_Dilated.nrrd", "--output2", "RH_GM_Dilated.nrrd"])
-		# os.remove("RH_GM_Dilated.nrrd")
+		# call_and_print([FitPlane,"--input1", args.Label + "_LH_GM_Dilated.nrrd", "--input2", args.Label + "_RH_GM_Dilated.nrrd", "--output1", args.Label + "_LH_GM_Dilated.nrrd", "--output2", args.Label + "_RH_GM_Dilated.nrrd"])
+		# os.remove(args.Label + "_RH_GM_Dilated.nrrd")
 		##########
 
-		call_and_print([EstimateCortexStreamlinesDensity, "--InputSurface" , "LH_" + Surface + ".vtk", "--InputOuterStreamlines",  "LH_Outer_streamlines.vtk",\
-			"--InputSegmentation", "CSF_Probability_Map.nrrd", "--InputMask", "LH_GM_Dilated.nrrd", "--OutputSurface", "LH_" + Surface + "_CSF_Density.vtk", "--VisitingMap",\
-			"LH__Visitation.nrrd"])
+		call_and_print([EstimateCortexStreamlinesDensity, "--InputSurface" , args.Label + "_LH_" + Surface + ".vtk", "--InputOuterStreamlines", args.Label + "_LH_Outer_streamlines.vtk",\
+			"--InputSegmentation", args.Label + "_CSF_Probability_Map.nrrd", "--InputMask", args.Label + "_LH_GM_Dilated.nrrd", "--OutputSurface", args.Label + "_LH_" + Surface + "_CSF_Density.vtk", "--VisitingMap",\
+			args.Label + "_LH_Visitation.nrrd"])
 	if(args.Clean_up) :
 	 	clean_up(Directory)
 			
 parser = argparse.ArgumentParser(description='EACSF Density Quantification')
-parser.add_argument("--T1",type=str, help='T1 Image', default="@T1_IMAGE@")
 parser.add_argument("--Tissu_Segmentation",type=str, help='Tissu Segmentation for Outer CSF Hull Creation', default="@Tissu_Segmentation@")
 parser.add_argument("--CSF_Probability_Map",type=str, help='CSF Probality Map', default="@CSF_Probability_Map@")
 parser.add_argument("--LH_MID_surface",type=str, help='Left Hemisphere MID Surface', default="@LH_MID_surface@")
 parser.add_argument("--LH_GM_surface",type=str, help='Left Hemisphere GM Surface', default="@LH_GM_surface@")
 parser.add_argument("--LH_Inflating_Template",type=str, help='Left Hemisphere Inflating Template', default="@LH_Inflating_Template@")
+parser.add_argument("--Label",type=str, help='Label of the case , ID for example', default="@Label@")
 parser.add_argument("--Output_Directory",type=str, help='Output Directory', default="@Output_Directory@")
 parser.add_argument('--CreateOuterImage', type=str, help='CreateOuterImage executable path', default='@CreateOuterImage_PATH@')
 parser.add_argument('--CreateOuterSurface', type=str, help='CreateOuterSurface executable path', default='@CreateOuterSurface_PATH@')
@@ -231,14 +246,12 @@ parser.add_argument('--klaplace', type=str, help='klaplace executable path', def
 parser.add_argument('--EstimateCortexStreamlinesDensity', type=str, help='EstimateCortexStreamlinesDensity executable path', default='@EstimateCortexStreamlinesDensity_PATH@')
 parser.add_argument('--AddScalarstoPolyData', type=str, help='AddScalarstoPolyData executable path', default='@AddScalarstoPolyData_PATH@')
 parser.add_argument('--HeatKernelSmoothing', type=str, help='HeatKernelSmoothing executable path', default='@HeatKernelSmoothing_PATH@')
-#parser.add_argument('--ComputeCSFVolume', type=str, help='ComputeCSFVolume executable path', default='@ComputeCSFVolume_PATH@')
 parser.add_argument('--ComputeAverageMesh', type=str, help='ComputeAverageMesh executable path', default='@ComputeAverageMesh_PATH@')
 parser.add_argument('--FitPlane', type=str, help='FitPlane executable path', default='@FitPlane_PATH@')
 parser.add_argument('--Smooth', type=bool, help='Smooth the CSF Density with a heat kernel smoothing', default=@Smooth@)
 parser.add_argument('--Clean_up', type=bool, help='Clean the output directory of intermediate outputs', default=@Clean@)
 parser.add_argument('--Interpolated', type=bool, help='Compute  the optimal CSF density ( Interpolated)', default=@Interpolated@)
 parser.add_argument('--NotInterpolated', type=bool, help='Compute CSF density without optimisation (Interpolation)', default=@NotInterpolated@)
-parser.add_argument('--Use_MID_Surface', type=bool, help='use the MID surface as the input surface', default=@Use_MID_Surface@)
 parser.add_argument('--Use_75P_Surface', type=bool, help='use the 75P Surface as the input surface', default=@Use_75P_Surface@)
 args = parser.parse_args()
 

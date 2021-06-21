@@ -29,5 +29,11 @@
       		<flag>S</flag>
       		<description> Left or right hemisphere</description>
 		</string>
+		<string>
+			<name>Label</name>
+			<longflag>Label</longflag>
+      		<flag>L</flag>
+      		<description> Case ID for example</description>
+		</string>
 	</parameters>
 </executable>

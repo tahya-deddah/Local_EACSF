@@ -96,7 +96,6 @@ void CSFWindow::setConfig(QJsonObject root_obj)
 {
     QJsonObject data_obj = root_obj["data"].toObject();
 
-    lineEdit_T1img->setText(data_obj["T1"].toString()); 
     lineEdit_Segmentation->setText(data_obj["Tissu_Segmentation"].toString());
     lineEdit_CSF_Probability_Map->setText(data_obj["CSF_Probability_Map"].toString());
     lineEdit_LH_MID_Surface->setText(data_obj["LH_MID_surface"].toString());
@@ -106,6 +105,7 @@ void CSFWindow::setConfig(QJsonObject root_obj)
     lineEdit_RH_GM_Surface->setText(data_obj["RH_GM_surface"].toString());
     lineEdit_RH_Inflating_Template->setText(data_obj["RH_Inflating_Template"].toString());
     lineEdit_Output_Directory->setText(data_obj["Output_Directory"].toString());
+    lineEdit_Label->setText(data_obj["Label"].toString());
 
     QJsonObject param_obj = root_obj["parameters"].toObject();
 
@@ -129,8 +129,30 @@ void CSFWindow::setConfig(QJsonObject root_obj)
     radioButton_Interpolated->setChecked(param_obj["Interpolated"].toBool());
     radioButton_notInterpolated->setChecked(param_obj["NotInterpolated"].toBool());
 
-    radioButton_MID->setChecked(param_obj["Use_MID_Surface"].toBool());
     radioButton_75P->setChecked(param_obj["Use_75P_Surface"].toBool());
+
+
+    if( radioButton_75P->isChecked() )
+    {
+        gray_matter_surfaces->setEnabled(true);
+        LH_GM_Surface->setEnabled(true);
+        RH_GM_Surface->setEnabled(true);
+        lineEdit_LH_GM_Surface->setEnabled(true);
+        lineEdit_RH_GM_Surface->setEnabled(true);
+    }
+    else
+    {
+        gray_matter_surfaces->setEnabled(false);
+        LH_GM_Surface->setEnabled(false);
+        RH_GM_Surface->setEnabled(false);
+        lineEdit_LH_GM_Surface->setEnabled(false);
+        lineEdit_RH_GM_Surface->setEnabled(false);
+    }
+    /*if( smooth->isChecked() )
+    {
+        slurm_parameters_state(true);
+    }else{slurm_parameters_state(false);}*/
+
 
     QJsonArray exe_array = root_obj["executables"].toArray();
     foreach (const QJsonValue exe_val, exe_array)
@@ -145,19 +167,23 @@ void CSFWindow::setConfig(QJsonObject root_obj)
 QJsonObject CSFWindow::getConfig(){
 
     QJsonObject data_obj; 
-    data_obj["T1"]=lineEdit_T1img->text();
+   
     data_obj["Tissu_Segmentation"]=lineEdit_Segmentation->text();
     data_obj["CSF_Probability_Map"]=lineEdit_CSF_Probability_Map->text();
-    data_obj["LH_MID_surface"]=lineEdit_LH_MID_Surface->text();
-    data_obj["LH_GM_surface"]=lineEdit_LH_GM_Surface->text();
+    data_obj["LH_MID_surface"]=lineEdit_LH_MID_Surface->text();  
     data_obj["LH_Inflating_Template"]=lineEdit_LH_Inflating_Template->text();
-    data_obj["RH_MID_surface"]=lineEdit_RH_MID_Surface->text();
-    data_obj["RH_GM_surface"]=lineEdit_RH_GM_Surface->text();
-    data_obj["RH_Inflating_Template"]=lineEdit_RH_Inflating_Template->text();
-    data_obj["RH_Inflating_Template"]=lineEdit_RH_Inflating_Template->text();
+    data_obj["RH_MID_surface"]=lineEdit_RH_MID_Surface->text();    
+    data_obj["RH_Inflating_Template"]=lineEdit_RH_Inflating_Template->text();  
     data_obj["Output_Directory"]=lineEdit_Output_Directory->text();
+    data_obj["Label"]=lineEdit_Label->text();
 
     QJsonObject param_obj;
+   
+    if( radioButton_75P->isChecked())
+    {
+        data_obj["LH_GM_surface"]=lineEdit_LH_GM_Surface->text();
+        data_obj["RH_GM_surface"]=lineEdit_RH_GM_Surface->text();
+    }
     if(radioButton_slurm->isChecked())
     {
         param_obj["Slurm_nodes"] = lineEdit_Node->text();    
@@ -182,7 +208,6 @@ QJsonObject CSFWindow::getConfig(){
     param_obj["Interpolated"] = radioButton_Interpolated->isChecked();
     param_obj["NotInterpolated"] = radioButton_notInterpolated->isChecked();
 
-    param_obj["Use_MID_Surface"] = radioButton_MID->isChecked();
     param_obj["Use_75P_Surface"] = radioButton_75P->isChecked();
 
     QJsonObject root_obj;
@@ -403,7 +428,6 @@ void CSFWindow::on_Find_clicked()
             { 
                 QDir oDir(file.absoluteFilePath());  
                 QMap<QString, QString> *row = new QMap<QString, QString>;
-                bool T1_Found = Find_File(oDir, lineEdit_T1_filter->text(), QString("T1"), row); 
                 bool Seg_Found = Find_File(oDir, lineEdit_Seg_filter->text(), QString("Tissu Segmentation"), row);
                 bool CSF_Found = Find_File(oDir, lineEdit_CSF_Prob_filter->text(), QString("CSF Probability Map"), row);   
                 bool LH_MID_Found = Find_File(oDir, lineEdit_LH_MID_filter->text(), QString("LH MID Surface"), row);
@@ -411,7 +435,7 @@ void CSFWindow::on_Find_clicked()
                 bool RH_MID_Found = Find_File(oDir, lineEdit_RH_MID_filter->text(), QString("RH MID Surface"), row);
                 bool RH_GM_Found = Find_File(oDir, lineEdit_RH_GM_filter->text(), QString("RH GM Surface"), row);
 
-                if(T1_Found &&  Seg_Found  && CSF_Found &&  LH_MID_Found && LH_GM_Found &&  RH_MID_Found && RH_GM_Found)
+                if(Seg_Found  && CSF_Found &&  LH_MID_Found && LH_GM_Found &&  RH_MID_Found && RH_GM_Found)
                 {
                     row->insert(QString("Output Directory"), file.absoluteFilePath()); 
                     ModelData << row ;  
@@ -566,7 +590,6 @@ void CSFWindow::on_Run_Batch_Process_clicked()
             for (int row=0;row<model->rowCount();row++)
             {
 
-                lineEdit_T1img->setText(data[row]->value("T1"));
                 lineEdit_Segmentation->setText(data[row]->value("Tissu Segmentation"));
                 lineEdit_CSF_Probability_Map->setText(data[row]->value("CSF Probability Map"));
                 lineEdit_LH_MID_Surface->setText(data[row]->value("LH MID Surface")); 
@@ -580,7 +603,6 @@ void CSFWindow::on_Run_Batch_Process_clicked()
         if (batchLocal->isChecked())
         {
             int row = 0;
-            lineEdit_T1img->setText(data[row]->value("T1"));
             lineEdit_Segmentation->setText(data[row]->value("Tissu Segmentation"));
             lineEdit_CSF_Probability_Map->setText(data[row]->value("CSF Probability Map"));
             lineEdit_LH_MID_Surface->setText(data[row]->value("LH MID Surface")); 
@@ -594,17 +616,6 @@ void CSFWindow::on_Run_Batch_Process_clicked()
 }
 
 //2nd tab
-
-void CSFWindow::on_T1_clicked()
-{
-
-    QString path=OpenFile();
-
-    if (!path.isEmpty())
-    {
-        lineEdit_T1img->setText(path);
-    }
-}
 
 void CSFWindow::on_Segmentation_clicked()
 {
@@ -692,6 +703,14 @@ void CSFWindow::on_output_directory_clicked()
         lineEdit_Output_Directory->setText(path);
     }
 }
+void CSFWindow::on_radioButton_75P_clicked(bool checked)
+{
+    gray_matter_surfaces->setEnabled(checked);
+    LH_GM_Surface->setEnabled(checked);
+    RH_GM_Surface->setEnabled(checked);
+    lineEdit_LH_GM_Surface->setEnabled(checked);
+    lineEdit_RH_GM_Surface->setEnabled(checked);
+}
 
 
 // 3rd Tab - Executables tab
@@ -773,7 +792,6 @@ void CSFWindow::prc_finished(QProcess *prc, QString outlog_filename, QString err
        QList<QMap<QString, QString>*> data = model->GetModelData();
         if (row < (model->rowCount()-1))
         {
-            lineEdit_T1img->setText(data[row + 1]->value("T1"));
             lineEdit_Segmentation->setText(data[row + 1]->value("Tissu Segmentation"));
             lineEdit_CSF_Probability_Map->setText(data[row + 1]->value("CSF Probability Map"));
             lineEdit_LH_MID_Surface->setText(data[row + 1]->value("LH MID Surface")); 
@@ -800,7 +818,6 @@ void CSFWindow::disp_output(QProcess *prc, QString outlog_filename)
 
     if (file.open(QIODevice::WriteOnly | QIODevice::Append)) {
     QTextStream out(&file); out <<output_log;
-    //output->setText(output_log);
     output->append(output_log);
     file.close();}  
 }
@@ -938,14 +955,14 @@ void CSFWindow::on_visualize_clicked()
     }
     if (VisualiseRightVisitation->isChecked())
     {
-        QString RH_visitation_map = RH_Directory + QString("/RH__Visitation.nrrd");
+        QString RH_visitation_map = RH_Directory + QString("/RH_Visitation.nrrd");
         QStringList arguments = QStringList()<< QString("-s") << RH_visitation_map << QString("-g") << CSF_Probability_Map;
         visualization->setWorkingDirectory(OutputDirectory);
         visualization->start(QString("itksnap"), arguments);
     }
     if (VisualiseLeftVisitation->isChecked())
     {
-        QString LH_visitation_map = LH_Directory + QString("/LH__Visitation.nrrd");    
+        QString LH_visitation_map = LH_Directory + QString("/LH_Visitation.nrrd");    
         QStringList arguments = QStringList()<< QString("-s") << LH_visitation_map << QString("-g") << CSF_Probability_Map;
         visualization->setWorkingDirectory(OutputDirectory);
         visualization->start(QString("itksnap"), arguments);
@@ -998,6 +1015,8 @@ void CSFWindow::on_Compare_clicked()
 
 
 }
+
+
 
 
 
