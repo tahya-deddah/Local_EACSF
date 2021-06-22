@@ -12,7 +12,7 @@
       <flag>c</flag>
       <description>
         a CSV file which his header is :
-        T1 Tissu Segmentation CSF Probability Map LH MID Surface LH GM Surface RH MID Surface RH GM Surface Output Directory
+        Tissu Segmentation CSF Probability Map LH MID Surface LH GM Surface RH MID Surface RH GM Surface Output Directory
       </description>
       <channel>input</channel>
     </file>
@@ -30,12 +30,5 @@
       <description>Use Local EACSF without the GUI</description>
       <default>false</default>
     </boolean>  
-    <boolean>
-      <name>slrum</name>
-      <longflag>slurm</longflag>
-      <flag>s</flag>
-      <description>execute Local EACSF in slurm</description>
-      <default>false</default>
-    </boolean>
   </parameters>
 </executable>

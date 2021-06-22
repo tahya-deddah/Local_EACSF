@@ -119,6 +119,10 @@ void CSFWindow::setConfig(QJsonObject root_obj)
     Bandwith_lineEdit->setText(param_obj["Smoothing_bandwith"].toString());
 
     clean->setChecked(param_obj["Clean"].toBool());
+    radioButton_slurm->setChecked(param_obj["Slurm"].toBool());
+    if(param_obj["Slurm"].toBool())
+        {slurm_parameters_state(true);}
+    else{slurm_parameters_state(false);}
 
     ClosingRadius->setValue(param_obj["Closing_radius"].toInt());
     DilationRadius->setValue(param_obj["Dilation_radius"].toInt());
@@ -129,31 +133,9 @@ void CSFWindow::setConfig(QJsonObject root_obj)
     radioButton_Interpolated->setChecked(param_obj["Interpolated"].toBool());
     radioButton_notInterpolated->setChecked(param_obj["NotInterpolated"].toBool());
 
-    radioButton_75P->setChecked(param_obj["Use_75P_Surface"].toBool());
+    checkBox_75P_Surface->setChecked(param_obj["Use_75P_Surface"].toBool());
 
-
-    if( radioButton_75P->isChecked() )
-    {
-        gray_matter_surfaces->setEnabled(true);
-        LH_GM_Surface->setEnabled(true);
-        RH_GM_Surface->setEnabled(true);
-        lineEdit_LH_GM_Surface->setEnabled(true);
-        lineEdit_RH_GM_Surface->setEnabled(true);
-    }
-    else
-    {
-        gray_matter_surfaces->setEnabled(false);
-        LH_GM_Surface->setEnabled(false);
-        RH_GM_Surface->setEnabled(false);
-        lineEdit_LH_GM_Surface->setEnabled(false);
-        lineEdit_RH_GM_Surface->setEnabled(false);
-    }
-    /*if( smooth->isChecked() )
-    {
-        slurm_parameters_state(true);
-    }else{slurm_parameters_state(false);}*/
-
-
+    
     QJsonArray exe_array = root_obj["executables"].toArray();
     foreach (const QJsonValue exe_val, exe_array)
     {
@@ -179,7 +161,7 @@ QJsonObject CSFWindow::getConfig(){
 
     QJsonObject param_obj;
    
-    if( radioButton_75P->isChecked())
+    if( checkBox_75P_Surface->isChecked())
     {
         data_obj["LH_GM_surface"]=lineEdit_LH_GM_Surface->text();
         data_obj["RH_GM_surface"]=lineEdit_RH_GM_Surface->text();
@@ -198,6 +180,7 @@ QJsonObject CSFWindow::getConfig(){
         param_obj["Smoothing_bandwith"] = Bandwith_lineEdit->text();
     }
     param_obj["Clean"] = clean->isChecked();
+    param_obj["Slurm"] = radioButton_slurm->isChecked();
 
     param_obj["Closing_radius"] = ClosingRadius->value();    
     param_obj["Dilation_radius"] = DilationRadius->value();
@@ -208,7 +191,7 @@ QJsonObject CSFWindow::getConfig(){
     param_obj["Interpolated"] = radioButton_Interpolated->isChecked();
     param_obj["NotInterpolated"] = radioButton_notInterpolated->isChecked();
 
-    param_obj["Use_75P_Surface"] = radioButton_75P->isChecked();
+    param_obj["Use_75P_Surface"] = checkBox_75P_Surface->isChecked();
 
     QJsonObject root_obj;
     root_obj["data"] = data_obj;
@@ -424,6 +407,7 @@ void CSFWindow::on_Find_clicked()
         {  
             QString subdirectory = it.next();
             QFileInfo file(subdirectory);
+            bool Three_quarters_Surface = checkBox_75P_Surface_batch->isChecked();
             if (file.isDir()) 
             { 
                 QDir oDir(file.absoluteFilePath());  
@@ -431,13 +415,20 @@ void CSFWindow::on_Find_clicked()
                 bool Seg_Found = Find_File(oDir, lineEdit_Seg_filter->text(), QString("Tissu Segmentation"), row);
                 bool CSF_Found = Find_File(oDir, lineEdit_CSF_Prob_filter->text(), QString("CSF Probability Map"), row);   
                 bool LH_MID_Found = Find_File(oDir, lineEdit_LH_MID_filter->text(), QString("LH MID Surface"), row);
-                bool LH_GM_Found = Find_File(oDir, lineEdit_LH_GM_filter->text(), QString("LH GM Surface"), row);
                 bool RH_MID_Found = Find_File(oDir, lineEdit_RH_MID_filter->text(), QString("RH MID Surface"), row);
-                bool RH_GM_Found = Find_File(oDir, lineEdit_RH_GM_filter->text(), QString("RH GM Surface"), row);
+                bool inputs_found = Seg_Found & CSF_Found & LH_MID_Found & RH_MID_Found ;
 
-                if(Seg_Found  && CSF_Found &&  LH_MID_Found && LH_GM_Found &&  RH_MID_Found && RH_GM_Found)
+                if(Three_quarters_Surface)
+                {
+                    bool LH_GM_Found = Find_File(oDir, lineEdit_LH_GM_filter->text(), QString("LH GM Surface"), row);                
+                    bool RH_GM_Found = Find_File(oDir, lineEdit_RH_GM_filter->text(), QString("RH GM Surface"), row);
+                    inputs_found = Seg_Found & CSF_Found & LH_MID_Found & RH_MID_Found & LH_GM_Found & RH_GM_Found ;
+                }  
+
+                if( inputs_found)
                 {
                     row->insert(QString("Output Directory"), file.absoluteFilePath()); 
+                    row->insert(QString("Label"), file.fileName());
                     ModelData << row ;  
                 }    
             } 
@@ -592,11 +583,15 @@ void CSFWindow::on_Run_Batch_Process_clicked()
 
                 lineEdit_Segmentation->setText(data[row]->value("Tissu Segmentation"));
                 lineEdit_CSF_Probability_Map->setText(data[row]->value("CSF Probability Map"));
-                lineEdit_LH_MID_Surface->setText(data[row]->value("LH MID Surface")); 
-                lineEdit_LH_GM_Surface->setText(data[row]->value("LH GM Surface"));
-                lineEdit_RH_MID_Surface->setText(data[row]->value("RH MID Surface"));
-                lineEdit_RH_GM_Surface->setText(data[row]->value("RH GM Surface"));
+                lineEdit_LH_MID_Surface->setText(data[row]->value("LH MID Surface"));                
+                lineEdit_RH_MID_Surface->setText(data[row]->value("RH MID Surface"));                
                 lineEdit_Output_Directory->setText(data[row]->value("Output Directory"));
+                lineEdit_Label->setText(data[row]->value("Label"));
+                if( checkBox_75P_Surface->isChecked())
+                {
+                    lineEdit_RH_GM_Surface->setText(data[row]->value("RH GM Surface"));
+                    lineEdit_LH_GM_Surface->setText(data[row]->value("LH GM Surface"));
+                }
                 run_Local_EACSF(row);
             }
         }
@@ -606,10 +601,14 @@ void CSFWindow::on_Run_Batch_Process_clicked()
             lineEdit_Segmentation->setText(data[row]->value("Tissu Segmentation"));
             lineEdit_CSF_Probability_Map->setText(data[row]->value("CSF Probability Map"));
             lineEdit_LH_MID_Surface->setText(data[row]->value("LH MID Surface")); 
-            lineEdit_LH_GM_Surface->setText(data[row]->value("LH GM Surface"));
             lineEdit_RH_MID_Surface->setText(data[row]->value("RH MID Surface"));
-            lineEdit_RH_GM_Surface->setText(data[row]->value("RH GM Surface"));
             lineEdit_Output_Directory->setText(data[row]->value("Output Directory"));
+            lineEdit_Label->setText(data[row]->value("Label"));
+            if( checkBox_75P_Surface->isChecked())
+            {
+                lineEdit_RH_GM_Surface->setText(data[row]->value("RH GM Surface"));
+                lineEdit_LH_GM_Surface->setText(data[row]->value("LH GM Surface"));
+            }
             run_Local_EACSF(row);
         }       
     }       
@@ -703,15 +702,6 @@ void CSFWindow::on_output_directory_clicked()
         lineEdit_Output_Directory->setText(path);
     }
 }
-void CSFWindow::on_radioButton_75P_clicked(bool checked)
-{
-    gray_matter_surfaces->setEnabled(checked);
-    LH_GM_Surface->setEnabled(checked);
-    RH_GM_Surface->setEnabled(checked);
-    lineEdit_LH_GM_Surface->setEnabled(checked);
-    lineEdit_RH_GM_Surface->setEnabled(checked);
-}
-
 
 // 3rd Tab - Executables tab
 void CSFWindow::updateExecutables(QString exeName, QString path)
@@ -795,11 +785,15 @@ void CSFWindow::prc_finished(QProcess *prc, QString outlog_filename, QString err
             lineEdit_Segmentation->setText(data[row + 1]->value("Tissu Segmentation"));
             lineEdit_CSF_Probability_Map->setText(data[row + 1]->value("CSF Probability Map"));
             lineEdit_LH_MID_Surface->setText(data[row + 1]->value("LH MID Surface")); 
-            lineEdit_LH_GM_Surface->setText(data[row + 1]->value("LH GM Surface"));
             lineEdit_RH_MID_Surface->setText(data[row + 1]->value("RH MID Surface"));
-            lineEdit_RH_GM_Surface->setText(data[row + 1]->value("RH GM Surface"));
+            if( checkBox_75P_Surface->isChecked())
+            {
+                lineEdit_RH_GM_Surface->setText(data[row + 1]->value("RH GM Surface"));
+                lineEdit_LH_GM_Surface->setText(data[row + 1]->value("LH GM Surface"));
+            }
             lineEdit_Output_Directory->setText(data[row + 1]->value("Output Directory"));
-            run_Local_EACSF(row+1);
+            lineEdit_Label->setText(data[row + 1]->value("Label"));
+            run_Local_EACSF(row+1);           
         }
     }
 }
@@ -1012,15 +1006,29 @@ void CSFWindow::on_Compare_clicked()
             }
         } 
     }   
-
-
 }
 
+void CSFWindow::on_checkBox_75P_Surface_stateChanged(int state)
+{
+    bool enab;
+    if (state==Qt::Checked){enab=true;}
+    else{enab=false;}
+    gray_matter_surfaces->setEnabled(enab);
+    LH_GM_Surface->setEnabled(enab);
+    RH_GM_Surface->setEnabled(enab);
+    lineEdit_LH_GM_Surface->setEnabled(enab);
+    lineEdit_RH_GM_Surface->setEnabled(enab);
+}
 
+void CSFWindow::on_checkBox_75P_Surface_batch_stateChanged(int state)
+{
+    bool enab;
+        if (state==Qt::Checked){enab=true;}
+        else{enab=false;}
+        LH_GM_filter->setEnabled(enab);
+        RH_GM_filter->setEnabled(enab);
+        lineEdit_LH_GM_filter->setEnabled(enab);
+        lineEdit_RH_GM_filter ->setEnabled(enab);
+        checkBox_75P_Surface->setChecked(enab);
 
-
-
-
-
-
-
+}

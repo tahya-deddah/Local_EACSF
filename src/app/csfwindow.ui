@@ -39,7 +39,7 @@
      <string/>
     </property>
     <property name="currentIndex">
-     <number>1</number>
+     <number>0</number>
     </property>
     <widget class="QWidget" name="tab_batch">
      <attribute name="title">
@@ -110,8 +110,8 @@
      <widget class="QLabel" name="CSF_Prob_filter">
       <property name="geometry">
        <rect>
-        <x>240</x>
-        <y>50</y>
+        <x>0</x>
+        <y>90</y>
         <width>111</width>
         <height>31</height>
        </rect>
@@ -123,8 +123,8 @@
      <widget class="QLineEdit" name="lineEdit_CSF_Prob_filter">
       <property name="geometry">
        <rect>
-        <x>350</x>
-        <y>50</y>
+        <x>100</x>
+        <y>90</y>
         <width>131</width>
         <height>31</height>
        </rect>
@@ -136,7 +136,7 @@
      <widget class="QLabel" name="LH_MID_filter">
       <property name="geometry">
        <rect>
-        <x>510</x>
+        <x>260</x>
         <y>50</y>
         <width>101</width>
         <height>31</height>
@@ -149,7 +149,7 @@
      <widget class="QLineEdit" name="lineEdit_LH_MID_filter">
       <property name="geometry">
        <rect>
-        <x>620</x>
+        <x>370</x>
         <y>50</y>
         <width>131</width>
         <height>31</height>
@@ -160,10 +160,13 @@
       </property>
      </widget>
      <widget class="QLabel" name="LH_GM_filter">
+      <property name="enabled">
+       <bool>false</bool>
+      </property>
       <property name="geometry">
        <rect>
-        <x>240</x>
-        <y>90</y>
+        <x>660</x>
+        <y>50</y>
         <width>101</width>
         <height>31</height>
        </rect>
@@ -173,10 +176,13 @@
       </property>
      </widget>
      <widget class="QLineEdit" name="lineEdit_LH_GM_filter">
+      <property name="enabled">
+       <bool>false</bool>
+      </property>
       <property name="geometry">
        <rect>
-        <x>350</x>
-        <y>90</y>
+        <x>750</x>
+        <y>50</y>
         <width>131</width>
         <height>31</height>
        </rect>
@@ -188,7 +194,7 @@
      <widget class="QLabel" name="RH_MID_filter">
       <property name="geometry">
        <rect>
-        <x>0</x>
+        <x>260</x>
         <y>90</y>
         <width>101</width>
         <height>31</height>
@@ -201,7 +207,7 @@
      <widget class="QLineEdit" name="lineEdit_RH_MID_filter">
       <property name="geometry">
        <rect>
-        <x>100</x>
+        <x>370</x>
         <y>90</y>
         <width>131</width>
         <height>31</height>
@@ -212,9 +218,12 @@
       </property>
      </widget>
      <widget class="QLabel" name="RH_GM_filter">
+      <property name="enabled">
+       <bool>false</bool>
+      </property>
       <property name="geometry">
        <rect>
-        <x>510</x>
+        <x>660</x>
         <y>90</y>
         <width>101</width>
         <height>31</height>
@@ -225,9 +234,12 @@
       </property>
      </widget>
      <widget class="QLineEdit" name="lineEdit_RH_GM_filter">
+      <property name="enabled">
+       <bool>false</bool>
+      </property>
       <property name="geometry">
        <rect>
-        <x>620</x>
+        <x>750</x>
         <y>90</y>
         <width>131</width>
         <height>31</height>
@@ -240,7 +252,7 @@
      <widget class="QPushButton" name="Find">
       <property name="geometry">
        <rect>
-        <x>180</x>
+        <x>120</x>
         <y>130</y>
         <width>141</width>
         <height>31</height>
@@ -328,7 +340,7 @@
      <widget class="QPushButton" name="Help">
       <property name="geometry">
        <rect>
-        <x>420</x>
+        <x>320</x>
         <y>130</y>
         <width>141</width>
         <height>31</height>
@@ -362,6 +374,19 @@
       </property>
       <property name="text">
        <string>Load a CSV file</string>
+      </property>
+     </widget>
+     <widget class="QCheckBox" name="checkBox_75P_Surface_batch">
+      <property name="geometry">
+       <rect>
+        <x>540</x>
+        <y>70</y>
+        <width>141</width>
+        <height>25</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Use 75P Surface</string>
       </property>
      </widget>
     </widget>
@@ -597,19 +622,6 @@
        </rect>
       </property>
      </widget>
-     <widget class="QRadioButton" name="radioButton_75P">
-      <property name="geometry">
-       <rect>
-        <x>10</x>
-        <y>240</y>
-        <width>371</width>
-        <height>25</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>Compute and use 3/4 Surface ( (MID + Gray)/2 ) </string>
-      </property>
-     </widget>
      <widget class="QPushButton" name="LH_Inflating_Template">
       <property name="geometry">
        <rect>
@@ -690,6 +702,19 @@
       </property>
       <property name="text">
        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:12pt; font-weight:600;&quot;&gt;Inflating Surfaces&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+      </property>
+     </widget>
+     <widget class="QCheckBox" name="checkBox_75P_Surface">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>240</y>
+        <width>371</width>
+        <height>25</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Compute and use 3/4 Surface ( (MID + Gray)/2 ) </string>
       </property>
      </widget>
     </widget>

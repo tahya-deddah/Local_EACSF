@@ -76,18 +76,24 @@ int  main(int argc, char** argv)
     {
 
         QJsonObject data_obj = root_obj["data"].toObject();
+        QJsonObject param_obj = root_obj["parameters"].toObject();
         QList<QMap<QString, QString>> CSVFile = readCSV(QString::fromStdString(csv_file));    
         for(int i =0 ; i< CSVFile.size(); i++)
             {
                
-                data_obj["T1"] = checkStringValue((CSVFile[i].value("T1")).toStdString() ,  data_obj["T1"]);
                 data_obj["Tissu_Segmentation"] = checkStringValue( (CSVFile[i].value("Tissu Segmentation")).toStdString(),  data_obj["Tissu_Segmentation"]);
                 data_obj["CSF_Probability_Map"] = checkStringValue( (CSVFile[i].value("CSF Probability Map")).toStdString(),  data_obj["CSF_Probability_Map"]);
                 data_obj["LH_MID_surface"] = checkStringValue(  (CSVFile[i].value("LH MID Surface")).toStdString(),  data_obj["LH_MID_surface"]);
-                data_obj["LH_GM_surface"] = checkStringValue(  (CSVFile[i].value("LH GM Surface")).toStdString(),  data_obj["LH_GM_surface"]);
                 data_obj["RH_MID_surface"] = checkStringValue((CSVFile[i].value("RH MID Surface")).toStdString(),  data_obj["RH_MID_surface"]);
-                data_obj["RH_GM_surface"] = checkStringValue(  (CSVFile[i].value("RH GM Surface")).toStdString(),   data_obj["RH_GM_surface"]);
-                data_obj["Output_Directory"] = checkStringValue((CSVFile[i].value("Output Directory")).toStdString(),   data_obj["Output_Directory"]);  
+
+                if(param_obj["Use_75P_Surface"].toBool())
+                {
+                    data_obj["LH_GM_surface"] = checkStringValue(  (CSVFile[i].value("LH GM Surface")).toStdString(),  data_obj["LH_GM_surface"]);                
+                    data_obj["RH_GM_surface"] = checkStringValue(  (CSVFile[i].value("RH GM Surface")).toStdString(),   data_obj["RH_GM_surface"]);
+                }
+                
+                data_obj["Output_Directory"] = checkStringValue((CSVFile[i].value("Output Directory")).toStdString(),   data_obj["Output_Directory"]);
+                data_obj["Label"] = checkStringValue((CSVFile[i].value("Label")).toStdString(),   data_obj["Label"]);    
                 root_obj["data"]=data_obj;  
 
                 QString output_dir = QDir::cleanPath(data_obj["Output_Directory"].toString());
@@ -108,9 +114,9 @@ int  main(int argc, char** argv)
                 QProcess* prc =  new QProcess;
                 prc->setWorkingDirectory(output_dir);
 
-                if(slrum)
+                if(param_obj["Slurm"].toBool())
                 {
-                    QString CSF_volume_filename = QDir::cleanPath(output_dir + QString("/LocalEACSF") + QString("/CSFVolume.txt"));
+                    QString CSF_volume_filename = QDir::cleanPath(output_dir + QString("/LocalEACSF") + QString("/")  + data_obj["Label"].toString() + QString("_CSFVolume.txt"));
                     QFile volume_file(CSF_volume_filename);
                     if(volume_file.exists()) 
                     {       
@@ -119,7 +125,6 @@ int  main(int argc, char** argv)
                     else
                     {
                         QString slurm_script = QDir::cleanPath(scripts_dir + QString("/slurm-job"));
-                        QJsonObject param_obj = root_obj["parameters"].toObject();
                         QString time = QString("--time=") + param_obj["Slurm_time"].toString();
                         QString memory = QString("--mem=") + param_obj["Slurm_memory"].toString();
                         QString core = QString("--ntasks=") + param_obj["Slurm_cores"].toString();

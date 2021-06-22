@@ -40,9 +40,6 @@ public:
     QJsonObject getConfig();
     void setConfig(QJsonObject root_obj);
 
-private slots:
-    void on_radioButton_75P_clicked(bool checked);
-
 private:
 
     QString OpenFile();
@@ -76,6 +73,7 @@ private slots:
 
     //1st tab
     void on_Data_Directory_clicked();
+    void on_checkBox_75P_Surface_batch_stateChanged(int arg1);
     void on_Find_clicked();   
     bool Find_File(QDir oDir, QString filter, QString key, QMap<QString, QString> *vect);
     void on_Add_clicked();
@@ -100,6 +98,7 @@ private slots:
     void on_RH_GM_Surface_clicked();
     void on_RH_Inflating_Template_clicked();
     void on_output_directory_clicked();
+    void on_checkBox_75P_Surface_stateChanged(int arg1);
 
     //3rd tab
     void updateExecutables(QString exeName, QString path);
