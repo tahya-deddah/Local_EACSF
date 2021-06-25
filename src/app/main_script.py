@@ -73,11 +73,11 @@ def main(args):
 			else :
 				call_and_print([ComputeCSFVolume, "--VisitingMap", os.path.join("LH_Directory", args.Label + "_LH_Visitation.nrrd"), "--CSFProb",\
 				os.path.join("LH_Directory", args.Label + "_CSF_Probability_Map.nrrd"),"--CSFFile", os.path.join("LH_Directory", args.Label\
-				+ "_LH_" + surface + "_CSF_Density_Final.txt") , "--Side", "Left"])
+				+ "_LH_" + surface + "_CSF_Density_Final.txt") , "--Side", "Left", "--Label", args.Label])
 
 				call_and_print([ComputeCSFVolume, "--VisitingMap", os.path.join("RH_Directory", args.Label + "_RH_Visitation.nrrd"), "--CSFProb",\
 				os.path.join("RH_Directory", args.Label + "_CSF_Probability_Map.nrrd"),"--CSFFile", os.path.join("RH_Directory", args.Label\
-				+ "_RH_" + surface + "_CSF_Density_Final.txt") , "--Side", "Right"])
+				+ "_RH_" + surface + "_CSF_Density_Final.txt") , "--Side", "Right", "--Label", args.Label])
 
 	print("Local_EACSF finished",flush=True)
 	sys.exit(0)

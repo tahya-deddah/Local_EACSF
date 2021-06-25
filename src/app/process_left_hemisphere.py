@@ -82,7 +82,7 @@ def optimize_csfdensity (surface): ## optimize
 	### add scalars to csfdensity.vtk
 	call_and_print([args.AddScalarstoPolyData, "--InputFile", args.Label + "_LH_" + surface + "_CSF_Density.vtk", "--OutputFile", "LH_" + surface + "_CSF_Density.vtk",\
 	"--ScalarsFile", args.Label + "_LH_" + surface + "_CSF_Density.txt", "--Scalars_Name", 'CSF_Density_Original'])
-	call_and_print([args.AddScalarstoPolyData, "--InputFile", "LH_" + surface + "_CSF_Density.vtk", "--OutputFile", args.Label + "_LH_" + surface + "_CSF_Density.vtk",\
+	call_and_print([args.AddScalarstoPolyData, "--InputFile", args.Label + "_LH_" + surface + "_CSF_Density.vtk", "--OutputFile", args.Label + "_LH_" + surface + "_CSF_Density.vtk",\
 	"--ScalarsFile", args.Label + "_LH_" + surface + "_CSF_Density_Interpolated.txt", "--Scalars_Name", 'CSF_Density_Interpolated'])
 
 	### add scalars to csfdensity_inflating.vtk

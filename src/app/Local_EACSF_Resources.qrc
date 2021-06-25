@@ -11,5 +11,6 @@
      <qresource prefix="/batch">
         <file>BatchProcessingDirectory.png</file>
         <file>CSVFile.png</file>
+        <file>BatchCSVFile.png</file>
     </qresource>
 </RCC>

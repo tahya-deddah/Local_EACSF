@@ -40,6 +40,15 @@ public:
     QJsonObject getConfig();
     void setConfig(QJsonObject root_obj);
 
+private slots:
+    void on_help_clicked();
+
+private slots:
+    void on_visualize_batch_clicked();
+
+private slots:
+    void on_CSVFile_path_clicked();
+
 private:
 
     QString OpenFile();

@@ -116,7 +116,6 @@ int main ( int argc, char *argv[] )
 
   vtkSmartPointer<vtkDoubleArray> Array = vtkSmartPointer<vtkDoubleArray>::New();
   Array->SetNumberOfComponents(1);
-  //Array->SetName("CSFDensity");
   Array->SetName("CSF_Density_Final");
 
   vtkSmartPointer<vtkCellArray> OuterLinearray = outerstreamlinesPolyData->GetLines();

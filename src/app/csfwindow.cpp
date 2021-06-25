@@ -434,7 +434,10 @@ void CSFWindow::on_Find_clicked()
             } 
         }
         if(!ModelData.isEmpty())
-        { model->SetModelData(ModelData); } 
+        { 
+            model->SetModelData(ModelData);
+            //QString =  data_directory + QString("CSF_Density.csv")
+        } 
         else{ infoMsgBox(QString("No data found."),QMessageBox::Warning);}            
     }
 }
@@ -917,7 +920,22 @@ void CSFWindow::on_output_path_clicked()
 
        if (!path.isEmpty())
        {
-           lineEdit_output_path->setText(path);
+            lineEdit_output_path->setText(path);
+            QString inflated_mid = lineEdit_output_path->text() + QString("/LocalEACSF") + QString("/LH_Directory") + QString("/LH_MID_Inflating_Template.vtk");
+            QString inflated_75p = lineEdit_output_path->text() + QString("/LocalEACSF") + QString("/LH_Directory") + QString("/LH_75P_Inflating_Template.vtk");
+            QFileInfo check_file1(inflated_mid);
+            QFileInfo check_file2(inflated_75p);
+            if(check_file1.exists() || check_file2.exists()){VisualiseCSFDensityinflating->setEnabled(true);}
+       }
+      
+}
+void CSFWindow::on_CSVFile_path_clicked()
+{
+    QString path=OpenFile();
+
+       if (!path.isEmpty())
+       {
+           lineEdit_CSVFile->setText(path);
        }
 }
 
@@ -945,8 +963,25 @@ void CSFWindow::on_visualize_clicked()
         QStringList arguments = QStringList() << QString("-v") << LH_CSFDensity  << QString("-v")<< RH_CSFDensity ;
         visualization->setWorkingDirectory(OutputDirectory);
         visualization->start(QString("ShapePopulationViewer"), arguments);
-
     }
+
+    if (VisualiseCSFDensityinflating->isChecked())
+    {
+
+        QString LH_CSFDensity = LH_Directory + QString("/LH_MID_Inflating_Template.vtk");
+        QString RH_CSFDensity  = RH_Directory + QString("/RH_MID_Inflating_Template.vtk");
+        QFileInfo check_file(LH_CSFDensity);
+        if(!check_file.exists())
+        {
+            LH_CSFDensity = LH_Directory + QString("/LH_75P_Inflating_Template.vtk");
+            RH_CSFDensity  = RH_Directory + QString("/RH_75P_Inflating_Template.vtk");
+        }
+        QStringList arguments = QStringList() << QString("-v") << LH_CSFDensity  << QString("-v")<< RH_CSFDensity ;
+        visualization->setWorkingDirectory(OutputDirectory);
+        visualization->start(QString("ShapePopulationViewer"), arguments);
+    }
+
+
     if (VisualiseRightVisitation->isChecked())
     {
         QString RH_visitation_map = RH_Directory + QString("/RH_Visitation.nrrd");
@@ -1031,4 +1066,57 @@ void CSFWindow::on_checkBox_75P_Surface_batch_stateChanged(int state)
         lineEdit_RH_GM_filter ->setEnabled(enab);
         checkBox_75P_Surface->setChecked(enab);
 
+}
+
+
+void CSFWindow::on_visualize_batch_clicked()
+{
+    QProcess *visualization_batch;
+    visualization_batch = new QProcess;
+    QString CSVFile =lineEdit_CSVFile->text();
+    QList<QMap<QString, QString>*> data = readCSV(CSVFile);
+    QStringList arguments = QStringList();
+
+    if (VisualiseCSFDensityBatch->isChecked())
+    {
+        QStringList arguments = QStringList() << QString("--csv") << CSVFile;
+        visualization_batch->start(QString("ShapePopulationViewer"), arguments);
+    }
+    if (VisualiseVisitationMapLeftBatch->isChecked())
+    {
+        for (int i = 0; i < data.size(); ++i)
+        {
+               qDebug() << data.at(i)->value(QString("LH Visitation Map")) ;
+               arguments << data.at(i)->value(QString("LH Visitation Map"));
+        }
+        visualization_batch->start(QString("MriWatcher"), arguments);
+    }
+    if (VisualiseVisitationMapRightBatch->isChecked())
+    {
+        for (int i = 0; i < data.size(); ++i)
+        {
+               qDebug() << data.at(i)->value(QString("RH Visitation Map")) ;
+               arguments << data.at(i)->value(QString("RH Visitation Map"));
+        }
+        visualization_batch->start(QString("MriWatcher"), arguments);
+    }
+}
+
+void CSFWindow::on_help_clicked()
+{
+    QWidget *help = new QWidget();
+    //help->resize(900, 520);
+    help->resize(900, 200);
+
+    QLabel *help_txt_1 = new QLabel(help);
+    help_txt_1->setGeometry(20,10,200,30);
+    help_txt_1->setText("<b> The CSV file  should be like: </b>");
+
+    QLabel *Data_directory_image = new QLabel(help);
+    //Data_directory_image->setGeometry(20,30,800,300);
+    Data_directory_image->setGeometry(20,30,800,150);
+    QPixmap pic(":/batch/BatchCSVFile.png");
+    Data_directory_image->setPixmap(pic);
+
+    help->show();
 }
