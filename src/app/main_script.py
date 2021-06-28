@@ -56,6 +56,9 @@ def main(args):
 	####
 	if(path.exists(os.path.join(OUT_PATH, args.Label + "_CSFVolume.txt"))):
 		print("Compute Local EACSF Density already done",flush=True)
+		if (os.path.isfile("../../../../Outputs.csv")):
+			print('CSV File existe:', flush=True)
+			
 	else :
 		Process_Left_Side = subprocess.call([python, process_left_hemisphere])
 		Process_Right_Side = subprocess.call([python, process_right_hemisphere])
@@ -78,6 +81,7 @@ def main(args):
 				call_and_print([ComputeCSFVolume, "--VisitingMap", os.path.join("RH_Directory", args.Label + "_RH_Visitation.nrrd"), "--CSFProb",\
 				os.path.join("RH_Directory", args.Label + "_CSF_Probability_Map.nrrd"),"--CSFFile", os.path.join("RH_Directory", args.Label\
 				+ "_RH_" + surface + "_CSF_Density_Final.txt") , "--Side", "Right", "--Label", args.Label])
+			
 
 	print("Local_EACSF finished",flush=True)
 	sys.exit(0)

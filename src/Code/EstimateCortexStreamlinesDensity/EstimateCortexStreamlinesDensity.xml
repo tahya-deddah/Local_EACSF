@@ -41,5 +41,11 @@
       <flag>v</flag>
       <description> Output Voxel Vistiting Map a nrrd file</description>
     </file>
+    <file>
+      <name>OutputVoxelVistitingLength</name>
+      <longflag>VisitingLength</longflag>
+      <flag>l</flag>
+      <description> Output Voxel Vistiting Length a nrrd file</description>
+    </file>
   </parameters> 
 </executable>

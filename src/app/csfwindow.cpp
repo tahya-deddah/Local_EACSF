@@ -436,7 +436,10 @@ void CSFWindow::on_Find_clicked()
         if(!ModelData.isEmpty())
         { 
             model->SetModelData(ModelData);
-            //QString =  data_directory + QString("CSF_Density.csv")
+            QString OutputCSVFile =  data_directory + QString("/Outputs.csv");
+            QFile file(OutputCSVFile);
+            file.open(QIODevice::WriteOnly);
+            file.close();
         } 
         else{ infoMsgBox(QString("No data found."),QMessageBox::Warning);}            
     }
@@ -1067,7 +1070,6 @@ void CSFWindow::on_checkBox_75P_Surface_batch_stateChanged(int state)
         checkBox_75P_Surface->setChecked(enab);
 
 }
-
 
 void CSFWindow::on_visualize_batch_clicked()
 {

@@ -227,7 +227,7 @@ def processing(args, DirectoryName, Surface, ImageDimension):
 
 		call_and_print([EstimateCortexStreamlinesDensity, "--InputSurface" , args.Label + "_LH_" + Surface + ".vtk", "--InputOuterStreamlines", args.Label + "_LH_Outer_streamlines.vtk",\
 			"--InputSegmentation", args.Label + "_CSF_Probability_Map.nrrd", "--InputMask", args.Label + "_LH_GM_Dilated.nrrd", "--OutputSurface", args.Label + "_LH_" + Surface + "_CSF_Density.vtk", "--VisitingMap",\
-			args.Label + "_LH_Visitation.nrrd"])
+			args.Label + "_LH_Visitation.nrrd", "--VisitingLength", args.Label + "_LH_VisitationLength.nrrd" ])
 	if(args.Clean_up) :
 	 	clean_up(Directory)
 			
