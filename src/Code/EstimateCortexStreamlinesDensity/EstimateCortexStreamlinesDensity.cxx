@@ -130,7 +130,7 @@ int main ( int argc, char *argv[] )
   ImageType::Pointer inputMask = Maskreader->GetOutput();
 
 
-/// ---------------------------------------------- visitation map and length -----------------------------------------------------------------
+/// ---------------------------------------------- visitation map and visitation length -----------------------------------------------------------------
 
   vtkSmartPointer<vtkCellArray> OuterLinearray = outerstreamlinesPolyData->GetLines();
   vtkIdType Outer_Line_ID = -1;
@@ -161,9 +161,6 @@ int main ( int argc, char *argv[] )
         }
     }
 
-    typedef itk::LinearInterpolateImageFunction<ImageType, double> InterpolatorType;
-                  InterpolatorType::Pointer Interpolator = InterpolatorType::New();
-                  Interpolator->SetInputImage(inputimage);
     int count = 0;
     int stopcount = std::numeric_limits<int>::max();
     int OuterFlag = 0;
@@ -200,8 +197,6 @@ int main ( int argc, char *argv[] )
       ImageType::IndexType pixelIndex1;
       const bool isInside1 = inputMask->TransformPhysicalPointToIndex( point, pixelIndex1 );
                   ImageType::PixelType label = inputMask->GetPixel(pixelIndex1);
-      ImageType::PixelType Propability = Interpolator->Evaluate(point);
-                  ImageType::PixelType Propability_next = Interpolator->Evaluate(point_next);
       if(label > 0)
       {        
        //new 
@@ -258,11 +253,11 @@ int main ( int argc, char *argv[] )
       OuterLinearray->GetCell(Line_Outer_cellLocation, Line_Outer_numIds, Line_Outer_idlist);
       Line_Outer_cellLocation += 1 + Line_Outer_numIds;
       if (a == Outer_Line_ID)
-        {
-                   //std::cout << "Line " << Outer_Line_ID << " has " << Line_Outer_numIds << " outer points." << std::endl;
-                   num_outer = Line_Outer_numIds;
-                   Line_idlist_outer_final = Line_Outer_idlist;
-        }
+      {
+         //std::cout << "Line " << Outer_Line_ID << " has " << Line_Outer_numIds << " outer points." << std::endl;
+         num_outer = Line_Outer_numIds;
+         Line_idlist_outer_final = Line_Outer_idlist;
+      }
     }
 
     typedef itk::LinearInterpolateImageFunction<ImageType, double> InterpolatorType;
@@ -302,20 +297,25 @@ int main ( int argc, char *argv[] )
       point_next[2] =  p_next[2];    // z coordinate
 
 
-
-
       ImageType::IndexType pixelIndex;
       const bool isInside = inputimage->TransformPhysicalPointToIndex( point, pixelIndex );
-      ImageType::PixelType Visited = outputimage->GetPixel(pixelIndex);
       ImageType::IndexType pixelIndex1;
       const bool isInside1 = inputMask->TransformPhysicalPointToIndex( point, pixelIndex1 );
                   ImageType::PixelType label = inputMask->GetPixel(pixelIndex1);
       ImageType::PixelType Propability = Interpolator->Evaluate(point);
-                  ImageType::PixelType Propability_next = Interpolator->Evaluate(point_next);
+      ImageType::PixelType Propability_next = Interpolator->Evaluate(point_next);
       if(label > 0)
       {
-        ImageType::PixelType Volume_Total = outputimage_2->GetPixel(pixelIndex);
-        CSFDensity += ((Propability + Propability_next)*step)/(2*Volume_Total);  
+        ImageType::PixelType lenght_of_steps = outputimage_2->GetPixel(pixelIndex);
+       
+        double  rapport = step/lenght_of_steps;
+        CSFDensity += ((Propability + Propability_next)*rapport)/2.0;
+
+
+        std::cout<< "density before normalization: " << ((Propability + Propability_next)*step)/2 << std::endl;
+        std::cout<< "density before normalization: " << ((Propability + Propability_next)*rapport)/2 << std::endl;
+        
+
       }
       else
       {
@@ -331,6 +331,7 @@ int main ( int argc, char *argv[] )
       CSFDensity = 0.0;
     }
     Array->InsertNextValue(CSFDensity);
+    
     if (OuterFlag == 1)
     {
       Outer_Line_ID-=1;

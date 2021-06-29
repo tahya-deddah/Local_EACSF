@@ -56,7 +56,7 @@ def main(args):
 	####
 	if(path.exists(os.path.join(OUT_PATH, args.Label + "_CSFVolume.txt"))):
 		print("Compute Local EACSF Density already done",flush=True)
-		if (os.path.isfile("../../../../Outputs.csv")):
+		if (os.path.isfile("../Outputs.csv")):
 			print('CSV File existe:', flush=True)
 			
 	else :
