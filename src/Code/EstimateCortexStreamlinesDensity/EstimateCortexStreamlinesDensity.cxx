@@ -194,16 +194,19 @@ int main ( int argc, char *argv[] )
       point_next[2] =  p_next[2];    // z coordinate
 
       
+
+      ImageType::IndexType pixelIndex;
+      const bool isInside = inputimage->TransformPhysicalPointToIndex( point, pixelIndex );
       ImageType::IndexType pixelIndex1;
       const bool isInside1 = inputMask->TransformPhysicalPointToIndex( point, pixelIndex1 );
                   ImageType::PixelType label = inputMask->GetPixel(pixelIndex1);
       if(label > 0)
       {        
        //new 
-        ImageType::IndexType pixelIndex;
-        const bool isInside = inputimage->TransformPhysicalPointToIndex( point, pixelIndex );
+        
         ImageType::PixelType number_of_visitation = outputimage_2->GetPixel(pixelIndex);
         number_of_visitation = number_of_visitation + step;
+        //std::cout << number_of_visitation << std::endl;
         outputimage_2->SetPixel(pixelIndex, number_of_visitation );
         outputimage->SetPixel(pixelIndex, Outer_Line_ID); // Mark this pixel visited in current vertex       
       }
@@ -296,6 +299,7 @@ int main ( int argc, char *argv[] )
       point_next[1] = -p_next[1];    // y coordinate
       point_next[2] =  p_next[2];    // z coordinate
 
+      
 
       ImageType::IndexType pixelIndex;
       const bool isInside = inputimage->TransformPhysicalPointToIndex( point, pixelIndex );
@@ -306,16 +310,12 @@ int main ( int argc, char *argv[] )
       ImageType::PixelType Propability_next = Interpolator->Evaluate(point_next);
       if(label > 0)
       {
+
+        
         ImageType::PixelType lenght_of_steps = outputimage_2->GetPixel(pixelIndex);
        
         double  rapport = step/lenght_of_steps;
         CSFDensity += ((Propability + Propability_next)*rapport)/2.0;
-
-
-        std::cout<< "density before normalization: " << ((Propability + Propability_next)*step)/2 << std::endl;
-        std::cout<< "density before normalization: " << ((Propability + Propability_next)*rapport)/2 << std::endl;
-        
-
       }
       else
       {
@@ -330,6 +330,7 @@ int main ( int argc, char *argv[] )
     {
       CSFDensity = 0.0;
     }
+    //std::cout << "CSFDensity = " << CSFDensity << std::endl;
     Array->InsertNextValue(CSFDensity);
     
     if (OuterFlag == 1)
@@ -394,9 +395,9 @@ int main ( int argc, char *argv[] )
 
 
   for(vtkIdType vertex = 0; vertex < inputPolyData->GetNumberOfPoints(); vertex++)
-      {
-                Result << ArrayCSFDensity->GetValue(vertex) << endl;
-            }
+  {
+      Result << ArrayCSFDensity->GetValue(vertex) << endl;
+  }
   Result.close();
 
  /* ofstream Result2;

@@ -924,8 +924,13 @@ void CSFWindow::on_output_path_clicked()
        if (!path.isEmpty())
        {
             lineEdit_output_path->setText(path);
-            QString inflated_mid = lineEdit_output_path->text() + QString("/LocalEACSF") + QString("/LH_Directory") + QString("/LH_MID_Inflating_Template.vtk");
-            QString inflated_75p = lineEdit_output_path->text() + QString("/LocalEACSF") + QString("/LH_Directory") + QString("/LH_75P_Inflating_Template.vtk");
+
+            QString jsonfile = lineEdit_output_path->text() + QString("/LocalEACSF") + QString("/Local_EACSF_config.json");
+            QJsonObject root_obj = readConfig(jsonfile);
+            QJsonObject data_obj = root_obj["data"].toObject();
+            QString Label = data_obj["Label"].toString();
+            QString inflated_mid = lineEdit_output_path->text() + QString("/LocalEACSF") + QString("/LH_Directory") + QString("/") + Label + QString("_LH_MID_Inflating_Template.vtk");
+            QString inflated_75p = lineEdit_output_path->text() + QString("/LocalEACSF") + QString("/LH_Directory") + QString("/") + Label + QString("_LH_75P_Inflating_Template.vtk");
             QFileInfo check_file1(inflated_mid);
             QFileInfo check_file2(inflated_75p);
             if(check_file1.exists() || check_file2.exists()){VisualiseCSFDensityinflating->setEnabled(true);}
@@ -949,19 +954,26 @@ void CSFWindow::on_visualize_clicked()
     QString OutputDirectory =lineEdit_output_path->text();
     QString LH_Directory = QDir::cleanPath(OutputDirectory + QString("/LocalEACSF") + QString("/LH_Directory"));
     QString RH_Directory = QDir::cleanPath(OutputDirectory + QString("/LocalEACSF") + QString("/RH_Directory"));
-    QString CSF_Probability_Map = LH_Directory + QString("/CSF_Probability_Map.nrrd");
+    
+
+    QString jsonfile = OutputDirectory + QString("/LocalEACSF") + QString("/Local_EACSF_config.json");
+    QJsonObject root_obj = readConfig(jsonfile);
+    QJsonObject data_obj = root_obj["data"].toObject();
+    QString Label = data_obj["Label"].toString();
+    qDebug() << Label ; 
+
 
     
     if (VisualiseCSFDensity->isChecked())
     {
 
-        QString LH_CSFDensity = LH_Directory + QString("/LH_MID_CSF_Density.vtk");
-        QString RH_CSFDensity  = RH_Directory + QString("/RH_MID_CSF_Density.vtk");
+        QString LH_CSFDensity = LH_Directory + QString("/") + Label + QString("_LH_MID_CSF_Density.vtk");
+        QString RH_CSFDensity  = RH_Directory + QString("/") + Label + QString("_RH_MID_CSF_Density.vtk");
         QFileInfo check_file(LH_CSFDensity);
         if(!check_file.exists())
         {
-            LH_CSFDensity = LH_Directory + QString("/LH_75P_CSF_Density.vtk");
-            RH_CSFDensity  = RH_Directory + QString("/RH_75P_CSF_Density.vtk");
+            LH_CSFDensity = LH_Directory + QString("/") + Label + QString("_LH_75P_CSF_Density.vtk");
+            RH_CSFDensity  = RH_Directory + QString("/") + Label + QString("_RH_75P_CSF_Density.vtk");
         }
         QStringList arguments = QStringList() << QString("-v") << LH_CSFDensity  << QString("-v")<< RH_CSFDensity ;
         visualization->setWorkingDirectory(OutputDirectory);
@@ -970,34 +982,34 @@ void CSFWindow::on_visualize_clicked()
 
     if (VisualiseCSFDensityinflating->isChecked())
     {
-
-        QString LH_CSFDensity = LH_Directory + QString("/LH_MID_Inflating_Template.vtk");
-        QString RH_CSFDensity  = RH_Directory + QString("/RH_MID_Inflating_Template.vtk");
+        QString LH_CSFDensity = LH_Directory + QString("/") + Label + QString("_LH_MID_Inflating_Template.vtk");
+        QString RH_CSFDensity  = RH_Directory + QString("/") + Label +  QString("_RH_MID_Inflating_Template.vtk");
         QFileInfo check_file(LH_CSFDensity);
         if(!check_file.exists())
         {
-            LH_CSFDensity = LH_Directory + QString("/LH_75P_Inflating_Template.vtk");
-            RH_CSFDensity  = RH_Directory + QString("/RH_75P_Inflating_Template.vtk");
+            LH_CSFDensity = LH_Directory + QString("/") + Label +  QString("_LH_75P_Inflating_Template.vtk");
+            RH_CSFDensity  = RH_Directory + QString("/") + Label +  QString("_RH_75P_Inflating_Template.vtk");
         }
         QStringList arguments = QStringList() << QString("-v") << LH_CSFDensity  << QString("-v")<< RH_CSFDensity ;
         visualization->setWorkingDirectory(OutputDirectory);
         visualization->start(QString("ShapePopulationViewer"), arguments);
     }
-
-
     if (VisualiseRightVisitation->isChecked())
     {
-        QString RH_visitation_map = RH_Directory + QString("/RH_Visitation.nrrd");
-        QStringList arguments = QStringList()<< QString("-s") << RH_visitation_map << QString("-g") << CSF_Probability_Map;
+
+        QString CSF_Probability_Map = RH_Directory + QString("/") + Label + QString("_CSF_Probability_Map.nrrd");
+        QString RH_visitation_map = RH_Directory + QString("/") + Label + QString("_RH_Visitation.nrrd");
+        QStringList arguments = QStringList()<< CSF_Probability_Map  << QString("-o") << RH_visitation_map  ;
         visualization->setWorkingDirectory(OutputDirectory);
-        visualization->start(QString("itksnap"), arguments);
+        visualization->start(QString("MriWatcher"), arguments);
     }
     if (VisualiseLeftVisitation->isChecked())
     {
-        QString LH_visitation_map = LH_Directory + QString("/LH_Visitation.nrrd");    
-        QStringList arguments = QStringList()<< QString("-s") << LH_visitation_map << QString("-g") << CSF_Probability_Map;
+        QString CSF_Probability_Map = LH_Directory + QString("/") + Label + QString("_CSF_Probability_Map.nrrd");
+        QString LH_visitation_map = LH_Directory + QString("/") + Label + QString("_LH_Visitation.nrrd");
+        QStringList arguments = QStringList()<< CSF_Probability_Map  << QString("-o") << LH_visitation_map  ;
         visualization->setWorkingDirectory(OutputDirectory);
-        visualization->start(QString("itksnap"), arguments);
+        visualization->start(QString("MriWatcher"), arguments);
     }    
 }
 
@@ -1088,7 +1100,6 @@ void CSFWindow::on_visualize_batch_clicked()
     {
         for (int i = 0; i < data.size(); ++i)
         {
-               qDebug() << data.at(i)->value(QString("LH Visitation Map")) ;
                arguments << data.at(i)->value(QString("LH Visitation Map"));
         }
         visualization_batch->start(QString("MriWatcher"), arguments);
@@ -1097,7 +1108,6 @@ void CSFWindow::on_visualize_batch_clicked()
     {
         for (int i = 0; i < data.size(); ++i)
         {
-               qDebug() << data.at(i)->value(QString("RH Visitation Map")) ;
                arguments << data.at(i)->value(QString("RH Visitation Map"));
         }
         visualization_batch->start(QString("MriWatcher"), arguments);
@@ -1107,7 +1117,6 @@ void CSFWindow::on_visualize_batch_clicked()
 void CSFWindow::on_help_clicked()
 {
     QWidget *help = new QWidget();
-    //help->resize(900, 520);
     help->resize(900, 200);
 
     QLabel *help_txt_1 = new QLabel(help);
@@ -1115,7 +1124,6 @@ void CSFWindow::on_help_clicked()
     help_txt_1->setText("<b> The CSV file  should be like: </b>");
 
     QLabel *Data_directory_image = new QLabel(help);
-    //Data_directory_image->setGeometry(20,30,800,300);
     Data_directory_image->setGeometry(20,30,800,150);
     QPixmap pic(":/batch/BatchCSVFile.png");
     Data_directory_image->setPixmap(pic);

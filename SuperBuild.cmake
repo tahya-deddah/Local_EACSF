@@ -11,7 +11,7 @@ option(EXECUTABLES_ONLY "Build the tools and the tools' libraries statically" ON
 # ${PRIMARY_PROJECT_NAME} dependency list
 #------------------------------------------------------------------------------
 #set(${PRIMARY_PROJECT_NAME}_DEPENDENCIES VTK ITK Python3 SlicerExecutionModel)
-set(${PRIMARY_PROJECT_NAME}_DEPENDENCIES VTK ITK VXL Python3 SlicerExecutionModel )
+set(${PRIMARY_PROJECT_NAME}_DEPENDENCIES VTK ITK VXL Python3 SlicerExecutionModel ShapePopulationViewer MriWatcher)
 
 option(USE_SYSTEM_ITK "Build using an externally defined version of ITK" OFF)
 option(USE_SYSTEM_SlicerExecutionModel "Build using an externally defined version of SlicerExecutionModel"  OFF)
@@ -158,5 +158,7 @@ ExternalProject_Add(${proj}
     -DVTK_DIR:PATH=${VTK_DIR}
     -DVXL_DIR:PATH=${VXL_DIR}
     -DSlicerExecutionModel_DIR:PATH=${SlicerExecutionModel_DIR}
+    -DShapePopulationViewer_DIR:PATH=${ShapePopulationViewer_DIR}
+    -DMriViewer_DIR:PATH=${MriViewer_DIR}
     ${CMAKE_OSX_EXTERNAL_PROJECT_ARGS}
 )

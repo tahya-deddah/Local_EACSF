@@ -11,6 +11,7 @@ import subprocess
 from subprocess import Popen
 import os.path
 from os import path
+import csv
 
 
 def call_and_print(args):
@@ -56,9 +57,6 @@ def main(args):
 	####
 	if(path.exists(os.path.join(OUT_PATH, args.Label + "_CSFVolume.txt"))):
 		print("Compute Local EACSF Density already done",flush=True)
-		if (os.path.isfile("../Outputs.csv")):
-			print('CSV File existe:', flush=True)
-			
 	else :
 		Process_Left_Side = subprocess.call([python, process_left_hemisphere])
 		Process_Right_Side = subprocess.call([python, process_right_hemisphere])
@@ -81,7 +79,21 @@ def main(args):
 				call_and_print([ComputeCSFVolume, "--VisitingMap", os.path.join("RH_Directory", args.Label + "_RH_Visitation.nrrd"), "--CSFProb",\
 				os.path.join("RH_Directory", args.Label + "_CSF_Probability_Map.nrrd"),"--CSFFile", os.path.join("RH_Directory", args.Label\
 				+ "_RH_" + surface + "_CSF_Density_Final.txt") , "--Side", "Right", "--Label", args.Label])
+
+		if (os.path.isfile("../Outputs.csv")):
+
+			header = ["LH CSF Density", "RH CSF Density", "LH Visitation Map", "RH Visitation Map"]
+			LH_CSF_Density = os.path.join(args.Output_Directory, "LocalEACSF", "LH_Directory", args.Label + "_LH_" + surface + "_CSF_Density.vtk")
+			RH_CSF_Density = os.path.join(args.Output_Directory, "LocalEACSF", "RH_Directory", args.Label + "_RH_" + surface + "_CSF_Density.vtk")
+			LH_Visitation_Map = os.path.join(args.Output_Directory, "LocalEACSF", "LH_Directory", args.Label + "_LH_Visitation.nrrd")
+			RH_Visitation_Map = os.path.join(args.Output_Directory, "LocalEACSF", "RH_Directory", args.Label + "_RH_Visitation.nrrd")
 			
+			line = [LH_CSF_Density, RH_CSF_Density, LH_Visitation_Map, RH_Visitation_Map ]			
+			f = csv.writer(open('../Outputs.csv','a'))
+			needs_header = os.stat('../Outputs.csv').st_size == 0
+			if needs_header:
+				f.writerow(header)
+			f.writerow(line)	
 
 	print("Local_EACSF finished",flush=True)
 	sys.exit(0)
