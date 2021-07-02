@@ -25,9 +25,6 @@ set(extProjName SlicerExecutionModel) #The find_package known name
 set(proj        SlicerExecutionModel) #This local name
 set(${extProjName}_REQUIRED_VERSION "")  #If a required version is necessary, then set this, else leave blank
 
-#if(${USE_SYSTEM_${extProjName}})
-#  unset(${extProjName}_DIR CACHE)
-#endif()
 
 # Sanity checks
 if(DEFINED ${extProjName}_DIR AND NOT EXISTS ${${extProjName}_DIR})
@@ -42,7 +39,7 @@ SlicerMacroCheckExternalProjectDependency(${proj})
 
 #set(USE_SYSTEM_${extProjName} ON)
 if(NOT ( DEFINED "USE_SYSTEM_${extProjName}" AND "${USE_SYSTEM_${extProjName}}" ) )
-  #message(STATUS "${__indent}Adding project ${proj}")
+
 
   # Set CMake OSX variable to pass down the external project
   set(CMAKE_OSX_EXTERNAL_PROJECT_ARGS)
@@ -73,11 +70,6 @@ if(NOT ( DEFINED "USE_SYSTEM_${extProjName}" AND "${USE_SYSTEM_${extProjName}}" 
       -DSlicerExecutionModel_DEFAULT_CLI_INSTALL_RUNTIME_DESTINATION:STRING=${${PROJECT_NAME}_CLI_INSTALL_RUNTIME_DESTINATION}
       -DSlicerExecutionModel_DEFAULT_CLI_INSTALL_LIBRARY_DESTINATION:STRING=${${PROJECT_NAME}_CLI_INSTALL_LIBRARY_DESTINATION}
       -DSlicerExecutionModel_DEFAULT_CLI_INSTALL_ARCHIVE_DESTINATION:STRING=${${PROJECT_NAME}_CLI_INSTALL_ARCHIVE_DESTINATION}
-      #-DSlicerExecutionModel_LIBRARY_PROPERTIES:STRING=${Slicer_LIBRARY_PROPERTIES}
-      #-DSlicerExecutionModel_INSTALL_BIN_DIR:PATH=bin
-      #-DSlicerExecutionModel_INSTALL_LIB_DIR:PATH=lib
-      #-DSlicerExecutionModel_INSTALL_SHARE_DIR:PATH=${Slicer_INSTALL_ROOT}share/${SlicerExecutionModel}
-      #-DSlicerExecutionModel_INSTALL_NO_DEVELOPMENT:BOOL=${Slicer_INSTALL_NO_DEVELOPMENT}
     )
   ### --- End Project specific additions
   set(${proj}_REPOSITORY "https://github.com/Slicer/SlicerExecutionModel.git")

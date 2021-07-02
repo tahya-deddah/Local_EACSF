@@ -17,4 +17,5 @@ add_subdirectory(HeatKernelSmoothing)
 add_subdirectory(ComputeCSFVolume)
 add_subdirectory(ComputeAverageMesh)
 add_subdirectory(FitPlane)
+add_subdirectory(ROImean)
 

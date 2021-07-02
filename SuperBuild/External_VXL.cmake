@@ -23,7 +23,6 @@ ProjectDependancyPush(CACHED_proj ${proj})
 # SlicerMacroCheckExternalProjectDependency
 set(extProjName VXL) #The find_package known name
 set(proj      VXL) #This local name
-#set(${extProjName}_REQUIRED_VERSION "ITKv5.1.1")
 set(${extProjName}_REQUIRED_VERSION ${${extProjName}_VERSION_MAJOR})  #If a required version is necessary, then set this, else leave blank
 
 #if(${USE_SYSTEM_${extProjName}})
@@ -73,9 +72,7 @@ if(NOT ( DEFINED "USE_SYSTEM_${extProjName}" AND "${USE_SYSTEM_${extProjName}}" 
     )
   ### --- End Project specific additions
   set(${proj}_REPOSITORY https://github.com/vxl/vxl.git)
-  #set(${proj}_GIT_TAG "release-4.13")
-  #set(ITK_VERSION_ID ITK-4.13)
-
+ 
   ExternalProject_Add(${proj}
     GIT_REPOSITORY ${${proj}_REPOSITORY}
     GIT_TAG ${${proj}_GIT_TAG}

@@ -59,7 +59,7 @@ def main(args):
 		print("Compute Local EACSF Density already done",flush=True)
 	else :
 		Process_Left_Side = subprocess.call([python, process_left_hemisphere])
-		Process_Right_Side = subprocess.call([python, process_right_hemisphere])
+		#Process_Right_Side = subprocess.call([python, process_right_hemisphere])
 	
 		if (os.path.isfile(LH_CSFDensity_Path) and os.path.isfile(RH_CSFDensity_Path)):
 			os.chdir(OUT_PATH)

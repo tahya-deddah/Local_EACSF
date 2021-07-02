@@ -305,6 +305,17 @@ vtkDataSet* createGrid(vtkPolyData* osurf, vtkPolyData* isurf, const int dims, s
 		double origin[3];
 		
 		GridCreate(double* bounds, const int dims) {
+
+
+			/// new to fixe the approximation 
+			for (int i = 0; i < 6 ; i++)
+			{
+				std::cout << bounds[i] << std::endl;
+				//bounds[i] = std::round(bounds[i]);
+			} 
+			///////////////////////////////////////
+
+
 			double maxbound = max(bounds[1]-bounds[0], max(bounds[3]-bounds[2], bounds[5]-bounds[4]));
 			
 			center[0] = (bounds[1]+bounds[0])/2.0;

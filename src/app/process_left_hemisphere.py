@@ -205,6 +205,10 @@ def processing(args, DirectoryName, Surface, ImageDimension):
 	
 		print('Creating LH streamlines', flush=True)
 		print('CEstablishing Surface Correspondance', flush=True)
+		
+		# call_and_print([klaplace,'-dims', ImageDimension, args.Label + "_LH_" + Surface + ".vtk",\
+		# "/work/tahya/Data/local_EACSf_Extraction/Ben_Test/101247/101247_LH_GM_Outer_MC.vtk",\
+		# '-surfaceCorrespondence',args.Label +"_LH_Outer.corr"])
 		call_and_print([klaplace,'-dims', ImageDimension, args.Label + "_LH_" + Surface + ".vtk", args.Label + "_LH_GM_Outer_MC.vtk",'-surfaceCorrespondence',args.Label +"_LH_Outer.corr"])
 		print('CEstablishing Streamlines', flush=True)
 		call_and_print([klaplace, '-traceStream',args.Label +"_LH_Outer.corr_field.vts", args.Label +"_LH_" + Surface + ".vtk", args.Label + "_LH_GM_Outer_MC.vtk", args.Label + "_LH_Outer_streamlines.vtp", \

@@ -64,8 +64,7 @@ int main ( int argc, char *argv[] )
 
   vtkPolyData* outerstreamlinesPolyData = outerstreamlinesreader->GetPolyDataOutput();
   std::cout << "Outer Streamlines File has " << outerstreamlinesPolyData->GetNumberOfLines() << " lines." << std::endl;
-  vtkDoubleArray* OuterLengthArray = vtkDoubleArray::SafeDownCast(outerstreamlinesPolyData->GetCellData()->GetArray("Length"));
-
+  
   // Get the segmentation filename from the command line
   std::string inputSegmentationFilename = InputSegmentationFileName;
   const unsigned int Dimension = 3;
@@ -108,12 +107,12 @@ int main ( int argc, char *argv[] )
 
 
   //// Initializing Voxel visiting Length
-  ImageType::Pointer outputimage_2 = ImageType::New();
-  outputimage_2->CopyInformation(inputimage);
-  outputimage_2->SetRegions(inputimage->GetRequestedRegion());
-  outputimage_2->Allocate();
+  ImageType::Pointer visitation_length = ImageType::New();
+  visitation_length->CopyInformation(inputimage);
+  visitation_length->SetRegions(inputimage->GetRequestedRegion());
+  visitation_length->Allocate();
 
-  IteratorType      outputIt2(outputimage_2, outputimage_2->GetRequestedRegion());
+  IteratorType      outputIt2(visitation_length, visitation_length->GetRequestedRegion());
   outputIt2.GoToBegin();
   while (!outputIt2.IsAtEnd())
   {
@@ -199,15 +198,18 @@ int main ( int argc, char *argv[] )
       const bool isInside = inputimage->TransformPhysicalPointToIndex( point, pixelIndex );
       ImageType::IndexType pixelIndex1;
       const bool isInside1 = inputMask->TransformPhysicalPointToIndex( point, pixelIndex1 );
-                  ImageType::PixelType label = inputMask->GetPixel(pixelIndex1);
+      ImageType::PixelType label = 0;
+
+      if(isInside && isInside1){
+        label = inputMask->GetPixel(pixelIndex1);
+      }
+                  
       if(label > 0)
       {        
        //new 
-        
-        ImageType::PixelType number_of_visitation = outputimage_2->GetPixel(pixelIndex);
-        number_of_visitation = number_of_visitation + step;
-        //std::cout << number_of_visitation << std::endl;
-        outputimage_2->SetPixel(pixelIndex, number_of_visitation );
+        ImageType::PixelType steps_length = visitation_length->GetPixel(pixelIndex);
+        steps_length = steps_length + step;
+        visitation_length->SetPixel(pixelIndex, steps_length );
         outputimage->SetPixel(pixelIndex, Outer_Line_ID); // Mark this pixel visited in current vertex       
       }
       else
@@ -226,15 +228,13 @@ int main ( int argc, char *argv[] )
   }
  
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-
 // //-----------------------------------------------Estimate CSF Density------------------------------------------------------------------
 
   vtkSmartPointer<vtkDoubleArray> Array = vtkSmartPointer<vtkDoubleArray>::New();
   Array->SetNumberOfComponents(1);
   Array->SetName("CSF_Density_Final");
 
-  
+
   Outer_Line_ID = -1;
 
   for(vtkIdType Vertex_ID = 0; Vertex_ID < inputPolyData->GetNumberOfPoints(); Vertex_ID++)
@@ -299,23 +299,26 @@ int main ( int argc, char *argv[] )
       point_next[1] = -p_next[1];    // y coordinate
       point_next[2] =  p_next[2];    // z coordinate
 
-      
+
 
       ImageType::IndexType pixelIndex;
       const bool isInside = inputimage->TransformPhysicalPointToIndex( point, pixelIndex );
       ImageType::IndexType pixelIndex1;
       const bool isInside1 = inputMask->TransformPhysicalPointToIndex( point, pixelIndex1 );
-                  ImageType::PixelType label = inputMask->GetPixel(pixelIndex1);
       ImageType::PixelType Propability = Interpolator->Evaluate(point);
       ImageType::PixelType Propability_next = Interpolator->Evaluate(point_next);
+      ImageType::PixelType label = 0;
+      if(isInside && isInside1){
+        label = inputMask->GetPixel(pixelIndex1);
+      }
+                  
       if(label > 0)
-      {
-
-        
-        ImageType::PixelType lenght_of_steps = outputimage_2->GetPixel(pixelIndex);
-       
+      {        
+       //new 
+        ImageType::PixelType lenght_of_steps = visitation_length->GetPixel(pixelIndex);      
         double  rapport = step/lenght_of_steps;
         CSFDensity += ((Propability + Propability_next)*rapport)/2.0;
+        //CSFDensity+= ((Propability + Propability_next)*step)/2.0;      
       }
       else
       {
@@ -330,9 +333,8 @@ int main ( int argc, char *argv[] )
     {
       CSFDensity = 0.0;
     }
-    //std::cout << "CSFDensity = " << CSFDensity << std::endl;
+
     Array->InsertNextValue(CSFDensity);
-    
     if (OuterFlag == 1)
     {
       Outer_Line_ID-=1;
@@ -400,19 +402,6 @@ int main ( int argc, char *argv[] )
   }
   Result.close();
 
- /* ofstream Result2;
-  std::string Result2FileName = NewFileName + "CSFDensityMagGradient.txt";
-  Result2.open (Result2FileName.c_str());
-  Result2 << "NUMBER_OF_POINTS=" << inputPolyData->GetNumberOfPoints() << endl; 
-  Result2 << "DIMENSION=1"  << endl;
-  Result2 << "TYPE=Scalar" << endl;
-  for(vtkIdType vertex = 0; vertex < inputPolyData->GetNumberOfPoints(); vertex++)
-      {
-                Result2 << ArrayMagGradient->GetValue(vertex) << endl;
-            }
-  Result2.close();*/
-
-
   std::string outputSurfaceFileName = OutputSurfacename;
   vtkSmartPointer<vtkPolyDataWriter> polywriter = vtkSmartPointer<vtkPolyDataWriter>::New();
   polywriter->SetFileName(outputSurfaceFileName.c_str());
@@ -440,7 +429,7 @@ int main ( int argc, char *argv[] )
 
   typedef itk::ImageFileWriter< ImageType > WriterType;
   WriterType::Pointer Imagewriter1 = WriterType::New();
-  Imagewriter1->SetInput(outputimage_2);
+  Imagewriter1->SetInput(visitation_length);
   Imagewriter1->SetFileName(OutputVoxelVistitingLength);
   Imagewriter1->Update();
 
