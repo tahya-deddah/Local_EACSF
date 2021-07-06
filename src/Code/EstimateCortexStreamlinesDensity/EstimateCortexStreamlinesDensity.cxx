@@ -317,8 +317,8 @@ int main ( int argc, char *argv[] )
        //new 
         ImageType::PixelType lenght_of_steps = visitation_length->GetPixel(pixelIndex);      
         double  rapport = step/lenght_of_steps;
-        CSFDensity += ((Propability + Propability_next)*rapport)/2.0;
-        //CSFDensity+= ((Propability + Propability_next)*step)/2.0;      
+        //CSFDensity += ((Propability + Propability_next)*rapport)/2.0;
+        CSFDensity+= ((Propability + Propability_next)*step)/2.0;      
       }
       else
       {

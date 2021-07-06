@@ -85,7 +85,7 @@ def optimize_csfdensity (surface): ## optimize
 	call_and_print([args.AddScalarstoPolyData, "--InputFile", args.Label + "_LH_" + surface + "_CSF_Density.vtk", "--OutputFile", args.Label + "_LH_" + surface + "_CSF_Density.vtk",\
 	"--ScalarsFile", args.Label + "_LH_" + surface + "_CSF_Density_Interpolated.txt", "--Scalars_Name", 'CSF_Density_Interpolated'])
 
-	### add scalars to csfdensity_inflating.vtk
+	### add scalars to csfdensity_inflated
 	if(args.LH_Inflating_Template != ""):
 		copyfile(args.LH_Inflating_Template, "LH_" + surface + "_Inflating_Template.vtk")
 		call_and_print([args.AddScalarstoPolyData, "--InputFile", args.Label + "_LH_" + surface + "_Inflating_Template.vtk", "--OutputFile", args.Label + "_LH_" + surface + "_Inflating_Template.vtk",\
@@ -142,11 +142,11 @@ def main_loop(args):
 			"--OutputSurface", args.Label +"_LH_" + surface + "_CSF_Density.vtk"])
 
 		if(args.LH_Inflating_Template != ""):
-			copyfile(args.LH_Inflating_Template, args.Label + "_LH_" + surface + "_Inflating_Template.vtk")
-			call_and_print([args.AddScalarstoPolyData, "--InputFile", args.Label +"_LH_" + surface + "_Inflating_Template.vtk", "--OutputFile", args.Label + "_LH_" + surface + "_Inflating_Template.vtk",\
+			copyfile(args.LH_Inflating_Template, args.Label + "_LH_" + surface + "_Inflated.vtk")
+			call_and_print([args.AddScalarstoPolyData, "--InputFile", args.Label +"_LH_" + surface + "_Inflated.vtk", "--OutputFile", args.Label + "_LH_" + surface + "_Inflated.vtk",\
 			"--ScalarsFile", args.Label + "_LH_" + surface + "_CSF_Density_Final.txt", "--Scalars_Name", 'CSF_Density_Final'])
 			if(args.Smooth) :
-				call_and_print([args.AddScalarstoPolyData, "--InputFile", args.Label + "_LH_" + surface + "_Inflating_Template.vtk", "--OutputFile", args.Label + "_LH_" + surface + "_Inflating_Template.vtk",\
+				call_and_print([args.AddScalarstoPolyData, "--InputFile", args.Label + "_LH_" + surface + "_Inflated.vtk", "--OutputFile", args.Label + "_LH_" + surface + "_Inflated.vtk",\
 				"--ScalarsFile", args.Label + "_LH_" + surface + "_CSF_Density_Final_Smoothed.txt", "--Scalars_Name", 'CSF_Density_Final_Smoothed'])
 	end = time.time()
 	print("time for LH:",end - start, flush=True)
@@ -206,9 +206,6 @@ def processing(args, DirectoryName, Surface, ImageDimension):
 		print('Creating LH streamlines', flush=True)
 		print('CEstablishing Surface Correspondance', flush=True)
 		
-		# call_and_print([klaplace,'-dims', ImageDimension, args.Label + "_LH_" + Surface + ".vtk",\
-		# "/work/tahya/Data/local_EACSf_Extraction/Ben_Test/101247/101247_LH_GM_Outer_MC.vtk",\
-		# '-surfaceCorrespondence',args.Label +"_LH_Outer.corr"])
 		call_and_print([klaplace,'-dims', ImageDimension, args.Label + "_LH_" + Surface + ".vtk", args.Label + "_LH_GM_Outer_MC.vtk",'-surfaceCorrespondence',args.Label +"_LH_Outer.corr"])
 		print('CEstablishing Streamlines', flush=True)
 		call_and_print([klaplace, '-traceStream',args.Label +"_LH_Outer.corr_field.vts", args.Label +"_LH_" + Surface + ".vtk", args.Label + "_LH_GM_Outer_MC.vtk", args.Label + "_LH_Outer_streamlines.vtp", \

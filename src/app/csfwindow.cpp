@@ -120,6 +120,10 @@ void CSFWindow::setConfig(QJsonObject root_obj)
 
     clean->setChecked(param_obj["Clean"].toBool());
     radioButton_slurm->setChecked(param_obj["Slurm"].toBool());
+    // to test:
+    if(param_obj["Slurm"].toBool()==true){radioButton_slurm->setChecked(true);}
+    else{radioButton_slurm->setChecked(false);}
+    /// /////
     if(param_obj["Slurm"].toBool())
         {slurm_parameters_state(true);}
     else{slurm_parameters_state(false);}
@@ -388,6 +392,19 @@ void CSFWindow::on_Data_Directory_clicked()
          lineEdit_Data_Directory->setText(path);
      }
 }
+
+void CSFWindow::on_checkBox_75P_Surface_batch_stateChanged(int state)
+{
+    bool enab;
+        if (state==Qt::Checked){enab=true;}
+        else{enab=false;}
+        LH_GM_filter->setEnabled(enab);
+        RH_GM_filter->setEnabled(enab);
+        lineEdit_LH_GM_filter->setEnabled(enab);
+        lineEdit_RH_GM_filter ->setEnabled(enab);
+        checkBox_75P_Surface->setChecked(enab);
+
+}
 void CSFWindow::on_Find_clicked()
 {
    QString data_directory = lineEdit_Data_Directory->text();
@@ -474,7 +491,7 @@ bool CSFWindow::Find_File(QDir oDir, QString filter, QString key, QMap<QString, 
 
 void CSFWindow::on_Add_clicked()
 {
-    addWidget *add_Widget = new addWidget();
+    addWidget *add_Widget = new addWidget(0,checkBox_75P_Surface_batch->isChecked());
     connect(add_Widget, SIGNAL(add_to_model( QMap<QString, QString>* )), this, SLOT(addToModel(QMap<QString, QString>* )));
     add_Widget->show();
 }
@@ -509,17 +526,17 @@ void CSFWindow::on_Help_clicked()
     help->resize(900, 520);
 
     QLabel *help_txt_1 = new QLabel(help);
-    help_txt_1->setGeometry(20,10,200,30);
-    help_txt_1->setText("<b> The Data Directory should be like: </b>");
+    help_txt_1->setGeometry(20,10,900,30);
+    help_txt_1->setText("<b> The Data Directory should be like the following example, if you don't want to use 75P surface no need to provide LH_GM.vtk and RH_GM.vtk: </b> " );
 
     QLabel *Data_directory_image = new QLabel(help);
-    Data_directory_image->setGeometry(20,30,800,300);
+    Data_directory_image->setGeometry(20,20,800,300);
     QPixmap pic(":/batch/BatchProcessingDirectory.png");
     Data_directory_image->setPixmap(pic);
 
     QLabel *help_txt_2 = new QLabel(help);
-    help_txt_2->setGeometry(20,330,700,30);
-    help_txt_2->setText("<b> The CSV File should be like the following example ( the order of the header doesn't matter) : </b>");
+    help_txt_2->setGeometry(20,330,900,30);
+    help_txt_2->setText("<b> The CSV File should be like the following example ( the order of the header doesn't matter) same as above about providing LH_GM.vtk and RH_GM.vtk: </b>");
 
     QLabel *CSV_image = new QLabel(help);
     CSV_image->setGeometry(20,250,800,320);
@@ -709,6 +726,19 @@ void CSFWindow::on_output_directory_clicked()
     }
 }
 
+void CSFWindow::on_checkBox_75P_Surface_stateChanged(int state)
+{
+    bool enab;
+    if (state==Qt::Checked){enab=true;}
+    else{enab=false;}
+    gray_matter_surfaces->setEnabled(enab);
+    LH_GM_Surface->setEnabled(enab);
+    RH_GM_Surface->setEnabled(enab);
+    lineEdit_LH_GM_Surface->setEnabled(enab);
+    lineEdit_RH_GM_Surface->setEnabled(enab);
+}
+
+
 // 3rd Tab - Executables tab
 void CSFWindow::updateExecutables(QString exeName, QString path)
 {
@@ -856,40 +886,46 @@ void CSFWindow::run_Local_EACSF(int row)
     QString scripts_dir = QDir::cleanPath(output_dir + QString("/LocalEACSF") + QString("/PythonScripts"));
     QString outlog_filename = QDir::cleanPath(output_dir + QString("/LocalEACSF") + QString("/output_log.txt"));
     QString errlog_filename = QDir::cleanPath(output_dir + QString("/LocalEACSF") + QString("/errors_log.txt"));
+    QString CSF_volume_filename = QDir::cleanPath(output_dir + QString("/LocalEACSF") + QString("/CSFVolume.txt"));
+    QFile volume_file(CSF_volume_filename);
 
 
     if (radioButton_local->isChecked())
     {  
+        if(volume_file.exists()) 
+        {       
+            output->append(QString("Compute Local EACSF Density already done for ID: ") + data_obj["Label"].toString() + QString("already done"));
+        } 
+        else
+        {
+            CleanFile(outlog_filename);
+            CleanFile(errlog_filename);
 
-        CleanFile(outlog_filename);
-        CleanFile(errlog_filename);
+            QString main_script = QDir::cleanPath(scripts_dir + QString("/main_script.py"));
+            QStringList params = QStringList() << main_script;
 
-        QString main_script = QDir::cleanPath(scripts_dir + QString("/main_script.py"));
-        QStringList params = QStringList() << main_script;
-
-        prc->setWorkingDirectory(output_dir); 
-        connect(prc, &QProcess::readyReadStandardOutput, [prc, outlog_filename, this](){
-           disp_output(prc, outlog_filename);
-        });
-        connect(prc, &QProcess::readyReadStandardError, [prc, errlog_filename, this](){
-           disp_err(prc, errlog_filename);
-        });
-        connect(prc, static_cast<void(QProcess::*)(int, QProcess::ExitStatus)>(&QProcess::finished), [prc, outlog_filename, errlog_filename, row, this ](){
-            prc_finished(prc, outlog_filename, errlog_filename, row);  
-        });
-       
-        QMap<QString, QString> executables = m_exeWidget->GetExeMap();
-        prc->start(executables[QString("python3")], params);  
-        
+            prc->setWorkingDirectory(output_dir); 
+            connect(prc, &QProcess::readyReadStandardOutput, [prc, outlog_filename, this](){
+               disp_output(prc, outlog_filename);
+            });
+            connect(prc, &QProcess::readyReadStandardError, [prc, errlog_filename, this](){
+               disp_err(prc, errlog_filename);
+            });
+            connect(prc, static_cast<void(QProcess::*)(int, QProcess::ExitStatus)>(&QProcess::finished), [prc, outlog_filename, errlog_filename, row, this ](){
+                prc_finished(prc, outlog_filename, errlog_filename, row);  
+            });
+           
+            QMap<QString, QString> executables = m_exeWidget->GetExeMap();
+            prc->start(executables[QString("python3")], params);         
+        }
     }
     
     if (radioButton_slurm->isChecked())
     {
-        QString CSF_volume_filename = QDir::cleanPath(output_dir + QString("/LocalEACSF") + QString("/CSFVolume.txt"));
-        QFile volume_file(CSF_volume_filename);
+        
         if(volume_file.exists()) 
         {       
-            output->append(QString("Compute Local EACSF Density already done"));
+            output->append(QString("Compute Local EACSF Density already done for ID: ") + data_obj["Label"].toString()  + QString("already done"));
         } 
         else
         {
@@ -1037,7 +1073,8 @@ void CSFWindow::on_Compare_clicked()
         {
             QString left = tableWidget->item(row,0)->text();
             QString right = tableWidget->item(row,1)->text();
-            float difference = (left.toFloat() - right.toFloat())/ (left.toFloat() + right.toFloat())/2;
+            //float difference = (left.toFloat() - right.toFloat())/ (left.toFloat() + right.toFloat())/2;
+            float difference = (left.toFloat() - right.toFloat())/ ((left.toFloat() + right.toFloat())/2);
             tableWidget->setItem( row, 2, new QTableWidgetItem( QString::number( difference * 100, 'f' , 2 ))); 
         }                   
     }
@@ -1058,30 +1095,8 @@ void CSFWindow::on_Compare_clicked()
     }   
 }
 
-void CSFWindow::on_checkBox_75P_Surface_stateChanged(int state)
-{
-    bool enab;
-    if (state==Qt::Checked){enab=true;}
-    else{enab=false;}
-    gray_matter_surfaces->setEnabled(enab);
-    LH_GM_Surface->setEnabled(enab);
-    RH_GM_Surface->setEnabled(enab);
-    lineEdit_LH_GM_Surface->setEnabled(enab);
-    lineEdit_RH_GM_Surface->setEnabled(enab);
-}
 
-void CSFWindow::on_checkBox_75P_Surface_batch_stateChanged(int state)
-{
-    bool enab;
-        if (state==Qt::Checked){enab=true;}
-        else{enab=false;}
-        LH_GM_filter->setEnabled(enab);
-        RH_GM_filter->setEnabled(enab);
-        lineEdit_LH_GM_filter->setEnabled(enab);
-        lineEdit_RH_GM_filter ->setEnabled(enab);
-        checkBox_75P_Surface->setChecked(enab);
 
-}
 
 void CSFWindow::on_visualize_batch_clicked()
 {
@@ -1120,8 +1135,8 @@ void CSFWindow::on_help_clicked()
     help->resize(900, 200);
 
     QLabel *help_txt_1 = new QLabel(help);
-    help_txt_1->setGeometry(20,10,200,30);
-    help_txt_1->setText("<b> The CSV file  should be like: </b>");
+    help_txt_1->setGeometry(20,10,800,30);
+    help_txt_1->setText("<b> The CSV file  should be like the followinf example. this csv file is created while batch processing and you can find it in the data directory : </b>");
 
     QLabel *Data_directory_image = new QLabel(help);
     Data_directory_image->setGeometry(20,30,800,150);

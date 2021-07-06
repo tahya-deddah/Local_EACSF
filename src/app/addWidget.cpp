@@ -8,10 +8,11 @@
 #include <QCoreApplication>
 #include <QVector>
 #include <QMessageBox>
+#include <QCheckBox>
 
 #include "addWidget.h"
 
-addWidget::addWidget(QWidget *m_parent)
+addWidget::addWidget(QWidget *m_parent, bool value)
 : QWidget(m_parent)
 {
 
@@ -21,10 +22,18 @@ addWidget::addWidget(QWidget *m_parent)
     verticalLayout->setSpacing(0);
 	verticalLayout->setMargin(0); 
 	verticalLayout->setContentsMargins( 0, 0, 0, 0 );
- 
+    use_75_surface = value;
+
+    
     QVector<QString> vector;
-    vector << QString("T1")  << QString("Tissu Segmentation") << QString("CSF Probability Map")  << QString("LH MID Surface")  << QString("LH GM Surface") << 
-    QString("RH MID Surface")  << QString("RH GM Surface") << QString("Output Directory");
+    vector << QString("Tissu Segmentation") << QString("CSF Probability Map") << QString("LH MID Surface") << QString("RH MID Surface")  << QString("Output Directory");
+
+    if(use_75_surface)
+    {
+        vector.clear();
+        vector << QString("Tissu Segmentation") << QString("CSF Probability Map")  << QString("LH MID Surface")  << QString("LH GM Surface") << 
+        QString("RH MID Surface")  << QString("RH GM Surface") << QString("Output Directory");
+    }
 
 
     foreach (const QString inputName, vector) 
