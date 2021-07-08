@@ -86,7 +86,7 @@ def optimize_csfdensity (surface):
 	if(args.RH_Inflating_Template != ""):
 
 		copyfile(args.RH_Inflating_Template, args.Label + "RH_" + surface + "_Inflated.vtk")
-		call_and_print([args.AddScalarstoPolyData, "--InputFile", args.Label + "_RH_" + surface + "_Inflated.vtk", "--OutputFile", "RH_" + surface + "_Inflated.vtk",\
+		call_and_print([args.AddScalarstoPolyData, "--InputFile", args.Label + "_RH_" + surface + "_Inflated.vtk", "--OutputFile", args.Label + "RH_" + surface + "_Inflated.vtk",\
 		"--ScalarsFile", args.Label + "_RH_" + surface + "_CSF_Density_Interpolated.txt", "--Scalars_Name", 'CSF_Density_Interpolated'])
 		call_and_print([args.AddScalarstoPolyData, "--InputFile", args.Label + "_RH_" + surface + "_Inflated.vtk", "--OutputFile", args.Label + "_RH_" + surface + "_Inflated.vtk",\
 		"--ScalarsFile", args.Label + "_RH_" + surface + "_CSF_Density.txt", "--Scalars_Name", 'CSF_Density_Original'])
@@ -141,11 +141,11 @@ def main_loop(args):
 				, "@Bandwith@", "--OutputSurface", args.Label + "_RH_" + surface + "_CSF_Density.vtk"])
 
 		if(args.RH_Inflating_Template != ""):
-			copyfile(args.RH_Inflating_Template, args.Label + "_RH_" + surface + "_Inflating_Template.vtk")
-			call_and_print([args.AddScalarstoPolyData, "--InputFile", args.Label + "_RH_" + surface + "_Inflating_Template.vtk", "--OutputFile", args.Label + "_RH_" + surface + "_Inflating_Template.vtk",\
+			copyfile(args.RH_Inflating_Template, args.Label + "_RH_" + surface + "_Inflated.vtk")
+			call_and_print([args.AddScalarstoPolyData, "--InputFile", args.Label + "_RH_" + surface + "_Inflated.vtk", "--OutputFile", args.Label + "_RH_" + surface + "_Inflated.vtk",\
 			"--ScalarsFile", args.Label + "_RH_" + surface + "_CSF_Density_Final.txt", "--Scalars_Name", 'CSF_Density_Final'])
 			if(args.Smooth) :
-				call_and_print([args.AddScalarstoPolyData, "--InputFile", args.Label + "_RH_" + surface + "_Inflating_Template.vtk", "--OutputFile", args.Label + "_RH_" + surface + "_Inflating_Template.vtk",\
+				call_and_print([args.AddScalarstoPolyData, "--InputFile", args.Label + "_RH_" + surface + "_Inflated.vtk", "--OutputFile", args.Label + "_RH_" + surface + "_Inflated.vtk",\
 				"--ScalarsFile", args.Label + "_RH_" + surface + "_CSF_Density_Final_Smoothed.txt", "--Scalars_Name", 'CSF_Density_Final_Smoothed'])
 
 	end = time.time()

@@ -100,9 +100,11 @@ int  main(int argc, char** argv)
 	vtkSmartPointer<vtkDoubleArray> array = vtkDoubleArray::SafeDownCast(inputPolyData->GetPointData()->GetArray("CSF_Density_Final_Smoothed"));
 	std::string FileName = InputSurface;
 
-	std::string NewFileName = FileName.substr(0,6);
+	//std::string NewFileName = FileName.substr(0,6);
+	std::string NewFileName = FileName.substr(0, FileName.size()-4);
 	//std::string ResultFileName = NewFileName + ".CSFDensity.txt";
-	std::string ResultFileName = NewFileName + "_CSF_Density_Final_Smoothed.txt";	
+	//std::string ResultFileName = NewFileName + "_CSF_Density_Final_Smoothed.txt";
+	std::string ResultFileName = NewFileName + "_Final_Smoothed.txt";	
 	ofstream Result;
 	Result.open(ResultFileName.c_str(), ofstream::trunc);
 	Result << "NUMBER_OF_POINTS=" << inputPolyData->GetNumberOfPoints() << endl; 

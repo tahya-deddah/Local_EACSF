@@ -87,10 +87,10 @@ def optimize_csfdensity (surface): ## optimize
 
 	### add scalars to csfdensity_inflated
 	if(args.LH_Inflating_Template != ""):
-		copyfile(args.LH_Inflating_Template, "LH_" + surface + "_Inflating_Template.vtk")
-		call_and_print([args.AddScalarstoPolyData, "--InputFile", args.Label + "_LH_" + surface + "_Inflating_Template.vtk", "--OutputFile", args.Label + "_LH_" + surface + "_Inflating_Template.vtk",\
+		copyfile(args.LH_Inflating_Template, args.Label + "_LH_" + surface + "_Inflated.vtk")
+		call_and_print([args.AddScalarstoPolyData, "--InputFile", args.Label + "_LH_" + surface + "_Inflated.vtk", "--OutputFile", args.Label + "_LH_" + surface + "_Inflated.vtk",\
 		"--ScalarsFile", args.Label + "_LH_" + surface + "_CSF_Density_Interpolated.txt", "--Scalars_Name", 'CSF_Density_Interpolated'])
-		call_and_print([args.AddScalarstoPolyData, "--InputFile", args.Label + "_LH_" + surface + "_Inflating_Template.vtk", "--OutputFile", args.Label + "_LH_" + surface + "_Inflating_Template.vtk",\
+		call_and_print([args.AddScalarstoPolyData, "--InputFile", args.Label + "_LH_" + surface + "_Inflated.vtk", "--OutputFile", args.Label + "_LH_" + surface + "_Inflated.vtk",\
 		"--ScalarsFile", args.Label + "_LH_" + surface + "_CSF_Density.txt", "--Scalars_Name", 'CSF_Density_Original'])
 
 	original_density_average = average(EACSFFile)

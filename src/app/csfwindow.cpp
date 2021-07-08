@@ -965,8 +965,8 @@ void CSFWindow::on_output_path_clicked()
             QJsonObject root_obj = readConfig(jsonfile);
             QJsonObject data_obj = root_obj["data"].toObject();
             QString Label = data_obj["Label"].toString();
-            QString inflated_mid = lineEdit_output_path->text() + QString("/LocalEACSF") + QString("/LH_Directory") + QString("/") + Label + QString("_LH_MID_Inflating_Template.vtk");
-            QString inflated_75p = lineEdit_output_path->text() + QString("/LocalEACSF") + QString("/LH_Directory") + QString("/") + Label + QString("_LH_75P_Inflating_Template.vtk");
+            QString inflated_mid = lineEdit_output_path->text() + QString("/LocalEACSF") + QString("/LH_Directory") + QString("/") + Label + QString("_LH_MID_Inflated.vtk");
+            QString inflated_75p = lineEdit_output_path->text() + QString("/LocalEACSF") + QString("/LH_Directory") + QString("/") + Label + QString("_LH_75P_Inflated.vtk");
             QFileInfo check_file1(inflated_mid);
             QFileInfo check_file2(inflated_75p);
             if(check_file1.exists() || check_file2.exists()){VisualiseCSFDensityinflating->setEnabled(true);}
@@ -1018,13 +1018,13 @@ void CSFWindow::on_visualize_clicked()
 
     if (VisualiseCSFDensityinflating->isChecked())
     {
-        QString LH_CSFDensity = LH_Directory + QString("/") + Label + QString("_LH_MID_Inflating_Template.vtk");
-        QString RH_CSFDensity  = RH_Directory + QString("/") + Label +  QString("_RH_MID_Inflating_Template.vtk");
+        QString LH_CSFDensity = LH_Directory + QString("/") + Label + QString("_LH_MID_Inflated.vtk");
+        QString RH_CSFDensity  = RH_Directory + QString("/") + Label +  QString("_RH_MID_Inflated.vtk");
         QFileInfo check_file(LH_CSFDensity);
         if(!check_file.exists())
         {
-            LH_CSFDensity = LH_Directory + QString("/") + Label +  QString("_LH_75P_Inflating_Template.vtk");
-            RH_CSFDensity  = RH_Directory + QString("/") + Label +  QString("_RH_75P_Inflating_Template.vtk");
+            LH_CSFDensity = LH_Directory + QString("/") + Label +  QString("_LH_75P_Inflated.vtk");
+            RH_CSFDensity  = RH_Directory + QString("/") + Label +  QString("_RH_75P_Inflated.vtk");
         }
         QStringList arguments = QStringList() << QString("-v") << LH_CSFDensity  << QString("-v")<< RH_CSFDensity ;
         visualization->setWorkingDirectory(OutputDirectory);
@@ -1052,7 +1052,12 @@ void CSFWindow::on_visualize_clicked()
 void CSFWindow::on_Compare_clicked()
 {
     QString OutputDirectory =lineEdit_output_path->text();
-    QString CSFVolume = QDir::cleanPath(OutputDirectory + QString("/LocalEACSF")  + QString("/CSFVolume.txt"));   
+    QString jsonfile = lineEdit_output_path->text() + QString("/LocalEACSF") + QString("/Local_EACSF_config.json");
+    QJsonObject root_obj = readConfig(jsonfile);
+    QJsonObject data_obj = root_obj["data"].toObject();
+    QString Label = data_obj["Label"].toString();
+    QString CSFVolume = QDir::cleanPath(OutputDirectory + QString("/LocalEACSF") +  QString("/") + Label  + QString("_CSFVolume.txt"));   
+    qDebug() << CSFVolume;
     QFile file(CSFVolume);    
     if(!file.exists()) 
     {infoMsgBox(QString(" No volume file found") , QMessageBox::Warning);} 
