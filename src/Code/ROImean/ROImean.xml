@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<executable>
+  <category></category>
+  <title>ROImean</title>
+  <description></description>
+  <version></version>
+   <parameters>
+	   	<file>
+	   		<name>InputMeasurement</name>
+	   		<longflag>InputMeasurement</longflag>
+      		<flag>I</flag>
+      		<description> input measurement file </description>
+	    </file>
+		<file>
+			<name>AtlasSurfaceLabeling</name>
+			<longflag>AtlasSurfaceLabeling</longflag>
+      		<flag>A</flag>
+      		<description>atlas surface labeling file </description>
+		</file>
+		<file>
+			<name>OutputFileName</name>
+			<longflag>OutputFileName</longflag>
+      		<flag>O</flag>
+      		<description>Output FileName</description>
+		</file>
+	</parameters>
+</executable>
