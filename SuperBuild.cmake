@@ -17,6 +17,7 @@ option(USE_SYSTEM_ITK "Build using an externally defined version of ITK" OFF)
 option(USE_SYSTEM_SlicerExecutionModel "Build using an externally defined version of SlicerExecutionModel"  OFF)
 option(USE_SYSTEM_VTK "Build using an externally defined version of VTK" OFF)
 option(USE_SYSTEM_VXL "Build using an externally defined version of VXL" OFF)
+option(USE_SYSTEM_MriWatcher "Build using an externally defined version of MriWatcher" OFF)
 
 
 #-----------------------------------------------------------------------------
@@ -159,6 +160,6 @@ ExternalProject_Add(${proj}
     -DVXL_DIR:PATH=${VXL_DIR}
     -DSlicerExecutionModel_DIR:PATH=${SlicerExecutionModel_DIR}
     -DShapePopulationViewer_DIR:PATH=${ShapePopulationViewer_DIR}
-    -DMriViewer_DIR:PATH=${MriViewer_DIR}
+    -DMriWatcher_DIR:PATH=${MriWatcher_DIR}
     ${CMAKE_OSX_EXTERNAL_PROJECT_ARGS}
 )

@@ -80,7 +80,7 @@ def optimize_csfdensity (surface): ## optimize
 	os.chdir(os.path.join( args.Output_Directory, "LocalEACSF", "LH_Directory"))
 
 	### add scalars to csfdensity.vtk
-	call_and_print([args.AddScalarstoPolyData, "--InputFile", args.Label + "_LH_" + surface + "_CSF_Density.vtk", "--OutputFile", "LH_" + surface + "_CSF_Density.vtk",\
+	call_and_print([args.AddScalarstoPolyData, "--InputFile", args.Label + "_LH_" + surface + "_CSF_Density.vtk", "--OutputFile", args.Label + "_LH_" + surface + "_CSF_Density.vtk",\
 	"--ScalarsFile", args.Label + "_LH_" + surface + "_CSF_Density.txt", "--Scalars_Name", 'CSF_Density_Original'])
 	call_and_print([args.AddScalarstoPolyData, "--InputFile", args.Label + "_LH_" + surface + "_CSF_Density.vtk", "--OutputFile", args.Label + "_LH_" + surface + "_CSF_Density.vtk",\
 	"--ScalarsFile", args.Label + "_LH_" + surface + "_CSF_Density_Interpolated.txt", "--Scalars_Name", 'CSF_Density_Interpolated'])
@@ -220,10 +220,10 @@ def processing(args, DirectoryName, Surface, ImageDimension):
 	else :
 		print('Computing LH EACSF  ', flush=True)
 		## avoid double counting
-		# call_and_print([CreateOuterImage,"--InputImg", args.Label + "_Tissu_Segmentation.nrrd", "--OutputImg", args.Label + "_RH_GM_Dilated.nrrd", "--closingradius", "@closingradius@",\
-	 # 		"--dilationradius", "@dilationradius@", "--Reverse", '1'])
-		# call_and_print([FitPlane,"--input1", args.Label + "_LH_GM_Dilated.nrrd", "--input2", args.Label + "_RH_GM_Dilated.nrrd", "--output1", args.Label + "_LH_GM_Dilated.nrrd", "--output2", args.Label + "_RH_GM_Dilated.nrrd"])
-		# os.remove(args.Label + "_RH_GM_Dilated.nrrd")
+		call_and_print([CreateOuterImage,"--InputImg", args.Label + "_Tissu_Segmentation.nrrd", "--OutputImg", args.Label + "_RH_GM_Dilated.nrrd", "--closingradius", "@closingradius@",\
+	  	"--dilationradius", "@dilationradius@", "--Reverse", '1'])
+		call_and_print([FitPlane,"--input1", args.Label + "_LH_GM_Dilated.nrrd", "--input2", args.Label + "_RH_GM_Dilated.nrrd", "--output1", args.Label + "_LH_GM_Dilated.nrrd", "--output2", args.Label + "_RH_GM_Dilated.nrrd"])
+		os.remove(args.Label + "_RH_GM_Dilated.nrrd")
 		##########
 
 		call_and_print([EstimateCortexStreamlinesDensity, "--InputSurface" , args.Label + "_LH_" + Surface + ".vtk", "--InputOuterStreamlines", args.Label + "_LH_Outer_streamlines.vtk",\

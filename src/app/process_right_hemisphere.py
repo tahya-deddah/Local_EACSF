@@ -220,10 +220,10 @@ def processing(args, DirectoryName, Surface, ImageDimension):
 	else :
 		print('Computing RH EACSF  ')
 		### avoid double counting
-		# call_and_print([CreateOuterImage,"--InputImg", args.Label + "_Tissu_Segmentation.nrrd", "--OutputImg", args.Label + "_LH_GM_Dilated.nrrd", "--closingradius", "@closingradius@", "--dilationradius", "@dilationradius@", "--Reverse", '0'])
-		# call_and_print([FitPlane,"--input1", args.Label + "_LH_GM_Dilated.nrrd", "--input2", args.Label + "_RH_GM_Dilated.nrrd", "--output1", \
-		# 	args.Label + "_LH_GM_Dilated.nrrd", "--output2", args.Label + "_RH_GM_Dilated.nrrd"])
-		# os.remove("LH_GM_Dilated.nrrd")
+		call_and_print([CreateOuterImage,"--InputImg", args.Label + "_Tissu_Segmentation.nrrd", "--OutputImg", args.Label + "_LH_GM_Dilated.nrrd", "--closingradius", "@closingradius@", "--dilationradius", "@dilationradius@", "--Reverse", '0'])
+		call_and_print([FitPlane,"--input1", args.Label + "_LH_GM_Dilated.nrrd", "--input2", args.Label + "_RH_GM_Dilated.nrrd", "--output1", \
+		args.Label + "_LH_GM_Dilated.nrrd", "--output2", args.Label + "_RH_GM_Dilated.nrrd"])
+		os.remove("LH_GM_Dilated.nrrd")
 		#######
 		call_and_print([EstimateCortexStreamlinesDensity, "--InputSurface" , args.Label + "_RH_" + Surface + ".vtk", "--InputOuterStreamlines",  args.Label + "_RH_Outer_streamlines.vtk",\
 			"--InputSegmentation", args.Label + "_CSF_Probability_Map.nrrd", "--InputMask", args.Label + "_RH_GM_Dilated.nrrd", "--OutputSurface", args.Label + "_RH_" + Surface + "_CSF_Density.vtk", "--VisitingMap",\
