@@ -148,6 +148,14 @@ def main_loop(args):
 				call_and_print([args.AddScalarstoPolyData, "--InputFile", args.Label + "_RH_" + surface + "_Inflated.vtk", "--OutputFile", args.Label + "_RH_" + surface + "_Inflated.vtk",\
 				"--ScalarsFile", args.Label + "_RH_" + surface + "_CSF_Density_Final_Smoothed.txt", "--Scalars_Name", 'CSF_Density_Final_Smoothed'])
 
+		##### add scalars to inflated surfaces
+		if(args.Compute_regional_CSF_density):
+			call_and_print([args.ROImean, "--InputMeasurement", args.Label + "_RH_" + surface + "_CSF_Density_Final.txt", "--AtlasSurfaceLabeling", args.Right_Atlas_Surface,\
+				"--OutputFileName", args.Label + "_RH_" + surface + "CSF_Regional_Density.txt"])
+			if(args.Smooth) :
+				call_and_print([args.ROImean, "--InputMeasurement", args.Label + "_RH_" + surface + "_CSF_Density_Final_Smoothed.txt", "--AtlasSurfaceLabeling", args.Right_Atlas_Surface,\
+				"--OutputFileName", args.Label + "_RH_" + surface + "CSF_Regional_Density.txt"])
+
 	end = time.time()
 	print("time for RH:",end - start, flush=True)
 
@@ -220,10 +228,11 @@ def processing(args, DirectoryName, Surface, ImageDimension):
 	else :
 		print('Computing RH EACSF  ')
 		### avoid double counting
-		call_and_print([CreateOuterImage,"--InputImg", args.Label + "_Tissu_Segmentation.nrrd", "--OutputImg", args.Label + "_LH_GM_Dilated.nrrd", "--closingradius", "@closingradius@", "--dilationradius", "@dilationradius@", "--Reverse", '0'])
+		call_and_print([CreateOuterImage,"--InputImg", args.Label + "_Tissu_Segmentation.nrrd", "--OutputImg", args.Label + "_LH_GM_Dilated.nrrd", \
+			"--closingradius", "@closingradius@", "--dilationradius", "@dilationradius@", "--Reverse", '0'])
 		call_and_print([FitPlane,"--input1", args.Label + "_LH_GM_Dilated.nrrd", "--input2", args.Label + "_RH_GM_Dilated.nrrd", "--output1", \
 		args.Label + "_LH_GM_Dilated.nrrd", "--output2", args.Label + "_RH_GM_Dilated.nrrd"])
-		os.remove("LH_GM_Dilated.nrrd")
+		os.remove(args.Label + "_LH_GM_Dilated.nrrd")
 		#######
 		call_and_print([EstimateCortexStreamlinesDensity, "--InputSurface" , args.Label + "_RH_" + Surface + ".vtk", "--InputOuterStreamlines",  args.Label + "_RH_Outer_streamlines.vtk",\
 			"--InputSegmentation", args.Label + "_CSF_Probability_Map.nrrd", "--InputMask", args.Label + "_RH_GM_Dilated.nrrd", "--OutputSurface", args.Label + "_RH_" + Surface + "_CSF_Density.vtk", "--VisitingMap",\
@@ -237,6 +246,7 @@ parser.add_argument("--CSF_Probability_Map",type=str, help='CSF Probality Map', 
 parser.add_argument("--RH_MID_surface",type=str, help='Right Hemisphere MID Surface',default="@RH_MID_surface@")
 parser.add_argument("--RH_GM_surface",type=str, help='Right Hemisphere GM Surface', default="@RH_GM_surface@")
 parser.add_argument("--RH_Inflating_Template",type=str, help='Right Hemisphere Inflating Template', default="@RH_Inflating_Template@")
+parser.add_argument("--Right_Atlas_Surface",type=str, help='Right Atlas Surface Labeling', default="@Right_Atlas_Surface@")
 parser.add_argument("--Label",type=str, help='Label of the case , ID for example', default="@Label@")
 parser.add_argument("--Output_Directory",type=str, help='Output Directory', default="@Output_Directory@")
 parser.add_argument('--CreateOuterImage', type=str, help='CreateOuterImage executable path', default='@CreateOuterImage_PATH@')
@@ -248,10 +258,12 @@ parser.add_argument('--AddScalarstoPolyData', type=str, help='AddScalarstoPolyDa
 parser.add_argument('--HeatKernelSmoothing', type=str, help='HeatKernelSmoothing executable path', default='@HeatKernelSmoothing_PATH@')
 parser.add_argument('--ComputeAverageMesh', type=str, help='ComputeAverageMesh executable path', default='@ComputeAverageMesh_PATH@')
 parser.add_argument('--FitPlane', type=str, help='FitPlane executable path', default='@FitPlane_PATH@')
+parser.add_argument('--ROImean', type=str, help='ROImean executable path', default='@ROImean_PATH@')
 parser.add_argument('--Smooth', type=bool, help='Smooth the CSF Density with a heat kernel smoothing', default=@Smooth@)
 parser.add_argument('--Clean_up', type=bool, help='Clean the output directory of intermediate outputs', default=@Clean@)
 parser.add_argument('--Interpolated', type=bool, help='Compute  the optimal CSF density ( Interpolated) ', default=@Interpolated@)
 parser.add_argument('--NotInterpolated', type=bool, help='Compute CSF density without optimisation (Interpolation) ', default=@NotInterpolated@)
 parser.add_argument('--Use_75P_Surface', type=bool, help='use the 75P Surface as the input surface', default=@Use_75P_Surface@)
+parser.add_argument('--Compute_regional_CSF_density', type=bool, help='Compute regional CSF density', default=@Compute_regional_CSF_density@)
 args = parser.parse_args()
 main_loop(args)

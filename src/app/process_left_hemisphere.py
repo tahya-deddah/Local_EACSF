@@ -137,10 +137,12 @@ def main_loop(args):
 					os.path.join( args.Output_Directory, "LocalEACSF", "LH_Directory", args.Label + "_LH_" + surface + "_CSF_Density_Final.txt"))
 
 		os.chdir(os.path.join( args.Output_Directory, "LocalEACSF", "LH_Directory"))
+		##### smooth the csf density
 		if(args.Smooth) :
 			call_and_print([args.HeatKernelSmoothing , "--InputSurface", args.Label + "_LH_" + surface + "_CSF_Density.vtk", "--NumberIter", "@NumberIter@", "--sigma", "@Bandwith@",\
 			"--OutputSurface", args.Label +"_LH_" + surface + "_CSF_Density.vtk"])
 
+		##### add scalars to inflated surfaces
 		if(args.LH_Inflating_Template != ""):
 			copyfile(args.LH_Inflating_Template, args.Label + "_LH_" + surface + "_Inflated.vtk")
 			call_and_print([args.AddScalarstoPolyData, "--InputFile", args.Label +"_LH_" + surface + "_Inflated.vtk", "--OutputFile", args.Label + "_LH_" + surface + "_Inflated.vtk",\
@@ -148,6 +150,16 @@ def main_loop(args):
 			if(args.Smooth) :
 				call_and_print([args.AddScalarstoPolyData, "--InputFile", args.Label + "_LH_" + surface + "_Inflated.vtk", "--OutputFile", args.Label + "_LH_" + surface + "_Inflated.vtk",\
 				"--ScalarsFile", args.Label + "_LH_" + surface + "_CSF_Density_Final_Smoothed.txt", "--Scalars_Name", 'CSF_Density_Final_Smoothed'])
+
+		##### add scalars to inflated surfaces
+		if(args.Compute_regional_CSF_density):
+			call_and_print([args.ROImean, "--InputMeasurement", args.Label + "_LH_" + surface + "_CSF_Density_Final.txt", "--AtlasSurfaceLabeling", args.Left_Atlas_Surface,\
+				"--OutputFileName", args.Label + "_LH_" + surface + "CSF_Regional_Density.txt"])
+			if(args.Smooth) :
+				call_and_print([args.ROImean, "--InputMeasurement", args.Label + "_LH_" + surface + "_CSF_Density_Final_Smoothed.txt", "--AtlasSurfaceLabeling", args.Left_Atlas_Surface,\
+				"--OutputFileName", args.Label + "_LH_" + surface + "CSF_Regional_Density.txt"])
+
+
 	end = time.time()
 	print("time for LH:",end - start, flush=True)
 
@@ -220,8 +232,8 @@ def processing(args, DirectoryName, Surface, ImageDimension):
 	else :
 		print('Computing LH EACSF  ', flush=True)
 		## avoid double counting
-		call_and_print([CreateOuterImage,"--InputImg", args.Label + "_Tissu_Segmentation.nrrd", "--OutputImg", args.Label + "_RH_GM_Dilated.nrrd", "--closingradius", "@closingradius@",\
-	  	"--dilationradius", "@dilationradius@", "--Reverse", '1'])
+		call_and_print([CreateOuterImage,"--InputImg", args.Label + "_Tissu_Segmentation.nrrd", "--OutputImg", args.Label + "_RH_GM_Dilated.nrrd", \
+			"--closingradius", "@closingradius@","--dilationradius", "@dilationradius@", "--Reverse", '1'])
 		call_and_print([FitPlane,"--input1", args.Label + "_LH_GM_Dilated.nrrd", "--input2", args.Label + "_RH_GM_Dilated.nrrd", "--output1", args.Label + "_LH_GM_Dilated.nrrd", "--output2", args.Label + "_RH_GM_Dilated.nrrd"])
 		os.remove(args.Label + "_RH_GM_Dilated.nrrd")
 		##########
@@ -238,6 +250,7 @@ parser.add_argument("--CSF_Probability_Map",type=str, help='CSF Probality Map', 
 parser.add_argument("--LH_MID_surface",type=str, help='Left Hemisphere MID Surface', default="@LH_MID_surface@")
 parser.add_argument("--LH_GM_surface",type=str, help='Left Hemisphere GM Surface', default="@LH_GM_surface@")
 parser.add_argument("--LH_Inflating_Template",type=str, help='Left Hemisphere Inflating Template', default="@LH_Inflating_Template@")
+parser.add_argument("--Left_Atlas_Surface",type=str, help='Left Atlas Surface Labeling', default="@Left_Atlas_Surface@")
 parser.add_argument("--Label",type=str, help='Label of the case , ID for example', default="@Label@")
 parser.add_argument("--Output_Directory",type=str, help='Output Directory', default="@Output_Directory@")
 parser.add_argument('--CreateOuterImage', type=str, help='CreateOuterImage executable path', default='@CreateOuterImage_PATH@')
@@ -249,11 +262,13 @@ parser.add_argument('--AddScalarstoPolyData', type=str, help='AddScalarstoPolyDa
 parser.add_argument('--HeatKernelSmoothing', type=str, help='HeatKernelSmoothing executable path', default='@HeatKernelSmoothing_PATH@')
 parser.add_argument('--ComputeAverageMesh', type=str, help='ComputeAverageMesh executable path', default='@ComputeAverageMesh_PATH@')
 parser.add_argument('--FitPlane', type=str, help='FitPlane executable path', default='@FitPlane_PATH@')
+parser.add_argument('--ROImean', type=str, help='ROImean executable path', default='@ROImean_PATH@')
 parser.add_argument('--Smooth', type=bool, help='Smooth the CSF Density with a heat kernel smoothing', default=@Smooth@)
 parser.add_argument('--Clean_up', type=bool, help='Clean the output directory of intermediate outputs', default=@Clean@)
 parser.add_argument('--Interpolated', type=bool, help='Compute  the optimal CSF density ( Interpolated)', default=@Interpolated@)
 parser.add_argument('--NotInterpolated', type=bool, help='Compute CSF density without optimisation (Interpolation)', default=@NotInterpolated@)
 parser.add_argument('--Use_75P_Surface', type=bool, help='use the 75P Surface as the input surface', default=@Use_75P_Surface@)
+parser.add_argument('--Compute_regional_CSF_density', type=bool, help='Compute regional CSF density', default=@Compute_regional_CSF_density@)
 args = parser.parse_args()
 
 main_loop(args)

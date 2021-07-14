@@ -41,6 +41,15 @@ public:
     void setConfig(QJsonObject root_obj);
 
 private slots:
+    void on_checkBox_Compute_regional_CSF_density_stateChanged(int arg1);
+
+private slots:
+    void on_Right_Atlas_Surface_clicked();
+
+private slots:
+    void on_Left_Atlas_Surface_clicked();
+
+private slots:
     void on_help_clicked();
 
 private slots:

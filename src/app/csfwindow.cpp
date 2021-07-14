@@ -103,6 +103,8 @@ void CSFWindow::setConfig(QJsonObject root_obj)
     lineEdit_LH_Inflating_Template->setText(data_obj["LH_Inflating_Template"].toString());
     lineEdit_RH_MID_Surface->setText(data_obj["RH_MID_surface"].toString());
     lineEdit_RH_GM_Surface->setText(data_obj["RH_GM_surface"].toString());
+    lineEdit_Left_Atlas_Surface->setText(data_obj["Left_Atlas_Surface"].toString());
+    lineEdit_Right_Atlas_Surface->setText(data_obj["Right_Atlas_Surface"].toString());
     lineEdit_RH_Inflating_Template->setText(data_obj["RH_Inflating_Template"].toString());
     lineEdit_Output_Directory->setText(data_obj["Output_Directory"].toString());
     lineEdit_Label->setText(data_obj["Label"].toString());
@@ -138,6 +140,7 @@ void CSFWindow::setConfig(QJsonObject root_obj)
     radioButton_notInterpolated->setChecked(param_obj["NotInterpolated"].toBool());
 
     checkBox_75P_Surface->setChecked(param_obj["Use_75P_Surface"].toBool());
+    checkBox_Compute_regional_CSF_density->setChecked(param_obj["Compute_regional_CSF_density"].toBool());
 
     
     QJsonArray exe_array = root_obj["executables"].toArray();
@@ -170,6 +173,11 @@ QJsonObject CSFWindow::getConfig(){
         data_obj["LH_GM_surface"]=lineEdit_LH_GM_Surface->text();
         data_obj["RH_GM_surface"]=lineEdit_RH_GM_Surface->text();
     }
+    if( checkBox_Compute_regional_CSF_density->isChecked())
+    {
+        data_obj["Left_Atlas_Surface"]=lineEdit_Left_Atlas_Surface->text();
+        data_obj["Right_Atlas_Surface"]=lineEdit_Right_Atlas_Surface->text();
+    }
     if(radioButton_slurm->isChecked())
     {
         param_obj["Slurm_nodes"] = lineEdit_Node->text();    
@@ -196,6 +204,7 @@ QJsonObject CSFWindow::getConfig(){
     param_obj["NotInterpolated"] = radioButton_notInterpolated->isChecked();
 
     param_obj["Use_75P_Surface"] = checkBox_75P_Surface->isChecked();
+    param_obj["Compute_regional_CSF_density"] = checkBox_Compute_regional_CSF_density->isChecked();
 
     QJsonObject root_obj;
     root_obj["data"] = data_obj;
@@ -1149,4 +1158,39 @@ void CSFWindow::on_help_clicked()
     Data_directory_image->setPixmap(pic);
 
     help->show();
+}
+
+void CSFWindow::on_Left_Atlas_Surface_clicked()
+{
+    QString path=OpenFile();
+
+       if (!path.isEmpty())
+       {
+           lineEdit_Left_Atlas_Surface->setText(path);
+       }
+
+}
+
+void CSFWindow::on_Right_Atlas_Surface_clicked()
+{QString path=OpenFile();
+
+    if (!path.isEmpty())
+    {
+        lineEdit_Right_Atlas_Surface->setText(path);
+    }
+
+
+}
+
+void CSFWindow::on_checkBox_Compute_regional_CSF_density_stateChanged(int state)
+{
+    bool enab;
+    if (state==Qt::Checked){enab=true;}
+    else{enab=false;}
+
+    Left_Atlas_Surface->setEnabled(enab);
+    Right_Atlas_Surface->setEnabled(enab);
+    lineEdit_Left_Atlas_Surface->setEnabled(enab);
+    lineEdit_Right_Atlas_Surface->setEnabled(enab);
+
 }

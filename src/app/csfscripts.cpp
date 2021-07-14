@@ -98,6 +98,7 @@ void CSFScripts::write_process_left_hemisphere()
     script_left_hemisphere.replace("@CSF_Probability_Map@", checkStringValue(data_obj["CSF_Probability_Map"]));
     script_left_hemisphere.replace("@LH_MID_surface@", checkStringValue(data_obj["LH_MID_surface"]));
     script_left_hemisphere.replace("@LH_GM_surface@", checkStringValue(data_obj["LH_GM_surface"]));
+    script_left_hemisphere.replace("@Left_Atlas_Surface@", checkStringValue(data_obj["Left_Atlas_Surface"]));
     script_left_hemisphere.replace("@LH_Inflating_Template@", checkStringValue(data_obj["LH_Inflating_Template"]));
     script_left_hemisphere.replace("@Output_Directory@", checkStringValue(data_obj["Output_Directory"]));
     script_left_hemisphere.replace("@Label@", checkStringValue(data_obj["Label"]));
@@ -119,6 +120,7 @@ void CSFScripts::write_process_left_hemisphere()
     script_left_hemisphere.replace("@HeatKernelSmoothing_PATH@", checkStringValue(m_Executables["HeatKernelSmoothing"]));
     script_left_hemisphere.replace("@ComputeAverageMesh_PATH@", checkStringValue(m_Executables["ComputeAverageMesh"]));
     script_left_hemisphere.replace("@FitPlane_PATH@", checkStringValue(m_Executables["FitPlane"]));
+    script_left_hemisphere.replace("@ROImean_PATH@", checkStringValue(m_Executables["ROImean"]));
 
 
     script_left_hemisphere.replace("@closingradius@", QString::number(param_obj["Closing_radius"].toInt()));
@@ -137,6 +139,7 @@ void CSFScripts::write_process_left_hemisphere()
 
 
     script_left_hemisphere.replace("@Use_75P_Surface@", checkBoolValue(param_obj["Use_75P_Surface"]));
+    script_left_hemisphere.replace("@Compute_regional_CSF_density@", checkBoolValue(param_obj["Compute_regional_CSF_density"]));
 
     QString scripts_dir = QDir::cleanPath(checkStringValue(data_obj["Output_Directory"]) + QString("/LocalEACSF") + m_PythonScripts);
     
@@ -164,6 +167,7 @@ void CSFScripts::write_process_right_hemisphere()
     script_right_hemisphere.replace("@CSF_Probability_Map@", checkStringValue(data_obj["CSF_Probability_Map"]));
     script_right_hemisphere.replace("@RH_MID_surface@", checkStringValue(data_obj["RH_MID_surface"]));
     script_right_hemisphere.replace("@RH_GM_surface@", checkStringValue(data_obj["RH_GM_surface"]));
+    script_right_hemisphere.replace("@Right_Atlas_Surface@", checkStringValue(data_obj["Right_Atlas_Surface"]));
     script_right_hemisphere.replace("@RH_Inflating_Template@", checkStringValue(data_obj["RH_Inflating_Template"]));
     script_right_hemisphere.replace("@Output_Directory@", checkStringValue(data_obj["Output_Directory"]));
     script_right_hemisphere.replace("@Label@", checkStringValue(data_obj["Label"]));
@@ -185,6 +189,8 @@ void CSFScripts::write_process_right_hemisphere()
     script_right_hemisphere.replace("@HeatKernelSmoothing_PATH@", checkStringValue(m_Executables["HeatKernelSmoothing"]));
     script_right_hemisphere.replace("@ComputeAverageMesh_PATH@", checkStringValue(m_Executables["ComputeAverageMesh"]));
     script_right_hemisphere.replace("@FitPlane_PATH@", checkStringValue(m_Executables["FitPlane"]));
+    script_right_hemisphere.replace("@ROImean_PATH@", checkStringValue(m_Executables["ROImean"]));
+
 
     script_right_hemisphere.replace("@closingradius@", QString::number(param_obj["Closing_radius"].toInt()));
     script_right_hemisphere.replace("@dilationradius@", QString::number(param_obj["Dilation_radius"].toInt()));
@@ -199,6 +205,7 @@ void CSFScripts::write_process_right_hemisphere()
     script_right_hemisphere.replace("@Interpolated@", checkBoolValue(param_obj["Interpolated"]));
     script_right_hemisphere.replace("@NotInterpolated@", checkBoolValue(param_obj["NotInterpolated"]));
     script_right_hemisphere.replace("@Use_75P_Surface@", checkBoolValue(param_obj["Use_75P_Surface"]));
+    script_right_hemisphere.replace("@Compute_regional_CSF_density@", checkBoolValue(param_obj["Compute_regional_CSF_density"]));
 
   
     QString scripts_dir = QDir::cleanPath(checkStringValue(data_obj["Output_Directory"]) + QString("/LocalEACSF") + m_PythonScripts);
