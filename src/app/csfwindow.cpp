@@ -979,8 +979,7 @@ void CSFWindow::on_output_path_clicked()
             QFileInfo check_file1(inflated_mid);
             QFileInfo check_file2(inflated_75p);
             if(check_file1.exists() || check_file2.exists()){VisualiseCSFDensityinflating->setEnabled(true);}
-       }
-      
+       }      
 }
 void CSFWindow::on_CSVFile_path_clicked()
 {
@@ -1108,9 +1107,6 @@ void CSFWindow::on_Compare_clicked()
         } 
     }   
 }
-
-
-
 
 void CSFWindow::on_visualize_batch_clicked()
 {

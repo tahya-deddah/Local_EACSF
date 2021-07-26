@@ -151,10 +151,12 @@ def main_loop(args):
 		##### add scalars to inflated surfaces
 		if(args.Compute_regional_CSF_density):
 			call_and_print([args.ROImean, "--InputMeasurement", args.Label + "_RH_" + surface + "_CSF_Density_Final.txt", "--AtlasSurfaceLabeling", args.Right_Atlas_Surface,\
-				"--OutputFileName", args.Label + "_RH_" + surface + "CSF_Regional_Density.txt"])
+				"--OutputFileName", args.Label + "_RH_" + surface + "_CSF_Density_regional_mean.txt"])
 			if(args.Smooth) :
 				call_and_print([args.ROImean, "--InputMeasurement", args.Label + "_RH_" + surface + "_CSF_Density_Final_Smoothed.txt", "--AtlasSurfaceLabeling", args.Right_Atlas_Surface,\
-				"--OutputFileName", args.Label + "_RH_" + surface + "CSF_Regional_Density.txt"])
+				"--OutputFileName", args.Label + "_RH_" + surface + "_CSF_Density_regional_mean.txt"])
+			call_and_print([args.AddScalarstoPolyData, "--InputFile", args.Label + "_RH_" + surface + "_CSF_Density.vtk", "--OutputFile", args.Label + "_RH_" + surface + "_CSF_Density.vtk",\
+			"--ScalarsFile", args.Label + "_RH_" + surface + "_CSF_Density_regional_mean.txt", "--Scalars_Name", 'CSF_Density_Regional'])
 
 	end = time.time()
 	print("time for RH:",end - start, flush=True)
