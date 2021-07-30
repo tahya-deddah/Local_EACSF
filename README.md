@@ -2,7 +2,7 @@
 
 # Local_EACSF
 
-LocalEACSFQuantification is a stand-alone tool which locally quantifies the extra-axial
+LocalEACSF is a stand-alone tool which locally quantifies the extra-axial
 cerbrospinal fluid (EA-CSF).
 
 <h2>Build instructions</h2>
