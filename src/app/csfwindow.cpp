@@ -1146,7 +1146,7 @@ void CSFWindow::on_help_clicked()
 
     QLabel *help_txt_1 = new QLabel(help);
     help_txt_1->setGeometry(20,10,800,30);
-    help_txt_1->setText("<b> The CSV file  should be like the followinf example. this csv file is created while batch processing and you can find it in the data directory : </b>");
+    help_txt_1->setText("<b> The CSV file  should be like the following example. this csv file is created while batch processing and you can find it in the data directory : </b>");
 
     QLabel *Data_directory_image = new QLabel(help);
     Data_directory_image->setGeometry(20,30,800,150);

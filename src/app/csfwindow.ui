@@ -39,7 +39,7 @@
      <string/>
     </property>
     <property name="currentIndex">
-     <number>1</number>
+     <number>6</number>
     </property>
     <widget class="QWidget" name="tab_batch">
      <attribute name="title">
@@ -1478,7 +1478,7 @@ p, li { white-space: pre-wrap; }
        </rect>
       </property>
       <property name="text">
-       <string>Visualize the visitation map and the CSF probability for left side in  itksnap</string>
+       <string>Visualize the visitation map and the CSF probability for left side in  MriWatcher</string>
       </property>
      </widget>
      <widget class="QRadioButton" name="VisualiseRightVisitation">
@@ -1491,7 +1491,7 @@ p, li { white-space: pre-wrap; }
        </rect>
       </property>
       <property name="text">
-       <string>Visualize the visitation map and the CSF probability for right side in  itksnap</string>
+       <string>Visualize the visitation map and the CSF probability for right side in  MriWatcher</string>
       </property>
      </widget>
      <widget class="QLabel" name="label">
