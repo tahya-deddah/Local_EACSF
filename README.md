@@ -2,8 +2,8 @@
 
 # Local_EACSF
 
-LocalEACSFQuantification is a tool which computes the extra-axial
-cerbrospinal fluid (EA-CSF) density.
+LocalEACSFQuantification is a stand-alone tool which locally quantifies the extra-axial
+cerbrospinal fluid (EA-CSF).
 
 <h2>Build instructions</h2>
 
@@ -20,5 +20,5 @@ cerbrospinal fluid (EA-CSF) density.
   make  
 
 4.Open the application by typing the line below :  
-  cd /Local_EACSF-inner-build/bin  
+  cd /Local_EACSF-inner-build/bin 
   ./Local_EACSF
