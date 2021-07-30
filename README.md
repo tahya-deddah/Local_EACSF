@@ -11,7 +11,7 @@ cerbrospinal fluid (EA-CSF).
   git clone https://github.com/tahya-deddah/Local_EACSF
 
 2.Make an out-of-source build directory:  
-  mkdir /Local_EACSF-build \ 
+  mkdir /Local_EACSF-build  \ 
   cd Local_EACSF-build  
 
 
