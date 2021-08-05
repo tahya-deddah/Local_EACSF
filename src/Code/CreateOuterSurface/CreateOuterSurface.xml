@@ -1,27 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
 <executable>
-  <category></category>
-  <title>Create Outer Surface</title>
-  <description>Create The CSF outer surface from a binary image(the tissue segmenation dilated)</description>
-  <version></version>
-   <parameters>
+    <category></category>
+    <title>Create Outer Surface</title>
+    <description>Create The CSF outer surface from a binary image(the tissue segmenation dilated)</description>
+    <version></version>
+    <parameters>
      	<file>
-        <name>InputBinaryImage</name>
-        <longflag>InputBinaryImg</longflag>
-        <flag>I</flag>
-        <description>Input Image a binary  nrrd file </description>
+          <name>InputBinaryImage</name>
+          <longflag>InputBinaryImg</longflag>
+          <flag>I</flag>
+          <description>Input Image a binary  nrrd file </description>
       </file>
-  	  <file>
-    		<name>OutputSurfacename</name>
-    		<longflag>OutputSurface</longflag>
-        <flag>O</flag>
-        <description>output surface a vtk file (CSF Outer Surface) </description>
+      <file>
+    		  <name>OutputSurfacename</name>
+    		  <longflag>OutputSurface</longflag>
+          <flag>O</flag>
+          <description>output surface a vtk file (CSF Outer Surface) </description>
   	  </file>
   	  <integer>
-    		<name>NumberOfIterations</name>
-    		<longflag>NumberIterations</longflag>
-        <flag>N</flag>
-        <description>Number of iteration of the smoothing applied to the CSF outer surface</description>
+    		  <name>NumberOfIterations</name>
+    		  <longflag>NumberIterations</longflag>
+          <flag>N</flag>
+          <description>Number of iteration of the smoothing applied to the CSF outer surface</description>
   	  </integer>
 	 </parameters>
 </executable>
