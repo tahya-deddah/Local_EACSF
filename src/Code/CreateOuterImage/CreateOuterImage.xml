@@ -2,38 +2,38 @@
 <executable>
   <category></category>
   <title>CreateOuterImage</title>
-  <description>Dilate an image </description>
+  <description>Create a binary image from the tissue segmentation by dilating closing and tresholding it. This outer image will be used after fore the creation of CSF outer surface </description>
   <version></version>
    <parameters advanced="false">
 	   	<file>
 	   		<name>InputImageFile</name>
 	   		<longflag>InputImg</longflag>
-          	<flag>I</flag>
-          	<description>Input Image a nrrd file </description>
+	   		<flag>I</flag>
+	   		<description>The tissue segmenataton of the gray matter,the white matter and the CSF(a nrrd file)  </description>
 	    </file>
-		<file>
+	    <file>
 			<name>OutputImageFile</name>
 			<longflag>OutputImg</longflag>
-          	<flag>O</flag>
-          	<description>Output Image a nrrd file </description>
+			<flag>O</flag>
+			<description>Output Image a nrrd file </description>
 		</file>
 		<integer>
 			<name>closingradius</name>
 			<longflag>closingradius</longflag>
-          	<flag>c</flag>
-          	<description></description>
+			<flag>c</flag>
+			<description>closing radius</description>
 		</integer>
 		<integer>
 			<name>dilationradius</name>
 			<longflag>dilationradius</longflag>
-          	<flag>d</flag>
-          	<description></description>
+			<flag>d</flag>
+			<description>dilation radious</description>
 		</integer>
 		<integer>
 			<name>Reverse</name>
 			<longflag>Reverse</longflag>
-          	<flag>R</flag>
-          	<description></description>
+			<flag>R</flag>
+			<description>This parameter is to tell the program to treate the left or the right side of the tissue segmentation ( for the left R=0 and for the right R=1 )</description>
 		</integer>
 	</parameters>
 </executable>
