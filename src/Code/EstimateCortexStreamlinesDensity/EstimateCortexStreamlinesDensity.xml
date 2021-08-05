@@ -2,50 +2,50 @@
 <executable>
   <category></category>
   <title>EstimateCortexStreamlinesDensity</title>
-  <description>Estiamte the CSF density in the streamlines</description>
+  <description>Estimate the CSF density in each vertex of the input polydata</description>
   <version></version>
   <parameters advanced="false">
     <file>
       <name>InputSurfaceFileName</name>
       <longflag>InputSurface</longflag>
       <flag>I</flag>
-      <description>Input MID surface a VTK file </description>
+      <description>a VTK file generraly the MID or 75P surface used to add EACSF sclars on it </description>
     </file>
     <file>
       <name>InputOuterStreamlinesFileName</name>
       <longflag>InputOuterStreamlines</longflag>
       <flag>S</flag>
-      <description>Input Streamlines FileName a VTK file </description>
+      <description>a vtk filename with the streamlines</description>
     </file>
     <file>
       <name>InputSegmentationFileName</name>
       <longflag>InputSegmentation</longflag>
       <flag>p</flag>
-      <description>Input Segmentation FileName a nnrd file </description>
+      <description>a nrrd file with the value of probabbility of CSF at each voxel (CSF probability map) </description>
     </file>
     <file>
       <name>InputMaskFileName</name>
       <longflag>InputMask</longflag>
       <flag>m</flag>
-      <description>Input Mask FileName a nnrd file </description>
+      <description>a nrrd file used as a mask to limit the boundaries of the streamlines </description>
     </file>
     <file>
       <name>OutputSurfacename</name>
       <longflag>OutputSurface</longflag>
       <flag>O</flag>
-      <description> Output Surface filename </description>
+      <description> a vtk file  </description>
     </file>
     <file>
       <name>OutputVoxelVistitingMap</name>
       <longflag>VisitingMap</longflag>
       <flag>v</flag>
-      <description> Output Voxel Vistiting Map a nrrd file</description>
+      <description> a binary nrrd file indicating the voxels visited during the computation of EA-CSF density</description>
     </file>
     <file>
       <name>OutputVoxelVistitingLength</name>
       <longflag>VisitingLength</longflag>
       <flag>l</flag>
-      <description> Output Voxel Vistiting Length a nrrd file</description>
+      <description> a nrrd file indicating the lenghth of streamelines passing throught each voxels</description>
     </file>
   </parameters> 
 </executable>
