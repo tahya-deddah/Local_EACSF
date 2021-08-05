@@ -10,12 +10,12 @@
 	   		<longflag>VisitingMap</longflag>
 	   		<flag>V</flag>
 	   		<description>Visitation map a binary image in nrrd format wich contains all the voxels visited during the compuatation of EA-CSF. this image is generated during the process of LocalEACSF computation   </description>
-	    </file>
+	   	</file>
 		<file>
 			<name>CSFProbabiltyMap</name>
 			<longflag>CSFProb</longflag>
 			<flag>C</flag>
-			<description>CSF Proabability Map a nrrd file wich gives is the probability of CSF at each voxel</description>
+			<description>CSF Proabability Map a nrrd file wich gives the probability of CSF at each voxel</description>
 		</file>
 		<file>
 			<name>CSFDenistytxtfile</name>
