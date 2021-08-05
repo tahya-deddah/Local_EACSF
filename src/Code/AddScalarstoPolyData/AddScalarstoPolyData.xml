@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <executable>
-  <category></category>
-  <title>AddScalarstoPolyData</title>
-  <description>Add a scalar's array to a vtk polydata</description>
-  <version></version>
-  <parameters>
+  	<category></category>
+  	<title>AddScalarstoPolyData</title>
+  	<description>Add a scalar's array to a vtk polydata</description>
+  	<version></version>
+  	<parameters>
 	   	<file>
 	   		<name>InputFileName</name>
 	   		<longflag>InputFile</longflag>
@@ -29,5 +29,5 @@
 			<flag>N</flag>
 			<description>Name to give to the scalars array in the new polydata </description>
 		</string>
-	</parameters>
+  	</parameters>
 </executable>
