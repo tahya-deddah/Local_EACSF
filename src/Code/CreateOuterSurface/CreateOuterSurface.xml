@@ -12,14 +12,14 @@
             <description>Input Image a binary  nrrd file </description>
       </file>
       <file>
-    		<name>OutputSurfacename</name>
-    		<longflag>OutputSurface</longflag>
+      		<name>OutputSurfacename</name>
+      		<longflag>OutputSurface</longflag>
             <flag>O</flag>
             <description>output surface a vtk file (CSF Outer Surface) </description>
   	  </file>
   	  <integer>
-    		<name>NumberOfIterations</name>
-    		<longflag>NumberIterations</longflag>
+  	  		<name>NumberOfIterations</name>
+  	  		<longflag>NumberIterations</longflag>
             <flag>N</flag>
             <description>Number of iteration of the smoothing applied to the CSF outer surface</description>
   	  </integer>
