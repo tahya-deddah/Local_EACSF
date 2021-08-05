@@ -4,30 +4,30 @@
   <title>AddScalarstoPolyData</title>
   <description>Add a scalar's array to a vtk polydata</description>
   <version></version>
-   <parameters>
+  <parameters>
 	   	<file>
 	   		<name>InputFileName</name>
 	   		<longflag>InputFile</longflag>
 	   		<flag>I</flag>
 	   		<description> The input Polydata where the scalars will be added</description>
-	    </file>
+		</file>
 		<file>
 			<name>OutputFileName</name>
 			<longflag>OutputFile</longflag>
-      		<flag>O</flag>
-      		<description>The output Polydata which is ths input polydata with scalars added  </description>
+			<flag>O</flag>
+			<description>The output Polydata which is ths input polydata with scalars array added  </description>
 		</file>
 		<file>
 			<name>ScalarsFilename</name>
 			<longflag>ScalarsFile</longflag>
-      		<flag>F</flag>
-      		<description>A txt file containing scalars to add to the input polydata</description>
+			<flag>F</flag>
+			<description>A txt file containing scalars to add to the input polydata</description>
 		</file>
 		<string>
 			<name>ScalarsName</name>
 			<longflag>Scalars_Name</longflag>
-      		<flag>N</flag>
-      		<description>Name to give to the scalars array in the new polydata </description>
+			<flag>N</flag>
+			<description>Name to give to the scalars array in the new polydata </description>
 		</string>
 	</parameters>
 </executable>
