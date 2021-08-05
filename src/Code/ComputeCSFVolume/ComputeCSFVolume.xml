@@ -9,7 +9,7 @@
 	   		<name>VisitationMap</name>
 	   		<longflag>VisitingMap</longflag>
 	   		<flag>V</flag>
-	   		<description>Visitation map a binary image in nrrd format wich contains all the voxels visited during the compuatation of EA-CSF. this image is generated during the process of LocalEACSF computation   </description>
+	   		<description>A binary image in nrrd format wich contains all the voxels visited during the compuatation of EA-CSF. This image is generated during the process of LocalEACSF computation   </description>
 	   	</file>
 		<file>
 			<name>CSFProbabiltyMap</name>
@@ -21,7 +21,7 @@
 			<name>CSFDenistytxtfile</name>
 			<longflag>CSFFile</longflag>
 			<flag>F</flag>
-			<description> Txt file where to add the volume value</description>
+			<description> Txt file where to write the volume value</description>
 		</file>
 		<string>
 			<name>Side</name>

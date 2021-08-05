@@ -9,7 +9,7 @@
             <name>InputBinaryImage</name>
             <longflag>InputBinaryImg</longflag>
             <flag>I</flag>
-            <description>Input Image a binary  nrrd file </description>
+            <description>Input Image a binary nrrd file </description>
         </file>
         <file>
             <name>OutputSurfacename</name>

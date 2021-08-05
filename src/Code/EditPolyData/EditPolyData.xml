@@ -9,13 +9,13 @@
         <name>InputSurfaceFileName</name>
         <longflag>InputSurface</longflag>
         <flag>I</flag>
-        <description>Input surface file name a vtk file </description>
+        <description>Input surface vtk file </description>
       </file>
       <file>
         <name>OutputSurfaceFileName</name>
         <longflag>OutputSurface</longflag>
         <flag>O</flag>
-        <description>Output surface file name a vtk file </description>
+        <description>Output surface a vtk file </description>
       </file>
         <double>
         <name>flipx</name>

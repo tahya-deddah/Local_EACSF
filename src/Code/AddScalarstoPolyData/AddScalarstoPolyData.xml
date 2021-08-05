@@ -15,7 +15,7 @@
 			<name>OutputFileName</name>
 			<longflag>OutputFile</longflag>
 			<flag>O</flag>
-			<description>The output Polydata which is ths input polydata plus the scalars array </description>
+			<description>The output Polydata </description>
 		</file>
 		<file>
 			<name>ScalarsFilename</name>

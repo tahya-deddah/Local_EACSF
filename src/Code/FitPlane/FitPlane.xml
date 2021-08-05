@@ -2,7 +2,7 @@
 <executable>
   <category></category>
   <title>FitPlane</title>
-  <description></description>
+  <description>Fit a mid-sagital plan in the intersection of two input images to </description>
   <version>0.1</version>
    <parameters advanced="false">
 	   	<file>
