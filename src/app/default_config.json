@@ -6,7 +6,7 @@
 		"LH_GM_surface": "/work/tahya/Data/local_EACSf_Extraction/Ben_Test/101247/101247_LH_GM.vtk", 
                 "LH_Inflating_Template": "",
 		"RH_MID_surface": "/work/tahya/Data/local_EACSf_Extraction/Ben_Test/101247/101247_RH_MID.vtk",
-        "RH_GM_surface": "/work/tahya/Data/local_EACSf_Extraction/Ben_Test/101247/101247_RH_GM.vtk",
+                "RH_GM_surface": "/work/tahya/Data/local_EACSf_Extraction/Ben_Test/101247/101247_RH_GM.vtk",
                 "RH_Inflating_Template": "",
                 "Label": "",
 		"Output_Directory": "/work/tahya/Test/101247"
