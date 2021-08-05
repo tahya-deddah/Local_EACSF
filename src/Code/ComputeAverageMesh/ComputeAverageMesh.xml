@@ -1,27 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
 <executable>
-  <category></category>
-  <title>ComputeAverageMesh</title>
-  <description>Compute the average mesh from inputmesh file1, file2</description>
-  <version></version>
-   <parameters>
+  	<category></category>
+  	<title>ComputeAverageMesh</title>
+  	<description>Compute the mesh average of two meshs given as inputs </description>
+  	<version></version>
+   	<parameters>
 	   	<file>
 	   		<name>inputFilename1</name>
 	   		<longflag>inputFilename1</longflag>
-      		<flag>I</flag>
-      		<description>first file</description>
-	    </file>
-		<file>
-			<name>inputFilename2</name>
-			<longflag>inputFilename2</longflag>
-      		<flag>f</flag>
-      		<description>second file</description>
-		</file>
-		<file>
-			<name>outputFilename</name>
-			<longflag>outputFilename</longflag>
-      		<flag>o</flag>
-      		<description>Output file Name</description>
-		</file>
+	   		<flag>I</flag>
+	   		<description>first input file</description>
+	   	</file>
+	   	<file>
+	   		<name>inputFilename2</name>
+	   		<longflag>inputFilename2</longflag>
+	   		<flag>f</flag>
+	   		<description>second input file</description>
+	   	</file>
+	   	<file>
+	   		<name>outputFilename</name>
+	   		<longflag>outputFilename</longflag>
+	   		<flag>o</flag>
+	   		<description>Output filename where two put the average of two inputs meshs</description>
+	   	</file>
 	</parameters>
 </executable>
