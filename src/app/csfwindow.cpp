@@ -892,10 +892,11 @@ void CSFWindow::run_Local_EACSF(int row)
     QJsonObject data_obj = root_obj["data"].toObject();
     QJsonObject param_obj = root_obj["parameters"].toObject();
     QString output_dir = data_obj["Output_Directory"].toString();
+    QString label = data_obj["Label"].toString();
     QString scripts_dir = QDir::cleanPath(output_dir + QString("/LocalEACSF") + QString("/PythonScripts"));
     QString outlog_filename = QDir::cleanPath(output_dir + QString("/LocalEACSF") + QString("/output_log.txt"));
     QString errlog_filename = QDir::cleanPath(output_dir + QString("/LocalEACSF") + QString("/errors_log.txt"));
-    QString CSF_volume_filename = QDir::cleanPath(output_dir + QString("/LocalEACSF") + QString("/CSFVolume.txt"));
+    QString CSF_volume_filename = QDir::cleanPath(output_dir + QString("/LocalEACSF/") + label + QString("_CSFVolume.txt"));
     QFile volume_file(CSF_volume_filename);
 
 
@@ -903,7 +904,7 @@ void CSFWindow::run_Local_EACSF(int row)
     {  
         if(volume_file.exists()) 
         {       
-            output->append(QString("Compute Local EACSF Density already done for ID: ") + data_obj["Label"].toString() + QString("already done"));
+            output->append(QString("Compute Local EACSF Density already done for ID: ") + label + QString("already done"));
         } 
         else
         {
@@ -1133,7 +1134,7 @@ void CSFWindow::on_visualize_batch_clicked()
     {
         for (int i = 0; i < data.size(); ++i)
         {
-               arguments << data.at(i)->value(QString("RH Visitation Map"));
+            arguments << data.at(i)->value(QString("RH Visitation Map"));
         }
         visualization_batch->start(QString("MriWatcher"), arguments);
     }

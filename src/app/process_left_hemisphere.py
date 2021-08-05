@@ -97,12 +97,15 @@ def optimize_csfdensity (surface): ## optimize
 	optimal_density_average = average(EACSFInterpolatedFile)
 	
 	if(original_density_average > optimal_density_average or original_density_average == optimal_density_average):
-		copyfile(EACSFInterpolatedFile, EACSFFinalFile)	
+		#copyfile(EACSFInterpolatedFile, EACSFFinalFile)
+		shutil.copy(EACSFInterpolatedFile, EACSFFinalFile)
+
 	if(optimal_density_average > original_density_average):
-		copyfile(EACSFFile, EACSFFinalFile)	
+		#copyfile(EACSFFile, EACSFFinalFile)
+		shutil.copy(EACSFFile, EACSFFinalFile)
 
 	os.rename(EACSFFile, os.path.join( args.Output_Directory, "LocalEACSF", "LH_Directory", args.Label + "_LH_" + surface + "_CSF_Density_Original.txt"))	
-	call_and_print([args.AddScalarstoPolyData, "--InputFile", args.Label + "_LH_" + surface + "_CSF_Density.vtk", "--OutputFile", "LH_" + surface + "_CSF_Density.vtk",\
+	call_and_print([args.AddScalarstoPolyData, "--InputFile", args.Label + "_LH_" + surface + "_CSF_Density.vtk", "--OutputFile", args.Label + "_LH_" + surface + "_CSF_Density.vtk",\
 		"--ScalarsFile", args.Label + "_LH_" + surface + "_CSF_Density_Final.txt", "--Scalars_Name", 'CSF_Density_Final'])
 	
 	if(args.Clean_up):
@@ -154,12 +157,14 @@ def main_loop(args):
 		##### add scalars to inflated surfaces
 		if(args.Compute_regional_CSF_density):
 			call_and_print([args.ROImean, "--InputMeasurement", args.Label + "_LH_" + surface + "_CSF_Density_Final.txt", "--AtlasSurfaceLabeling", args.Left_Atlas_Surface,\
-				"--OutputFileName", args.Label + "_LH_" + surface + "_CSF_Density_regional_mean.txt"])
+				"--OutputFileName1", args.Label + "_LH_" + surface + "_CSF_Density_regional_mean.txt","--OutputFileName2", args.Label + "_LH_" + surface + "_CSF_Density_regional_sum.txt"])
 			if(args.Smooth) :
 				call_and_print([args.ROImean, "--InputMeasurement", args.Label + "_LH_" + surface + "_CSF_Density_Final_Smoothed.txt", "--AtlasSurfaceLabeling", args.Left_Atlas_Surface,\
-				"--OutputFileName", args.Label + "_LH_" + surface + "_CSF_Density_regional_mean.txt"])
+				"--OutputFileName1", args.Label + "_LH_" + surface + "_CSF_Density_regional_mean.txt", "--OutputFileName2", args.Label + "_LH_" + surface + "_CSF_Density_regional_sum.txt"])
 			call_and_print([args.AddScalarstoPolyData, "--InputFile", args.Label + "_LH_" + surface + "_CSF_Density.vtk", "--OutputFile", args.Label + "_LH_" + surface + "_CSF_Density.vtk",\
-			"--ScalarsFile", args.Label + "_LH_" + surface + "_CSF_Density_regional_mean.txt", "--Scalars_Name", 'CSF_Density_Regional'])
+			"--ScalarsFile", args.Label + "_LH_" + surface + "_CSF_Density_regional_mean.txt", "--Scalars_Name", 'CSF_Density_Regional_Mean'])
+			call_and_print([args.AddScalarstoPolyData, "--InputFile", args.Label + "_LH_" + surface + "_CSF_Density.vtk", "--OutputFile", args.Label + "_LH_" + surface + "_CSF_Density.vtk",\
+			"--ScalarsFile", args.Label + "_LH_" + surface + "_CSF_Density_regional_sum.txt", "--Scalars_Name", 'CSF_Density_Regional_Sum'])
 
 	end = time.time()
 	print("time for LH:",end - start, flush=True)
@@ -226,22 +231,32 @@ def processing(args, DirectoryName, Surface, ImageDimension):
 		call_and_print([klaplace, '-conv', args.Label + "_LH_Outer_streamlines.vtp", args.Label + "_LH_Outer_streamlines.vtk"])
 		print('Creating LH streamlines Done!', flush=True)
 
+
+	OuterImageAfterFittingPlane = os.path.join(Directory, args.Label + "_LH_New_GM_Dilated.nrrd")  
+	OuterImageAfterFittingPlaneExistenceTest = os.path.isfile(OuterImageAfterFittingPlane)
+	if OuterImageAfterFittingPlaneExistenceTest==True :
+		print('Fitting a plane to avoid double counting done ', flush=True)
+	else :
+		print('Fitting a plane to avoid EACSF double counting ', flush=True)
+		# avoid double counting
+		call_and_print([CreateOuterImage,"--InputImg", args.Label + "_Tissu_Segmentation.nrrd", "--OutputImg", args.Label + "_RH_GM_Dilated.nrrd", \
+			"--closingradius", "@closingradius@","--dilationradius", "@dilationradius@", "--Reverse", '1'])
+		call_and_print([FitPlane,"--input1", args.Label + "_LH_GM_Dilated.nrrd", "--input2", args.Label + "_RH_GM_Dilated.nrrd", "--output1", \
+		args.Label + "_LH_New_GM_Dilated.nrrd", "--output2", args.Label + "_RH_New_GM_Dilated.nrrd"])
+		os.remove(args.Label + "_RH_GM_Dilated.nrrd")
+		os.remove(args.Label + "_RH_New_GM_Dilated.nrrd")
+		##########
+
+
 	CSFDensdityTxtFile = os.path.join(Directory, args.Label +"_LH_" + Surface + "_CSF_Density.txt")
 	CSFDensityExistenceTest = os.path.isfile(CSFDensdityTxtFile)
 	if CSFDensityExistenceTest==True :
 		print('Computing LH EACSF Done', flush=True)
 	else :
 		print('Computing LH EACSF  ', flush=True)
-		## avoid double counting
-		call_and_print([CreateOuterImage,"--InputImg", args.Label + "_Tissu_Segmentation.nrrd", "--OutputImg", args.Label + "_RH_GM_Dilated.nrrd", \
-			"--closingradius", "@closingradius@","--dilationradius", "@dilationradius@", "--Reverse", '1'])
-		call_and_print([FitPlane,"--input1", args.Label + "_LH_GM_Dilated.nrrd", "--input2", args.Label + "_RH_GM_Dilated.nrrd", "--output1", args.Label + "_LH_GM_Dilated.nrrd", "--output2", args.Label + "_RH_GM_Dilated.nrrd"])
-		os.remove(args.Label + "_RH_GM_Dilated.nrrd")
-		##########
-
 		call_and_print([EstimateCortexStreamlinesDensity, "--InputSurface" , args.Label + "_LH_" + Surface + ".vtk", "--InputOuterStreamlines", args.Label + "_LH_Outer_streamlines.vtk",\
-			"--InputSegmentation", args.Label + "_CSF_Probability_Map.nrrd", "--InputMask", args.Label + "_LH_GM_Dilated.nrrd", "--OutputSurface", args.Label + "_LH_" + Surface + "_CSF_Density.vtk", "--VisitingMap",\
-			args.Label + "_LH_Visitation.nrrd", "--VisitingLength", args.Label + "_LH_VisitationLength.nrrd" ])
+			"--InputSegmentation", args.Label + "_CSF_Probability_Map.nrrd", "--InputMask", args.Label + "_LH_New_GM_Dilated.nrrd", "--OutputSurface", args.Label + "_LH_" + Surface + "_CSF_Density.vtk", "--VisitingMap",\
+			args.Label + "_LH_Visitation.nrrd", "--VisitingLength", args.Label + "_LH_Visitation_Length.nrrd" ])
 	if(args.Clean_up) :
 	 	clean_up(Directory)
 			

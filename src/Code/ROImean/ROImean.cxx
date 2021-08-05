@@ -60,6 +60,7 @@ int  main(int argc, char** argv)
     
 
     double ROI_Mean[roinum] ;
+    double ROI_Sum[roinum] ;
     int roisize[roinum];
     int indx[measurement_array.size()];
 
@@ -95,16 +96,17 @@ int  main(int argc, char** argv)
     for (int j=0; j < measurement_array.size() ; j++)
     {
         ROI_Mean[indx[j]] = 0;
+        ROI_Sum[indx[j]] = 0;
     }
     for( int j=0; j < measurement_array.size() ; j++ )
     {
-        ROI_Mean[indx[j]] = ROI_Mean[indx[j]] + (std::atof(measurement_array[j].c_str())/roisize[indx[j]]);
-       
+        ROI_Mean[indx[j]] = ROI_Mean[indx[j]] + (std::atof(measurement_array[j].c_str())/roisize[indx[j]]); 
+        ROI_Sum[indx[j]] = ROI_Sum[indx[j]] + std::atof(measurement_array[j].c_str());     
     }
     // put the regional values in the output file
 
     ofstream Result;
-    Result.open (OutputFileName.c_str());
+    Result.open (OutputFileName1.c_str());
     Result << "NUMBER_OF_POINTS=" << measurement_array.size() << endl; 
     Result << "DIMENSION=1" << endl;
     Result << "TYPE=Scalar" << endl;
@@ -113,6 +115,18 @@ int  main(int argc, char** argv)
         Result << ROI_Mean[indx[j]] << endl;      
     }
     Result.close();
+
+
+    ofstream Result2;
+    Result2.open (OutputFileName2.c_str());
+    Result2 << "NUMBER_OF_POINTS=" << measurement_array.size() << endl; 
+    Result2 << "DIMENSION=1" << endl;
+    Result2 << "TYPE=Scalar" << endl;
+    for (int j=0; j < measurement_array.size() ; j++)
+    {
+        Result2 << ROI_Sum[indx[j]] << endl;      
+    }
+    Result2.close();
 
     return EXIT_SUCCESS;    
 }

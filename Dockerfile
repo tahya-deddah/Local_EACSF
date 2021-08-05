@@ -18,7 +18,3 @@ RUN ./configure
 RUN make install
 WORKDIR /scr/
 ADD . / /scr/Local_EACSF/
-#RUN mkdir /scr/Local_EACSF-build && cd /scr/Local_EACSF-build/ && \
-#    cmake ../Local_EACSF/ && \
-#    make
-#CMD ["/scr/Local_EACSF-build/Local_EACSF-inner-build/bin/Local_EACSF"]

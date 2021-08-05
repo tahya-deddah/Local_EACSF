@@ -18,10 +18,16 @@
       		<description>atlas surface labeling file </description>
 		</file>
 		<file>
-			<name>OutputFileName</name>
-			<longflag>OutputFileName</longflag>
-      		<flag>O</flag>
-      		<description>Output FileName</description>
+			<name>OutputFileName1</name>
+			<longflag>OutputFileName1</longflag>
+      		<flag>M</flag>
+      		<description>Output FileName for regional average</description>
+		</file>
+		<file>
+			<name>OutputFileName2</name>
+			<longflag>OutputFileName2</longflag>
+      		<flag>S</flag>
+      		<description>Output FileName for regional sum</description>
 		</file>
 	</parameters>
 </executable>
