@@ -2,7 +2,7 @@
 <executable>
   <category></category>
   <title>Create Outer Surface</title>
-  <description>Create a surface from dilated image</description>
+  <description>Create The CSF outer surface from a binary image(the tissue segmenation dilated)</description>
   <version></version>
    <parameters>
      	<file>
@@ -15,13 +15,13 @@
     		<name>OutputSurfacename</name>
     		<longflag>OutputSurface</longflag>
         <flag>O</flag>
-        <description>output surface a vtk file </description>
+        <description>output surface a vtk file (CSF Outer Surface) </description>
   	  </file>
   	  <integer>
     		<name>NumberOfIterations</name>
     		<longflag>NumberIterations</longflag>
         <flag>N</flag>
-        <description>Number of iteration </description>
+        <description>Number of iteration of the smoothing applied to the CSF outer surface</description>
   	  </integer>
 	 </parameters>
 </executable>
