@@ -9,19 +9,19 @@
 	   		<name>inputFilename1</name>
 	   		<longflag>inputFilename1</longflag>
 	   		<flag>I</flag>
-	   		<description>first input file</description>
+	   		<description>first input file (mesh 1)</description>
 	   	</file>
 	   	<file>
 	   		<name>inputFilename2</name>
 	   		<longflag>inputFilename2</longflag>
 	   		<flag>f</flag>
-	   		<description>second input file</description>
+	   		<description>second input file (mesh 2)</description>
 	   	</file>
 	   	<file>
 	   		<name>outputFilename</name>
 	   		<longflag>outputFilename</longflag>
 	   		<flag>o</flag>
-	   		<description>Output filename where two put the average of two inputs meshs</description>
+	   		<description>Output filename where to put the average of two inputs meshs</description>
 	   	</file>
 	</parameters>
 </executable>

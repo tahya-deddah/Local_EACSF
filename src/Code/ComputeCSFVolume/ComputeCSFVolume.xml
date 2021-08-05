@@ -1,39 +1,39 @@
 <?xml version="1.0" encoding="utf-8"?>
 <executable>
-  <category></category>
-  <title>ComputeCSFVolume</title>
-  <description>Compute The CSF Volume From Visiatation map </description>
-  <version>0.1</version>
-   <parameters advanced="false">
+  	<category></category>
+  	<title>ComputeCSFVolume</title>
+  	<description>Compute The EA-CSF Volume For the left or the right hemisphere from a binary image (CSF probability image). Indeed this image is multiplied by the visitation map to remove lateral ventricule  CSF from it. then the volume is computed using the image result of this multiplication </description>
+  	<version>0.1</version>
+   	<parameters advanced="false">
 	   	<file>
 	   		<name>VisitationMap</name>
 	   		<longflag>VisitingMap</longflag>
-          	<flag>V</flag>
-          	<description>Visitation map a binary file </description>
+	   		<flag>V</flag>
+	   		<description>Visitation map a binary image in nrrd format wich contains all the voxels visited during the compuatation of EA-CSF. this image is generated during the process of LocalEACSF computation   </description>
 	    </file>
 		<file>
 			<name>CSFProbabiltyMap</name>
 			<longflag>CSFProb</longflag>
-          	<flag>C</flag>
-          	<description>CSF Proabability Map a nrrd file </description>
+			<flag>C</flag>
+			<description>CSF Proabability Map a nrrd file wich gives is the probability of CSF at each voxel</description>
 		</file>
 		<file>
 			<name>CSFDenistytxtfile</name>
 			<longflag>CSFFile</longflag>
-      		<flag>F</flag>
-      		<description> txt file containing The CSF density</description>
+			<flag>F</flag>
+			<description> Txt file where to add the volume value</description>
 		</file>
 		<string>
 			<name>Side</name>
 			<longflag>Side</longflag>
-      		<flag>S</flag>
-      		<description> Left or right hemisphere</description>
+			<flag>S</flag>
+			<description> Left or right hemisphere</description>
 		</string>
 		<string>
 			<name>Label</name>
 			<longflag>Label</longflag>
-      		<flag>L</flag>
-      		<description> Case ID for example</description>
+			<flag>L</flag>
+			<description> Case ID for example (to differenciate cases from each other)</description>
 		</string>
 	</parameters>
 </executable>
