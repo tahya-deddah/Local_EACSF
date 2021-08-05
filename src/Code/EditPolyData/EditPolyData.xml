@@ -11,29 +11,29 @@
         <flag>I</flag>
         <description>Input surface file name a vtk file </description>
       </file>
-  	  <file>
-		    <name>OutputSurfaceFileName</name>
-		    <longflag>OutputSurface</longflag>
+      <file>
+        <name>OutputSurfaceFileName</name>
+        <longflag>OutputSurface</longflag>
         <flag>O</flag>
         <description>Output surface file name a vtk file </description>
-  	  </file>
-      <double>
+      </file>
+        <double>
         <name>flipx</name>
         <longflag>flipx</longflag>
         <flag>x</flag>
-        <description>value of flip following the x direction </description>
+        <description></description>
       </double>
       <double>
         <name>flipy</name>
         <longflag>flipy</longflag>
         <flag>y</flag>
-        <description>value of flip following the y direction </description>
+        <description></description>
       </double>
       <double>
         <name>flipz</name>
         <longflag>flipz</longflag>
         <flag>z</flag>
-        <description>value of flip following the z direction </description>
+        <description></description>
       </double>
-  	</parameters>
+  </parameters>
 </executable>
