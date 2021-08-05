@@ -2,7 +2,7 @@
 <executable>
   <category></category>
   <title>CreateOuterImage</title>
-  <description>Create a binary image from the tissue segmentation by dilating closing and tresholding it. This outer image will be used after fore the creation of CSF outer surface </description>
+  <description>Create a binary image from the tissue segmentation by dilating closing and tresholding it. This outer image will be used after for the creation of CSF outer surface </description>
   <version></version>
    <parameters advanced="false">
 	   	<file>
@@ -10,8 +10,8 @@
 	   		<longflag>InputImg</longflag>
 	   		<flag>I</flag>
 	   		<description>The tissue segmenataton of the gray matter,the white matter and the CSF(a nrrd file)  </description>
-	    </file>
-	    <file>
+	   	</file>
+	   	<file>
 			<name>OutputImageFile</name>
 			<longflag>OutputImg</longflag>
 			<flag>O</flag>
