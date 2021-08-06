@@ -15,7 +15,7 @@
       <name>InputOuterStreamlinesFileName</name>
       <longflag>InputOuterStreamlines</longflag>
       <flag>S</flag>
-      <description>a vtk filename which contains all the streamlines</description>
+      <description>a vtk file which contains all the streamlines</description>
     </file>
     <file>
       <name>InputSegmentationFileName</name>

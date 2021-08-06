@@ -30,6 +30,7 @@
 #include "itkBinaryThresholdImageFilter.h"
 #include <itkLinearInterpolateImageFunction.h>
 #include "itkImageRegionIterator.h"
+#include <itkMinimumMaximumImageCalculator.h>
 
 #include <vector>
 #include <iostream>
@@ -80,6 +81,16 @@ int main ( int argc, char *argv[] )
   inputimage->SetRegions(Imagereader->GetOutput()->GetRequestedRegion());
   inputimage->Allocate();
 
+  /////////// new
+
+  typedef itk::MinimumMaximumImageCalculator <ImageType> MinimumMaximumImageCalculatorType ;
+  MinimumMaximumImageCalculatorType::Pointer MinimumMaximumImage = MinimumMaximumImageCalculatorType::New();
+  MinimumMaximumImage->SetImage(Imagereader->GetOutput());   
+  MinimumMaximumImage->ComputeMaximum();
+  std::cout << MinimumMaximumImage->GetMaximum() << std::endl;
+  /////// 
+
+
   typedef itk::ImageRegionIterator< ImageType>       IteratorType;
   IteratorType      inputIt1(Imagereader->GetOutput(), Imagereader->GetOutput()->GetRequestedRegion());
   IteratorType      inputIt2(inputimage, inputimage->GetRequestedRegion());
@@ -87,7 +98,8 @@ int main ( int argc, char *argv[] )
   inputIt2.GoToBegin();
   while (!inputIt1.IsAtEnd())
   {
-        inputIt2.Set(double(inputIt1.Get())/double(std::numeric_limits<unsigned short>::max()));
+        //inputIt2.Set(double(inputIt1.Get())/double(std::numeric_limits<unsigned short>::max()));
+        inputIt2.Set(double(inputIt1.Get())/MinimumMaximumImage->GetMaximum());
         ++inputIt1;
         ++inputIt2;
   }
@@ -120,7 +132,7 @@ int main ( int argc, char *argv[] )
     ++outputIt2;
   }
 
-
+  ///
   std::string inputMaskFilename = InputMaskFileName;
   typedef itk::ImageFileReader< ImageType >  MaskReaderType;
   MaskReaderType::Pointer Maskreader = MaskReaderType::New();
@@ -319,9 +331,9 @@ int main ( int argc, char *argv[] )
         if(lenght_of_steps == 0) {CSFDensity += 0;} 
         else
         {
-            double  rapport = step/lenght_of_steps;            
-            //CSFDensity += ((Propability + Propability_next)*rapport)/2.0;
-            CSFDensity+= ((Propability + Propability_next)*step)/2.0;  
+          double  rapport = step/lenght_of_steps;            
+          CSFDensity += ((Propability + Propability_next)*rapport)/2.0;
+          //CSFDensity+= ((Propability + Propability_next)*step)/2.0;  
         }          
       }
       else

@@ -904,7 +904,7 @@ void CSFWindow::run_Local_EACSF(int row)
     {  
         if(volume_file.exists()) 
         {       
-            output->append(QString("Compute Local EACSF Density already done for ID: ") + label + QString("already done"));
+            output->append(QString("Compute Local EACSF Density already done for : ") + label);
         } 
         else
         {
@@ -935,7 +935,7 @@ void CSFWindow::run_Local_EACSF(int row)
         
         if(volume_file.exists()) 
         {       
-            output->append(QString("Compute Local EACSF Density already done for ID: ") + data_obj["Label"].toString()  + QString("already done"));
+            output->append(QString("Compute Local EACSF Density already done for : ") + data_obj["Label"].toString() );
         } 
         else
         {

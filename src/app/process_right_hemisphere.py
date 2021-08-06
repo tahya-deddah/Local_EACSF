@@ -259,7 +259,7 @@ def processing(args, DirectoryName, Surface, ImageDimension):
 	if(args.Clean_up) :
 	 	clean_up(Directory)
 
-parser = argparse.ArgumentParser(description='EACSF Density Quantification')
+parser = argparse.ArgumentParser(description='EACSF Density Quantification for the right hemisphere')
 parser.add_argument("--Tissu_Segmentation",type=str, help='Tissu Segmentation for Outer CSF Hull Creation', default="@Tissu_Segmentation@")
 parser.add_argument("--CSF_Probability_Map",type=str, help='CSF Probality Map', default="@CSF_Probability_Map@")
 parser.add_argument("--RH_MID_surface",type=str, help='Right Hemisphere MID Surface',default="@RH_MID_surface@")

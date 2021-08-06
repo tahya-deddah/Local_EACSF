@@ -52,39 +52,35 @@ int  main(int argc, char** argv)
 	multiplyfilter->SetInput2(reader2->GetOutput());
 	multiplyfilter->Update();
 
- 	 typedef itk::MinimumMaximumImageCalculator <input1Type> 
+ 	typedef itk::MinimumMaximumImageCalculator <input1Type> 
        MinimumMaximumImageCalculatorType ;
     MinimumMaximumImageCalculatorType::Pointer MinimumMaximumImage = MinimumMaximumImageCalculatorType::New();
     MinimumMaximumImage->SetImage(multiplyfilter->GetOutput());   
     MinimumMaximumImage->ComputeMaximum();
-    
 
-   	typedef itk::BinaryThresholdImageFilter <input1Type, input1Type>
-    BinaryThresholdImageFilterType;
-  	BinaryThresholdImageFilterType::Pointer thresholdFilter
-    = BinaryThresholdImageFilterType::New();
-  	thresholdFilter->SetInput(multiplyfilter->GetOutput());
-	thresholdFilter->SetLowerThreshold((MinimumMaximumImage->GetMaximum()) *0.003);  
-	thresholdFilter->SetInsideValue(1);
-	thresholdFilter->SetOutsideValue(0);
-	thresholdFilter->Update();
+  
+    typedef itk::ImageRegionIterator<input1Type>       IteratorType;
+  	IteratorType      MyIt1(multiplyfilter->GetOutput(), multiplyfilter->GetOutput()->GetRequestedRegion());
+	MyIt1.GoToBegin();
 
+	while (!MyIt1.IsAtEnd())
+	{
+		MyIt1.Set(double(MyIt1.Get())/MinimumMaximumImage->GetMaximum());
+		++MyIt1;
+	}
 
 	 // Compute Volume
-	itk::ImageRegionConstIterator<input1Type> MyIt(thresholdFilter->GetOutput(),thresholdFilter->GetOutput()->GetLargestPossibleRegion());
+	itk::ImageRegionIterator<input1Type> MyIt(multiplyfilter->GetOutput(),multiplyfilter->GetOutput()->GetLargestPossibleRegion());
 	MyIt.GoToBegin();
-	int NumberOfCSFVoxel = 0;
+	int SumOfCSFProbabilities = 0;
 	while (!MyIt.IsAtEnd())
-	{
-		if (MyIt.Get() == 1)
-		{ 
-			NumberOfCSFVoxel+=1;
-		}
-		++MyIt;
+	{	
+		SumOfCSFProbabilities = SumOfCSFProbabilities + MyIt.Get();		
 	}
-	input2Type::SpacingType spacing = thresholdFilter->GetOutput()->GetSpacing();
+	input2Type::SpacingType spacing = multiplyfilter->GetOutput()->GetSpacing();
 	double VolumeOfOneVoxel = spacing[0] * spacing[1] * spacing[2];		
-	double TotalVolume = NumberOfCSFVoxel * VolumeOfOneVoxel;
+	double TotalVolume = SumOfCSFProbabilities * VolumeOfOneVoxel;
+	TotalVolume = int(TotalVolume);
 
 
 	// Compute CSF Density Sum
@@ -100,10 +96,6 @@ int  main(int argc, char** argv)
 	}
 	sum = int(sum);
 
-	// put the volume and CSF density sum in a txt file
-	//std::string FileName = VisitationMap;
-  	//std::string NewFileName = FileName.substr(0, FileName.size()-16);
-  	//std::string ResultFileName = NewFileName + "CSFVolume.txt";
   	std::string ResultFileName = Label + "_CSFVolume.txt";
   	ofstream Result;
   	Result.open (ResultFileName.c_str(), std::ios_base::app); 

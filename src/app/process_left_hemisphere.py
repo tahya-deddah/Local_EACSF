@@ -154,7 +154,7 @@ def main_loop(args):
 				call_and_print([args.AddScalarstoPolyData, "--InputFile", args.Label + "_LH_" + surface + "_Inflated.vtk", "--OutputFile", args.Label + "_LH_" + surface + "_Inflated.vtk",\
 				"--ScalarsFile", args.Label + "_LH_" + surface + "_CSF_Density_Final_Smoothed.txt", "--Scalars_Name", 'CSF_Density_Final_Smoothed'])
 
-		##### add scalars to inflated surfaces
+		##### Compute regional mean and sum of EA-CSF
 		if(args.Compute_regional_CSF_density):
 			call_and_print([args.ROImean, "--InputMeasurement", args.Label + "_LH_" + surface + "_CSF_Density_Final.txt", "--AtlasSurfaceLabeling", args.Left_Atlas_Surface,\
 				"--OutputFileName1", args.Label + "_LH_" + surface + "_CSF_Density_regional_mean.txt","--OutputFileName2", args.Label + "_LH_" + surface + "_CSF_Density_regional_sum.txt"])
@@ -260,7 +260,7 @@ def processing(args, DirectoryName, Surface, ImageDimension):
 	if(args.Clean_up) :
 	 	clean_up(Directory)
 			
-parser = argparse.ArgumentParser(description='EACSF Density Quantification')
+parser = argparse.ArgumentParser(description='EACSF Density Quantification for the left hemisphere')
 parser.add_argument("--Tissu_Segmentation",type=str, help='Tissu Segmentation for Outer CSF Hull Creation', default="@Tissu_Segmentation@")
 parser.add_argument("--CSF_Probability_Map",type=str, help='CSF Probality Map', default="@CSF_Probability_Map@")
 parser.add_argument("--LH_MID_surface",type=str, help='Left Hemisphere MID Surface', default="@LH_MID_surface@")

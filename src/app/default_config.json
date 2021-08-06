@@ -1,65 +1,17 @@
 {
-	"data":{
-		"Tissu_Segmentation": "/work/tahya/Data/local_EACSf_Extraction/Ben_Test/101247/101247_Seg.nrrd",
-		"CSF_Probability_Map": "/work/tahya/Data/local_EACSf_Extraction/Ben_Test/101247/101247_CSF_Prop.nrrd",
-		"LH_MID_surface": "/work/tahya/Data/local_EACSf_Extraction/Ben_Test/101247/101247_LH_MID.vtk",
-		"LH_GM_surface": "/work/tahya/Data/local_EACSf_Extraction/Ben_Test/101247/101247_LH_GM.vtk", 
-                "LH_Inflating_Template": "",
-		"RH_MID_surface": "/work/tahya/Data/local_EACSf_Extraction/Ben_Test/101247/101247_RH_MID.vtk",
-                "RH_GM_surface": "/work/tahya/Data/local_EACSf_Extraction/Ben_Test/101247/101247_RH_GM.vtk",
-                "RH_Inflating_Template": "",
-                "Label": "",
-		"Output_Directory": "/work/tahya/Test/101247"
-	},
-
-
-"parameters": {
-
-        "Slurm": false,
-        "Slurm_nodes": "1",
-        "Slurm_cores": "2",
-        "Slurm_time": "8:00:00",
-        "Slurm_memory":"32G",
-
-        "Smooth" : false,
-        "Smoothing_numberIter" :"0",
-        "Smoothing_bandwith":"0",
-
-        "Clean" : false,
-        
-        "Closing_radius": 15,
-        "Dilation_radius": 2,
-        "Iterations_number": 1,
-        "Image_dimension": "300"
+    "data": {
+        "CSF_Probability_Map": "/NIRAL/work/tahya/Data/local_EACSf_Extraction/Ben_Test/101247/101247_CSF_Prop.nrrd",
+        "LH_Inflating_Template": "/NIRAL/tools/atlas/Surface/CIVET_160K/icbm_surface/icbm_avg_mid_sym_mc_left_hires.vtk",
+        "LH_MID_surface": "/NIRAL/work/tahya/Data/local_EACSf_Extraction/Ben_Test/101247/101247_LH_MID.vtk",
+        "Label": "101247",
+        "Left_Atlas_Surface": "/NIRAL/tools/atlas/Surface/CIVET_160K/icbm_surface/Destrieux/Atlas_Left_Destrieux.txt",
+        "Output_Directory": "/NIRAL/work/tahya/final_test/101247",
+        "RH_Inflating_Template": "/NIRAL/tools/atlas/Surface/CIVET_160K/icbm_surface/icbm_avg_mid_sym_mc_right_hires.vtk",
+        "RH_MID_surface": "/NIRAL/work/tahya/Data/local_EACSf_Extraction/Ben_Test/101247/101247_RH_MID.vtk",
+        "Right_Atlas_Surface": "/NIRAL/tools/atlas/Surface/CIVET_160K/icbm_surface/Destrieux/Atlas_Right_Destrieux.txt",
+        "Tissu_Segmentation": "/NIRAL/work/tahya/Data/local_EACSf_Extraction/Ben_Test/101247/101247_Seg.nrrd"
     },
-
-
-
- "executables": [
-        {
-            "name": "CreateOuterImage",
-            "path": ""
-        },
-        {
-            "name": "CreateOuterSurface",
-            "path": ""
-        },
-        {
-            "name": "ComputeCSFVolume",
-            "path": ""
-        },
-        {
-            "name": "EditPolyData",
-            "path": ""
-        },
-        {
-            "name": "EACSFKlaplace",
-            "path": ""
-        },
-        {
-            "name": "EstimateCortexStreamlinesDensity",
-            "path": ""
-        },
+    "executables": [
         {
             "name": "AddScalarstoPolyData",
             "path": ""
@@ -69,11 +21,35 @@
             "path": ""
         },
         {
-            "name": "HeatKernelSmoothing",
+            "name": "ComputeCSFVolume",
+            "path": ""
+        },
+        {
+            "name": "CreateOuterImage",
+            "path": ""
+        },
+        {
+            "name": "CreateOuterSurface",
+            "path": ""
+        },
+        {
+            "name": "EACSFKlaplace",
+            "path": ""
+        },
+        {
+            "name": "EditPolyData",
+            "path": ""
+        },
+        {
+            "name": "EstimateCortexStreamlinesDensity",
             "path": ""
         },
         {
             "name": "FitPlane",
+            "path": ""
+        },
+        {
+            "name": "HeatKernelSmoothing",
             "path": ""
         },
         {
@@ -84,9 +60,21 @@
             "name": "python3",
             "path": ""
         }
-    ]
-
-
+    ],
+    "parameters": {
+        "Clean": true,
+        "Closing_radius": 15,
+        "Compute_regional_CSF_density": true,
+        "Dilation_radius": 2,
+        "Image_dimension": "300",
+        "Interpolated": true,
+        "Interpolation_margin": "20",
+        "Iterations_number": 1,
+        "NotInterpolated": false,
+        "Slurm": false,
+        "Smooth": true,
+        "Smoothing_bandwith": "1",
+        "Smoothing_numberIter": "10",
+        "Use_75P_Surface": false
+    }
 }
-
-

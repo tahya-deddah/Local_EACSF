@@ -11,7 +11,7 @@
       <longflag>csv</longflag>
       <flag>c</flag>
       <description>
-        a CSV file which his header is :
+        a CSV file with the following header:
         Tissu Segmentation CSF Probability Map LH MID Surface LH GM Surface RH MID Surface RH GM Surface Output Directory
       </description>
       <channel>input</channel>

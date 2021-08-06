@@ -56,7 +56,7 @@ def main(args):
 	RH_CSFDensity_Path = os.path.join(args.Output_Directory, "LocalEACSF", "RH_Directory", args.Label + "_RH_" + surface + "_CSF_Density_Final.txt")
 	####
 	if(path.exists(os.path.join(OUT_PATH, args.Label + "_CSFVolume.txt"))):
-		print('Compute Local EACSF for ID {} is already done'.format(args.Label) , flush=True)
+		print('Compute Local EACSF for {} is already done'.format(args.Label) , flush=True)
 	else :
 		Process_Left_Side = subprocess.call([python, process_left_hemisphere])
 		Process_Right_Side = subprocess.call([python, process_right_hemisphere])
