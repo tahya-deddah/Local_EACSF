@@ -8,26 +8,26 @@
 	   	<file>
 	   		<name>InputSurface</name>
 	   		<longflag>InputSurface</longflag>
-      		<flag>i</flag>
-      		<description>Input Surface Name </description>
+	   		<flag>i</flag>
+	   		<description>Surface to smooth </description>
 	    </file>
 		<integer>
 			<name>Numberofiterations</name>
 			<longflag>NumberIter</longflag>
-      		<flag>n</flag>
-      		<description>number of iterations</description>
+			<flag>n</flag>
+			<description>number of iterations of smoothing </description>
 		</integer>
 		<double>
 			<name>sigma</name>
 			<longflag>sigma</longflag>
-      		<flag>s</flag>
-      		<description>The kernel bandwidth </description>
+			<flag>s</flag>
+			<description>The kernel bandwidth </description>
 		</double>
 		<file>
 	   		<name>OutputSurface</name>
 	   		<longflag>OutputSurface</longflag>
-      		<flag>o</flag>
-      		<description>Output Surface Name </description>
+	   		<flag>o</flag>
+	   		<description>surface after smoothing </description>
 	    </file>
 	</parameters>
 </executable>
