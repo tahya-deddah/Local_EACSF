@@ -55,12 +55,16 @@ def main(args):
 	LH_CSFDensity_Path = os.path.join(args.Output_Directory, "LocalEACSF", "LH_Directory", args.Label + "_LH_" + surface + "_CSF_Density_Final.txt")
 	RH_CSFDensity_Path = os.path.join(args.Output_Directory, "LocalEACSF", "RH_Directory", args.Label + "_RH_" + surface + "_CSF_Density_Final.txt")
 	####
+
+	### if volume file exite --> EACSF already computed
 	if(path.exists(os.path.join(OUT_PATH, args.Label + "_CSFVolume.txt"))):
 		print('Compute Local EACSF for {} is already done'.format(args.Label) , flush=True)
+	### else 
 	else :
 		Process_Left_Side = subprocess.call([python, process_left_hemisphere])
 		Process_Right_Side = subprocess.call([python, process_right_hemisphere])
-	
+		
+		###### compute the volume of EACSF
 		if (os.path.isfile(LH_CSFDensity_Path) and os.path.isfile(RH_CSFDensity_Path)):
 			os.chdir(OUT_PATH)
 			if(args.Smooth) :
@@ -80,6 +84,7 @@ def main(args):
 				os.path.join("RH_Directory", args.Label + "_CSF_Probability_Map.nrrd"),"--CSFFile", os.path.join("RH_Directory", args.Label\
 				+ "_RH_" + surface + "_CSF_Density_Final.txt") , "--Side", "Right", "--Label", args.Label])
 
+			###### If batch processing put the output paths in the outputs CSV file for group visualisation
 			if (os.path.isfile("../Outputs.csv")):
 
 				header = ["LH CSF Density", "RH CSF Density", "LH Visitation Map", "RH Visitation Map"]

@@ -15,6 +15,8 @@ from decimal import *
 import threading
 from main_script import call_and_print
 
+
+### Compute the average of the values of a txt fule given as an input
 def average(file):
 	data = []
 	with open(file) as f:
@@ -28,6 +30,7 @@ def average(file):
 	average = sum(data)/len(data)
 	return (average)
 
+### Clean up the outputs directory from intermediate outputs
 def clean_up(Directory):
 
 	print("Cleaning the right hemisphere output directory", flush=True)
@@ -36,6 +39,9 @@ def clean_up(Directory):
 			os.remove(i)
 	print("Cleaning the right hemisphere output directory done", flush=True)
 
+
+### Compute EACSF interpolated by doing a linear interpolation of EACSFMaxValueFile and  EACSFMinValueFile. Compute also the difference between the EACSF interpolated and the
+## original EACSF (EACSFFile)
 def interpolation(EACSFMaxValueFile, EACSFMinValueFile , EACSFInterpolatedFile, EACSFFile, AbsoluteDifferenceFile):
 
 	print("interpolating ", flush=True)
@@ -66,6 +72,7 @@ def interpolation(EACSFMaxValueFile, EACSFMinValueFile , EACSFInterpolatedFile, 
 		AbsoluteDifference.write(str("%.4f" % delta) + "\n" )  
 	print("Interpolation done ", flush=True)
 
+###  Compare the average of origial EACSF and the average of  the interpolated EACSF and choose the one with higher average as the final one  
 def optimize_csfdensity (surface):
 
 	EACSFFile = os.path.join( args.Output_Directory, "LocalEACSF", "RH_Directory", args.Label + "_RH_" + surface + "_CSF_Density.txt")
@@ -124,6 +131,7 @@ def main_loop(args):
 		print('Compute local EACSF density for right hemisphere done!', flush=True)
 	else:
 		print ("Processing Right Side", flush=True)
+		### if interpolation
 		if(args.Interpolated):
 			ImageSizes = [@imagedimension@, int(@imagedimension@) + int(@interpolationMargin@), int(@imagedimension@) - int(@interpolationMargin@) ]
 			DirectoriesNames = ["RH_Directory", "RH_InterpolationMaxValue_Directory", "RH_InterpolationMinValue_Directory" ]
@@ -133,18 +141,19 @@ def main_loop(args):
 			pool.close()
 			pool.join()
 			optimize_csfdensity (surface)
+		### if not interplation
 		if(args.NotInterpolated):
 			processing(args, "RH_Directory", surface, str(@imagedimension@))
 			os.rename(os.path.join( args.Output_Directory, "LocalEACSF", "RH_Directory", args.Label + "_RH_" + surface + "_CSF_Density.txt"),\
 				os.path.join( args.Output_Directory, "LocalEACSF", "RH_Directory", args.Label + "_RH_" + surface + "_CSF_Density_Final.txt"))	
 
+		######
 		os.chdir(os.path.join( args.Output_Directory, "LocalEACSF", "RH_Directory"))
 
-		#### smoothing
+		##### smooth the csf density
 		if(args.Smooth) :
 			call_and_print([args.HeatKernelSmoothing , "--InputSurface", args.Label + "_RH_" + surface + "_CSF_Density.vtk", "--NumberIter", "@NumberIter@", "--sigma"\
 				, "@Bandwith@", "--OutputSurface", args.Label + "_RH_" + surface + "_CSF_Density.vtk"])
-
 
 		##### add scalars to inflated surfaces
 		if(args.RH_Inflating_Template != ""):
@@ -155,7 +164,7 @@ def main_loop(args):
 				call_and_print([args.AddScalarstoPolyData, "--InputFile", args.Label + "_RH_" + surface + "_Inflated.vtk", "--OutputFile", args.Label + "_RH_" + surface + "_Inflated.vtk",\
 				"--ScalarsFile", args.Label + "_RH_" + surface + "_CSF_Density_Final_Smoothed.txt", "--Scalars_Name", 'CSF_Density_Final_Smoothed'])
 
-		#### regional computation
+		#### regional computation of EACSF
 		if(args.Compute_regional_CSF_density):
 			call_and_print([args.ROImean, "--InputMeasurement", args.Label + "_RH_" + surface + "_CSF_Density_Final.txt", "--AtlasSurfaceLabeling", args.Right_Atlas_Surface,\
 				"--OutputFileName1", args.Label + "_RH_" + surface + "_CSF_Density_regional_mean.txt", "--OutputFileName2", args.Label + "_RH_" + surface + "_CSF_Density_regional_sum.txt"])
@@ -204,6 +213,8 @@ def processing(args, DirectoryName, Surface, ImageDimension):
 	
 	###
 	os.chdir(Directory)
+
+	############ Generation of streamlines
 	Streamline_Path = os.path.join(Directory, args.Label + "_RH_Outer_streamlines.vtk")
 	StreamlinesExistenceTest = os.path.isfile(Streamline_Path)
 	if StreamlinesExistenceTest ==True :
@@ -232,14 +243,14 @@ def processing(args, DirectoryName, Surface, ImageDimension):
 		call_and_print([klaplace, '-conv', args.Label + "_RH_Outer_streamlines.vtp", args.Label + "_RH_Outer_streamlines.vtk"])
 		print('Creating RH streamlines Done!', flush=True)
 
-
+	############ Avoid double counting by fitting a mid-sagital plan
 	OuterImageAfterFittingPlane = os.path.join(Directory, args.Label + "_RH_New_GM_Dilated.nrrd")  
 	OuterImageAfterFittingPlaneExistenceTest = os.path.isfile(OuterImageAfterFittingPlane)
 	if OuterImageAfterFittingPlaneExistenceTest==True :
 		print('Fitting a plane to avoid double counting done ', flush=True)
 	else :
 		print('Fitting a plane to avoid EACSF double counting ', flush=True)
-		### avoid double counting
+		
 		call_and_print([CreateOuterImage,"--InputImg", args.Label + "_Tissu_Segmentation.nrrd", "--OutputImg", args.Label + "_LH_GM_Dilated.nrrd", \
 			"--closingradius", "@closingradius@", "--dilationradius", "@dilationradius@", "--Reverse", '0'])
 		call_and_print([FitPlane,"--input1", args.Label + "_LH_GM_Dilated.nrrd", "--input2", args.Label + "_RH_GM_Dilated.nrrd", "--output1", \
@@ -247,6 +258,8 @@ def processing(args, DirectoryName, Surface, ImageDimension):
 		os.remove(args.Label + "_LH_GM_Dilated.nrrd")
 		os.remove(args.Label + "_LH_New_GM_Dilated.nrrd")
 
+
+	############ Computation of EACSF in the streamlines
 	CSFDensdityTxtFile = os.path.join(Directory, args.Label + "_RH_" + Surface + "_CSF_Density.txt")  
 	CSFDensityExistenceTest = os.path.isfile(CSFDensdityTxtFile)
 	if CSFDensityExistenceTest==True :
@@ -264,7 +277,7 @@ parser.add_argument("--Tissu_Segmentation",type=str, help='Tissu Segmentation fo
 parser.add_argument("--CSF_Probability_Map",type=str, help='CSF Probality Map', default="@CSF_Probability_Map@")
 parser.add_argument("--RH_MID_surface",type=str, help='Right Hemisphere MID Surface',default="@RH_MID_surface@")
 parser.add_argument("--RH_GM_surface",type=str, help='Right Hemisphere GM Surface', default="@RH_GM_surface@")
-parser.add_argument("--RH_Inflating_Template",type=str, help='Right Hemisphere Inflating Template', default="@RH_Inflating_Template@")
+parser.add_argument("--RH_Inflating_Template",type=str, help='Right Hemisphere Inflated Surface', default="@RH_Inflating_Template@")
 parser.add_argument("--Right_Atlas_Surface",type=str, help='Right Atlas Surface Labeling', default="@Right_Atlas_Surface@")
 parser.add_argument("--Label",type=str, help='Label of the case , ID for example', default="@Label@")
 parser.add_argument("--Output_Directory",type=str, help='Output Directory', default="@Output_Directory@")

@@ -390,8 +390,7 @@ void CSFWindow::on_actionToggle_advanced_mode_toggled(bool toggled)
 }
 
 
-// 1st Tab - Input
-
+// 1st Tab - batch processing
 
 void CSFWindow::on_Data_Directory_clicked()
 {
@@ -646,7 +645,7 @@ void CSFWindow::on_Run_Batch_Process_clicked()
     }       
 }
 
-//2nd tab
+//2nd tab Inputs
 
 void CSFWindow::on_Segmentation_clicked()
 {
@@ -748,7 +747,7 @@ void CSFWindow::on_checkBox_75P_Surface_stateChanged(int state)
 }
 
 
-// 3rd Tab - Executables tab
+// 3rd Tab - Tools path tab
 void CSFWindow::updateExecutables(QString exeName, QString path)
 {
    m_exeWidget->setExecutable(exeName, path);

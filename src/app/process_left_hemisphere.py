@@ -17,6 +17,8 @@ import threading
 from decimal import *
 from main_script import call_and_print
 
+
+### Compute the average of the values of a txt fule given as an input
 def average(file):
 	data = []
 	with open(file) as f:
@@ -30,13 +32,16 @@ def average(file):
 	average = sum(data)/len(data)
 	return (average)
 
+### Clean up the outputs directory from intermediate outputs
 def clean_up(Directory):
 	print("Cleaning the directory", flush=True)
 	for i in os.listdir(Directory):
 		if i.endswith('.vtp') or i.endswith('.vts'):
 			os.remove(i)
 	print("Cleaning directory done", flush=True)
-	
+
+### Compute EACSF interpolated by doing a linear interpolation of EACSFMaxValueFile and  EACSFMinValueFile. Compute also the difference between the EACSF interpolated and the
+## original EACSF (EACSFFile)
 def interpolation(EACSFMaxValueFile, EACSFMinValueFile , EACSFInterpolatedFile, EACSFFile, AbsoluteDifferenceFile):
 
 	print("interpolating ", flush=True)
@@ -67,6 +72,7 @@ def interpolation(EACSFMaxValueFile, EACSFMinValueFile , EACSFInterpolatedFile, 
 		AbsoluteDifference.write(str("%.4f" % delta) + "\n" )  
 	print("Interpolation done ", flush=True)
 
+###  Compare the average of origial EACSF and the average of  the interpolated EACSF and choose the one with higher average as the final one  
 def optimize_csfdensity (surface): ## optimize
 
 	EACSFFile = os.path.join( args.Output_Directory, "LocalEACSF", "LH_Directory", args.Label + "_LH_" + surface + "_CSF_Density.txt")
@@ -125,6 +131,7 @@ def main_loop(args):
 		print('Compute local EACSF density for left hemisphere done!', flush=True)
 	else:
 		print ("Processing Left Side", flush=True)
+		### if interpolation
 		if(args.Interpolated):
 			ImageSizes = [@imagedimension@, int(@imagedimension@) + int(@interpolationMargin@), int(@imagedimension@) - int(@interpolationMargin@) ]
 			DirectoriesNames = ["LH_Directory", "LH_InterpolationMaxValue_Directory", "LH_InterpolationMinValue_Directory" ]
@@ -133,12 +140,14 @@ def main_loop(args):
 				pool.apply_async(processing, args = (args, DirectoriesNames[i], surface, str(ImageSizes[i]),))
 			pool.close()
 			pool.join()
-			optimize_csfdensity(surface)			
+			optimize_csfdensity(surface)
+		### if not interplation			
 		if(args.NotInterpolated):
 			processing(args, "LH_Directory", surface, str(@imagedimension@))
 			os.rename(os.path.join( args.Output_Directory, "LocalEACSF", "LH_Directory", args.Label +"_LH_" + surface + "_CSF_Density.txt"),\
-					os.path.join( args.Output_Directory, "LocalEACSF", "LH_Directory", args.Label + "_LH_" + surface + "_CSF_Density_Final.txt"))
+				os.path.join( args.Output_Directory, "LocalEACSF", "LH_Directory", args.Label + "_LH_" + surface + "_CSF_Density_Final.txt"))
 
+		######
 		os.chdir(os.path.join( args.Output_Directory, "LocalEACSF", "LH_Directory"))
 		##### smooth the csf density
 		if(args.Smooth) :
@@ -202,7 +211,8 @@ def processing(args, DirectoryName, Surface, ImageDimension):
 	FitPlane = args.FitPlane
 	
 	os.chdir(Directory)	
-			
+	
+	############ Generation of streamlines 		
 	Streamline_Path = os.path.join(Directory, args.Label + "_LH_Outer_streamlines.vtk")
 	StreamlinesExistenceTest = os.path.isfile(Streamline_Path)
 	if StreamlinesExistenceTest ==True :
@@ -231,23 +241,22 @@ def processing(args, DirectoryName, Surface, ImageDimension):
 		call_and_print([klaplace, '-conv', args.Label + "_LH_Outer_streamlines.vtp", args.Label + "_LH_Outer_streamlines.vtk"])
 		print('Creating LH streamlines Done!', flush=True)
 
-
+	############ Avoid double counting by fitting a mid sagital plan
 	OuterImageAfterFittingPlane = os.path.join(Directory, args.Label + "_LH_New_GM_Dilated.nrrd")  
 	OuterImageAfterFittingPlaneExistenceTest = os.path.isfile(OuterImageAfterFittingPlane)
 	if OuterImageAfterFittingPlaneExistenceTest==True :
 		print('Fitting a plane to avoid double counting done ', flush=True)
 	else :
 		print('Fitting a plane to avoid EACSF double counting ', flush=True)
-		# avoid double counting
+		
 		call_and_print([CreateOuterImage,"--InputImg", args.Label + "_Tissu_Segmentation.nrrd", "--OutputImg", args.Label + "_RH_GM_Dilated.nrrd", \
 			"--closingradius", "@closingradius@","--dilationradius", "@dilationradius@", "--Reverse", '1'])
 		call_and_print([FitPlane,"--input1", args.Label + "_LH_GM_Dilated.nrrd", "--input2", args.Label + "_RH_GM_Dilated.nrrd", "--output1", \
 		args.Label + "_LH_New_GM_Dilated.nrrd", "--output2", args.Label + "_RH_New_GM_Dilated.nrrd"])
 		os.remove(args.Label + "_RH_GM_Dilated.nrrd")
 		os.remove(args.Label + "_RH_New_GM_Dilated.nrrd")
-		##########
 
-
+	############ Computation of EACSF in the streamlines
 	CSFDensdityTxtFile = os.path.join(Directory, args.Label +"_LH_" + Surface + "_CSF_Density.txt")
 	CSFDensityExistenceTest = os.path.isfile(CSFDensdityTxtFile)
 	if CSFDensityExistenceTest==True :
@@ -265,7 +274,7 @@ parser.add_argument("--Tissu_Segmentation",type=str, help='Tissu Segmentation fo
 parser.add_argument("--CSF_Probability_Map",type=str, help='CSF Probality Map', default="@CSF_Probability_Map@")
 parser.add_argument("--LH_MID_surface",type=str, help='Left Hemisphere MID Surface', default="@LH_MID_surface@")
 parser.add_argument("--LH_GM_surface",type=str, help='Left Hemisphere GM Surface', default="@LH_GM_surface@")
-parser.add_argument("--LH_Inflating_Template",type=str, help='Left Hemisphere Inflating Template', default="@LH_Inflating_Template@")
+parser.add_argument("--LH_Inflating_Template",type=str, help='Left Hemisphere Inflated Surface', default="@LH_Inflating_Template@")
 parser.add_argument("--Left_Atlas_Surface",type=str, help='Left Atlas Surface Labeling', default="@Left_Atlas_Surface@")
 parser.add_argument("--Label",type=str, help='Label of the case , ID for example', default="@Label@")
 parser.add_argument("--Output_Directory",type=str, help='Output Directory', default="@Output_Directory@")
