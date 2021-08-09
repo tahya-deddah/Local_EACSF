@@ -8,26 +8,26 @@
 	   	<file>
 	   		<name>InputMeasurement</name>
 	   		<longflag>InputMeasurement</longflag>
-      		<flag>I</flag>
-      		<description> A txt file with the values of EA-CSF desnityat each vertex </description>
-	    </file>
+	   		<flag>I</flag>
+	   		<description> A txt file with the values of EA-CSF desnity at each vertex </description>
+	   	</file>
 		<file>
 			<name>AtlasSurfaceLabeling</name>
 			<longflag>AtlasSurfaceLabeling</longflag>
-      		<flag>A</flag>
-      		<description>a labeling txt (atlas destrieux) which divide the brain to many regions </description>
+			<flag>A</flag>
+			<description>a labeling txt (atlas destrieux) which divide the brain to many regions </description>
 		</file>
 		<file>
 			<name>OutputFileName1</name>
 			<longflag>OutputFileName1</longflag>
-      		<flag>M</flag>
-      		<description>A txt file with the values of regional mean of EACSF </description>
+			<flag>M</flag>
+			<description>A txt file with the values of regional mean of EACSF </description>
 		</file>
 		<file>
 			<name>OutputFileName2</name>
 			<longflag>OutputFileName2</longflag>
-      		<flag>S</flag>
-      		<description>A txt file with the values of regional sum of EACSF</description>
+			<flag>S</flag>
+			<description>A txt file with the values of regional sum of EACSF</description>
 		</file>
 	</parameters>
 </executable>

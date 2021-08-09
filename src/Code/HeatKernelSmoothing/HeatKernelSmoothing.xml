@@ -27,7 +27,7 @@
 	   		<name>OutputSurface</name>
 	   		<longflag>OutputSurface</longflag>
 	   		<flag>o</flag>
-	   		<description>surface after smoothing </description>
+	   		<description>Input surface smoothed </description>
 	    </file>
 	</parameters>
 </executable>
