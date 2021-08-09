@@ -21,7 +21,7 @@
       <name>InputSegmentationFileName</name>
       <longflag>InputSegmentation</longflag>
       <flag>p</flag>
-      <description>a nrrd file with the value of probabbility of CSF at each voxel (CSF probability map) </description>
+      <description>a nrrd file with the value of probability of CSF at each voxel (CSF probability map) </description>
     </file>
     <file>
       <name>InputMaskFileName</name>

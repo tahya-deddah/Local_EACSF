@@ -8,8 +8,8 @@
 	   	<file>
 	   		<name>input1</name>
 	   		<longflag>input1</longflag>
-          	<flag>l</flag>
-          	<description>a nrrd file</description>
+	   		<flag>l</flag>
+	   		<description>a nrrd file</description>
 	    </file>
 		<file>
 			<name>input2</name>
@@ -20,14 +20,14 @@
 		<file>
 			<name>output1</name>
 			<longflag>output1</longflag>
-          	<flag>L</flag>
-          	<description>the first input after fitting the mid-sagital plane </description>
+			<flag>L</flag>
+			<description>the first input after fitting the mid-sagital plane </description>
 		</file>
 		<file>
 			<name>output2</name>
 			<longflag>output2</longflag>
-          	<flag>R</flag>
-          	<description> the second input after fitting the plan</description>
+			<flag>R</flag>
+			<description> the second input after fitting the mid-sagital plan</description>
 		</file>
 	</parameters>
 </executable>

@@ -75,7 +75,8 @@ int  main(int argc, char** argv)
 	int SumOfCSFProbabilities = 0;
 	while (!MyIt.IsAtEnd())
 	{	
-		SumOfCSFProbabilities = SumOfCSFProbabilities + MyIt.Get();		
+		SumOfCSFProbabilities = SumOfCSFProbabilities + MyIt.Get();
+		++MyIt;		
 	}
 	input2Type::SpacingType spacing = multiplyfilter->GetOutput()->GetSpacing();
 	double VolumeOfOneVoxel = spacing[0] * spacing[1] * spacing[2];		
