@@ -10,7 +10,7 @@
 	   		<longflag>InputSurface</longflag>
 	   		<flag>i</flag>
 	   		<description>Surface to smooth </description>
-	    </file>
+	   	</file>
 		<integer>
 			<name>Numberofiterations</name>
 			<longflag>NumberIter</longflag>

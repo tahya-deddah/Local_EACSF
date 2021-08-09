@@ -15,9 +15,9 @@
 			<name>AtlasSurfaceLabeling</name>
 			<longflag>AtlasSurfaceLabeling</longflag>
 			<flag>A</flag>
-			<description>a labeling txt (atlas destrieux) which divide the brain to many regions </description>
+			<description>a labeling txt ( for example: atlas destrieux) which divides the brain to many regions </description>
 		</file>
-		<file>
+		<file> 
 			<name>OutputFileName1</name>
 			<longflag>OutputFileName1</longflag>
 			<flag>M</flag>
