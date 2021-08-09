@@ -10,12 +10,12 @@
 	   		<longflag>input1</longflag>
 	   		<flag>l</flag>
 	   		<description>a nrrd file</description>
-	    </file>
-		<file>
+	   	</file>
+	    <file>
 			<name>input2</name>
 			<longflag>input2</longflag>
-          	<flag>r</flag>
-          	<description>a nrrd file</description>
+			<flag>r</flag>
+			<description>a nrrd file</description>
 		</file>
 		<file>
 			<name>output1</name>
