@@ -531,11 +531,12 @@ void CSFWindow::on_Clear_clicked()
 void CSFWindow::on_Help_clicked()
 {
     QWidget *help = new QWidget();
-    help->resize(900, 520);
+    help->resize(920, 520);
 
     QLabel *help_txt_1 = new QLabel(help);
-    help_txt_1->setGeometry(20,10,900,30);
-    help_txt_1->setText("<b> The Data Directory should be like the following example, if you don't want to use 75P surface no need to provide LH_GM.vtk and RH_GM.vtk: </b> " );
+    help_txt_1->setGeometry(20,10,920,30);
+    help_txt_1->setText("<b> The Data Directory should be like the following example. </b> <b>If you don't want to use 75P surface no need to LH_GM.vtk and RH_GM.vtk in subjects directories.</b> <b> Each subdirectory ( for example subject_0 ) will be used as the output directory and its name as the label of the corresponding case.</b> " );
+    help_txt_1->setWordWrap(true);
 
     QLabel *Data_directory_image = new QLabel(help);
     Data_directory_image->setGeometry(20,20,800,300);
@@ -543,8 +544,9 @@ void CSFWindow::on_Help_clicked()
     Data_directory_image->setPixmap(pic);
 
     QLabel *help_txt_2 = new QLabel(help);
-    help_txt_2->setGeometry(20,330,900,30);
-    help_txt_2->setText("<b> The CSV File should be like the following example ( the order of the header doesn't matter) same as above about providing LH_GM.vtk and RH_GM.vtk: </b>");
+    help_txt_2->setGeometry(20,330,920,30);
+    help_txt_2->setText("<b> The CSV File should be like the following example ( the order of the header doesn't matter).</b> <b> Same as above about if you use MID surfaces instead of 75P surfaces no need to LH GM Surface and RH GM Surface in your CSV file: </b>");
+    help_txt_2->setWordWrap(true);
 
     QLabel *CSV_image = new QLabel(help);
     CSV_image->setGeometry(20,250,800,320);
@@ -985,10 +987,10 @@ void CSFWindow::on_CSVFile_path_clicked()
 {
     QString path=OpenFile();
 
-       if (!path.isEmpty())
-       {
-           lineEdit_CSVFile->setText(path);
-       }
+    if (!path.isEmpty())
+    {
+       lineEdit_CSVFile->setText(path);
+    }
 }
 
 void CSFWindow::on_visualize_clicked()
@@ -1086,7 +1088,6 @@ void CSFWindow::on_Compare_clicked()
         {
             QString left = tableWidget->item(row,0)->text();
             QString right = tableWidget->item(row,1)->text();
-            //float difference = (left.toFloat() - right.toFloat())/ (left.toFloat() + right.toFloat())/2;
             float difference = (left.toFloat() - right.toFloat())/ ((left.toFloat() + right.toFloat())/2);
             tableWidget->setItem( row, 2, new QTableWidgetItem( QString::number( difference * 100, 'f' , 2 ))); 
         }                   
@@ -1146,7 +1147,8 @@ void CSFWindow::on_help_clicked()
 
     QLabel *help_txt_1 = new QLabel(help);
     help_txt_1->setGeometry(20,10,800,30);
-    help_txt_1->setText("<b> The CSV file  should be like the following example. this csv file is created while batch processing and you can find it in the data directory : </b>");
+    help_txt_1->setText("<b> The CSV file  should be like the following example. this CSV file is created while batch processing and you can find it in the data directory provide as input in batch processing and its called Outputs.csv : </b>");
+    help_txt_1->setWordWrap(true);
 
     QLabel *Data_directory_image = new QLabel(help);
     Data_directory_image->setGeometry(20,30,800,150);

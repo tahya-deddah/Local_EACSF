@@ -88,8 +88,8 @@ int  main(int argc, char** argv)
 
                 if(param_obj["Use_75P_Surface"].toBool())
                 {
-                    data_obj["LH_GM_surface"] = checkStringValue(  (CSVFile[i].value("LH GM Surface")).toStdString(),  data_obj["LH_GM_surface"]);                
-                    data_obj["RH_GM_surface"] = checkStringValue(  (CSVFile[i].value("RH GM Surface")).toStdString(),   data_obj["RH_GM_surface"]);
+                    data_obj["LH_GM_surface"] = checkStringValue(  (CSVFile[i].value("LH GM Surface")).toStdString(),  data_obj["LH_GM_surface"] );                
+                    data_obj["RH_GM_surface"] = checkStringValue(  (CSVFile[i].value("RH GM Surface")).toStdString(),  data_obj["RH_GM_surface"] );
                 }
                 
                 data_obj["Output_Directory"] = checkStringValue((CSVFile[i].value("Output Directory")).toStdString(),   data_obj["Output_Directory"]);
