@@ -340,6 +340,16 @@ void CSFWindow::on_actionLoad_Csv_File_triggered()
     {
         QList<QMap<QString, QString>*> list = readCSV(filename);
         model->SetModelData(list);
+
+
+        if(!list.isEmpty())
+        { 
+            QString data_directory = list[0]->value("Output Directory").mid(0, list[0]->value("Output Directory").lastIndexOf("/"));
+            QString OutputCSVFile =  data_directory + QString("/Outputs.csv");
+            QFile file(OutputCSVFile);
+            file.open(QIODevice::WriteOnly | QIODevice::Append);
+            file.close();
+        } 
     }
 }
 void CSFWindow::on_actionSave_Csv_File_triggered()
@@ -380,13 +390,13 @@ void CSFWindow::on_actionAbout_triggered()
 void CSFWindow::on_actionToggle_advanced_mode_toggled(bool toggled)
 {
     if (toggled)
-       {
-           tab->insertTab(3,tab_parameters,QString("Parameters"));
-       }
-       else
-       {
-           tab->removeTab(3);
-       }
+    {
+        tab->insertTab(3,tab_parameters,QString("Parameters"));
+    }
+    else
+    {
+        tab->removeTab(3);
+    }
 }
 
 
@@ -395,22 +405,22 @@ void CSFWindow::on_actionToggle_advanced_mode_toggled(bool toggled)
 void CSFWindow::on_Data_Directory_clicked()
 {
     QString path=OpenDir();
-     if (!path.isEmpty())
-     {
-         lineEdit_Data_Directory->setText(path);
-     }
+    if (!path.isEmpty())
+    {
+        lineEdit_Data_Directory->setText(path);
+    }
 }
 
 void CSFWindow::on_checkBox_75P_Surface_batch_stateChanged(int state)
 {
     bool enab;
-        if (state==Qt::Checked){enab=true;}
-        else{enab=false;}
-        LH_GM_filter->setEnabled(enab);
-        RH_GM_filter->setEnabled(enab);
-        lineEdit_LH_GM_filter->setEnabled(enab);
-        lineEdit_RH_GM_filter ->setEnabled(enab);
-        checkBox_75P_Surface->setChecked(enab);
+    if (state==Qt::Checked){enab=true;}
+    else{enab=false;}
+    LH_GM_filter->setEnabled(enab);
+    RH_GM_filter->setEnabled(enab);
+    lineEdit_LH_GM_filter->setEnabled(enab);
+    lineEdit_RH_GM_filter ->setEnabled(enab);
+    checkBox_75P_Surface->setChecked(enab);
 
 }
 void CSFWindow::on_Find_clicked()
@@ -463,7 +473,7 @@ void CSFWindow::on_Find_clicked()
             model->SetModelData(ModelData);
             QString OutputCSVFile =  data_directory + QString("/Outputs.csv");
             QFile file(OutputCSVFile);
-            file.open(QIODevice::WriteOnly);
+            file.open(QIODevice::WriteOnly | QIODevice::Append);
             file.close();
         } 
         else{ infoMsgBox(QString("No data found."),QMessageBox::Warning);}            
@@ -531,10 +541,10 @@ void CSFWindow::on_Clear_clicked()
 void CSFWindow::on_Help_clicked()
 {
     QWidget *help = new QWidget();
-    help->resize(920, 520);
+    help->resize(940, 520);
 
     QLabel *help_txt_1 = new QLabel(help);
-    help_txt_1->setGeometry(20,10,920,30);
+    help_txt_1->setGeometry(20,10,940,30);
     help_txt_1->setText("<b> The Data Directory should be like the following example. </b> <b>If you don't want to use 75P surface no need to LH_GM.vtk and RH_GM.vtk in subjects directories.</b> <b> Each subdirectory ( for example subject_0 ) will be used as the output directory and its name as the label of the corresponding case.</b> " );
     help_txt_1->setWordWrap(true);
 
@@ -544,7 +554,7 @@ void CSFWindow::on_Help_clicked()
     Data_directory_image->setPixmap(pic);
 
     QLabel *help_txt_2 = new QLabel(help);
-    help_txt_2->setGeometry(20,330,920,30);
+    help_txt_2->setGeometry(20,330,940,30);
     help_txt_2->setText("<b> The CSV File should be like the following example ( the order of the header doesn't matter).</b> <b> Same as above about if you use MID surfaces instead of 75P surfaces no need to LH GM Surface and RH GM Surface in your CSV file: </b>");
     help_txt_2->setWordWrap(true);
 
@@ -567,6 +577,15 @@ void CSFWindow::on_Load_clicked()
     {
         QList<QMap<QString, QString>*> list = readCSV(filename);
         model->SetModelData(list);
+
+        if(!list.isEmpty())
+        { 
+            QString data_directory = list[0]->value("Output Directory").mid(0, list[0]->value("Output Directory").lastIndexOf("/"));
+            QString OutputCSVFile =  data_directory + QString("/Outputs.csv");
+            QFile file(OutputCSVFile);
+            file.open(QIODevice::WriteOnly | QIODevice::Append);
+            file.close();
+        } 
     }
 }
 
@@ -903,32 +922,27 @@ void CSFWindow::run_Local_EACSF(int row)
 
     if (radioButton_local->isChecked())
     {  
-        if(volume_file.exists()) 
-        {       
-            output->append(QString("Compute Local EACSF Density already done for : ") + label);
-        } 
-        else
-        {
-            CleanFile(outlog_filename);
-            CleanFile(errlog_filename);
+        
+        CleanFile(outlog_filename);
+        CleanFile(errlog_filename);
 
-            QString main_script = QDir::cleanPath(scripts_dir + QString("/main_script.py"));
-            QStringList params = QStringList() << main_script;
+        QString main_script = QDir::cleanPath(scripts_dir + QString("/main_script.py"));
+        QStringList params = QStringList() << main_script;
 
-            prc->setWorkingDirectory(output_dir); 
-            connect(prc, &QProcess::readyReadStandardOutput, [prc, outlog_filename, this](){
-               disp_output(prc, outlog_filename);
-            });
-            connect(prc, &QProcess::readyReadStandardError, [prc, errlog_filename, this](){
-               disp_err(prc, errlog_filename);
-            });
-            connect(prc, static_cast<void(QProcess::*)(int, QProcess::ExitStatus)>(&QProcess::finished), [prc, outlog_filename, errlog_filename, row, this ](){
-                prc_finished(prc, outlog_filename, errlog_filename, row);  
-            });
-           
-            QMap<QString, QString> executables = m_exeWidget->GetExeMap();
-            prc->start(executables[QString("python3")], params);         
-        }
+        prc->setWorkingDirectory(output_dir); 
+        connect(prc, &QProcess::readyReadStandardOutput, [prc, outlog_filename, this](){
+           disp_output(prc, outlog_filename);
+        });
+        connect(prc, &QProcess::readyReadStandardError, [prc, errlog_filename, this](){
+           disp_err(prc, errlog_filename);
+        });
+        connect(prc, static_cast<void(QProcess::*)(int, QProcess::ExitStatus)>(&QProcess::finished), [prc, outlog_filename, errlog_filename, row, this ](){
+            prc_finished(prc, outlog_filename, errlog_filename, row);  
+        });
+       
+        QMap<QString, QString> executables = m_exeWidget->GetExeMap();
+        prc->start(executables[QString("python3")], params);         
+        
     }
     
     if (radioButton_slurm->isChecked())
@@ -968,20 +982,20 @@ void CSFWindow::on_output_path_clicked()
 {
     QString path=OpenDir();
 
-       if (!path.isEmpty())
-       {
-            lineEdit_output_path->setText(path);
+    if (!path.isEmpty())
+    {
+        lineEdit_output_path->setText(path);
 
-            QString jsonfile = lineEdit_output_path->text() + QString("/LocalEACSF") + QString("/Local_EACSF_config.json");
-            QJsonObject root_obj = readConfig(jsonfile);
-            QJsonObject data_obj = root_obj["data"].toObject();
-            QString Label = data_obj["Label"].toString();
-            QString inflated_mid = lineEdit_output_path->text() + QString("/LocalEACSF") + QString("/LH_Directory") + QString("/") + Label + QString("_LH_MID_Inflated.vtk");
-            QString inflated_75p = lineEdit_output_path->text() + QString("/LocalEACSF") + QString("/LH_Directory") + QString("/") + Label + QString("_LH_75P_Inflated.vtk");
-            QFileInfo check_file1(inflated_mid);
-            QFileInfo check_file2(inflated_75p);
-            if(check_file1.exists() || check_file2.exists()){VisualiseCSFDensityinflating->setEnabled(true);}
-       }      
+        QString jsonfile = lineEdit_output_path->text() + QString("/LocalEACSF") + QString("/Local_EACSF_config.json");
+        QJsonObject root_obj = readConfig(jsonfile);
+        QJsonObject data_obj = root_obj["data"].toObject();
+        QString Label = data_obj["Label"].toString();
+        QString inflated_mid = lineEdit_output_path->text() + QString("/LocalEACSF") + QString("/LH_Directory") + QString("/") + Label + QString("_LH_MID_Inflated.vtk");
+        QString inflated_75p = lineEdit_output_path->text() + QString("/LocalEACSF") + QString("/LH_Directory") + QString("/") + Label + QString("_LH_75P_Inflated.vtk");
+        QFileInfo check_file1(inflated_mid);
+        QFileInfo check_file2(inflated_75p);
+        if(check_file1.exists() || check_file2.exists()){VisualiseCSFDensityinflating->setEnabled(true);}
+    }      
 }
 void CSFWindow::on_CSVFile_path_clicked()
 {

@@ -83,9 +83,14 @@ def main(args):
 				call_and_print([ComputeCSFVolume, "--VisitingMap", os.path.join("RH_Directory", args.Label + "_RH_Visitation.nrrd"), "--CSFProb",\
 				os.path.join("RH_Directory", args.Label + "_CSF_Probability_Map.nrrd"),"--CSFFile", os.path.join("RH_Directory", args.Label\
 				+ "_RH_" + surface + "_CSF_Density_Final.txt") , "--Side", "Right", "--Label", args.Label])
-
-			###### If batch processing put the output paths in the outputs CSV file for group visualisation
-			if (os.path.isfile("../Outputs.csv")):
+			## moving up two directories
+			os.chdir('..')
+			os.chdir('..')
+			print(os.getcwd(), flush=True)
+			csv_file = os.path.join(os.getcwd(), "Outputs.csv")
+			###### If batch processing put the outputs paths in the outputs CSV file for group visualisation
+			if (os.path.isfile(csv_file)):
+				print("haha", flush=True )
 
 				header = ["LH CSF Density", "RH CSF Density", "LH Visitation Map", "RH Visitation Map"]
 				LH_CSF_Density = os.path.join(args.Output_Directory, "LocalEACSF", "LH_Directory", args.Label + "_LH_" + surface + "_CSF_Density.vtk")
@@ -100,8 +105,8 @@ def main(args):
 					header = ["LH CSF Density", "RH CSF Density", "LH Visitation Map", "RH Visitation Map", "LH CSF Density Inflated", "RH CSF Density Inflated"]
 					line = [LH_CSF_Density, RH_CSF_Density, LH_Visitation_Map, RH_Visitation_Map, LH_CSF_Density_Inflated, RH_CSF_Density_Inflated ]
 
-				f = csv.writer(open('../Outputs.csv','a'))
-				needs_header = os.stat('../Outputs.csv').st_size == 0
+				f = csv.writer(open(csv_file,'a'))
+				needs_header = os.stat(csv_file).st_size == 0
 				if needs_header:
 					f.writerow(header)
 				f.writerow(line)	
