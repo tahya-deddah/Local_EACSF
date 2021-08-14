@@ -3,7 +3,7 @@
   	<category></category>
   	<title>AddScalarstoPolyData</title>
   	<description>Add a scalar's array to a vtk polydata</description>
-  	<version></version>
+  	<version>0.0.5</version>
   	<parameters>
 	   	<file>
 	   		<name>InputFileName</name>

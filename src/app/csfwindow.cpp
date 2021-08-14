@@ -870,28 +870,6 @@ void CSFWindow::CleanFile(QString filename)
     file.close();
 }
 
-void CSFWindow::disp_output(QProcess *prc, QString outlog_filename)
-{   
-    QString output_log(prc->readAllStandardOutput()); 
-    QFile file(outlog_filename);
-
-    if (file.open(QIODevice::WriteOnly | QIODevice::Append)) {
-    QTextStream out(&file); out <<output_log;
-    output->append(output_log);
-    file.close();}  
-}
-
-void CSFWindow::disp_err(QProcess *prc, QString errlog_filename)
-{ 
-    QString error_log(prc->readAllStandardError());
-    QFile file(errlog_filename);
-
-    if (file.open(QIODevice::WriteOnly | QIODevice::Append)) {
-    QTextStream out(&file); out <<error_log;
-    error->append(error_log);
-    file.close();}  
-}
-
 
 void CSFWindow::on_Execute_clicked()
 {  
@@ -930,19 +908,21 @@ void CSFWindow::run_Local_EACSF(int row)
         QStringList params = QStringList() << main_script;
 
         prc->setWorkingDirectory(output_dir); 
-        connect(prc, &QProcess::readyReadStandardOutput, [prc, outlog_filename, this](){
-           disp_output(prc, outlog_filename);
+        prc->setStandardOutputFile(outlog_filename);
+        prc->setStandardErrorFile(errlog_filename);
+
+        connect(prc, &QProcess::started, [prc,  this](){
+            output->append(QString("Job started successfully"));
         });
-        connect(prc, &QProcess::readyReadStandardError, [prc, errlog_filename, this](){
-           disp_err(prc, errlog_filename);
-        });
+        /*connect(prc, &QProcess::errorOccurred, [QProcess::ProcessError error, this](){
+            error->append(error);
+        });*/
         connect(prc, static_cast<void(QProcess::*)(int, QProcess::ExitStatus)>(&QProcess::finished), [prc, outlog_filename, errlog_filename, row, this ](){
             prc_finished(prc, outlog_filename, errlog_filename, row);  
         });
        
         QMap<QString, QString> executables = m_exeWidget->GetExeMap();
-        prc->start(executables[QString("python3")], params);         
-        
+        prc->start(executables[QString("python3")], params);                 
     }
     
     if (radioButton_slurm->isChecked())

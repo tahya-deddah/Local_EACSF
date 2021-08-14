@@ -2,7 +2,7 @@
 <executable>
   <category>PROJECT</category>
   <title>Local_EACSF</title>
-  <version>0.1.4</version>
+  <version>0.0.5</version>
   <contributor>Tahya Deddah, Martin Styner, Juan Prieto</contributor>
   <description>Local EACSF Quantification</description>
   <parameters advanced="false">
@@ -32,5 +32,12 @@
       <description>Use Local EACSF without the GUI</description>
       <default>false</default>
     </boolean>  
+    <boolean>
+      <name>BatchProcessing</name>
+      <longflag>BatchProcessing</longflag>
+      <flag>b</flag>
+      <description>run LocalEacsf for many cases</description>
+      <default>false</default>
+    </boolean>
   </parameters>
 </executable>

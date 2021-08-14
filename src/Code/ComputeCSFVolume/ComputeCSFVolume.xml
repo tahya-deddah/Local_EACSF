@@ -3,7 +3,7 @@
   	<category></category>
   	<title>ComputeCSFVolume</title>
   	<description>Compute The EA-CSF Volume For the left or the right hemisphere from a binary image (CSF probability image). Indeed this image is multiplied by the visitation map to remove lateral ventricule  CSF from it. then the volume is computed using the image result of this multiplication </description>
-  	<version>0.1</version>
+  	<version>0.0.5</version>
    	<parameters advanced="false">
 	   	<file>
 	   		<name>VisitationMap</name>

@@ -331,8 +331,8 @@ int main ( int argc, char *argv[] )
         if(lenght_of_steps == 0) {CSFDensity += 0;} 
         else
         {
-          double  rapport = step/lenght_of_steps;            
-          CSFDensity += ((Propability + Propability_next)*rapport)/2.0;
+          double  ratio = step/lenght_of_steps;            
+          CSFDensity += ((Propability + Propability_next)*ratio)/2.0;
           //CSFDensity+= ((Propability + Propability_next)*step)/2.0;  
         }          
       }

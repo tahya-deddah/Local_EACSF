@@ -37,7 +37,6 @@ void CSFScripts::run_EACSF()
 
     //3. WRITE SLURM_JOB
     write_slurm_job();
-
     
 }
 

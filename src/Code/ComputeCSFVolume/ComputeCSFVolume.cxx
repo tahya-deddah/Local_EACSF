@@ -20,46 +20,46 @@ using namespace std;
 int  main(int argc, char** argv) 
 {
 	PARSE_ARGS;
-  	typedef itk::Image<double, 3>    input1Type;
-  	typedef itk::ImageFileReader<input1Type> Reader1Type;
-  	Reader1Type::Pointer reader1 = Reader1Type::New();
-  	reader1->SetFileName(VisitationMap);
+	const unsigned int Dimension = 3;
+	typedef double                      PixelType;
+	typedef itk::Image< PixelType, Dimension > ImageType;
+	typedef itk::ImageFileReader< ImageType >  ReaderType;
 
-  	typedef itk::Image<short, 3>    input2Type;
-  	typedef itk::ImageFileReader<input2Type> Reader2Type;
-  	Reader2Type::Pointer reader2 = Reader2Type::New();
-  	reader2->SetFileName(CSFProbabiltyMap);
+	ReaderType::Pointer reader1 = ReaderType::New();
+	reader1->SetFileName(VisitationMap);
+	reader1->Update();
 
-  	typedef itk::BinaryBallStructuringElement<
-  	input1Type::PixelType,3>                  StructuringElementType;
+	ReaderType::Pointer reader2 = ReaderType::New();
+	reader2->SetFileName(CSFProbabiltyMap);
+	reader2->Update();
+
+  	typedef itk::BinaryBallStructuringElement<ImageType::PixelType,Dimension>                  StructuringElementType;
   	StructuringElementType structuringElement;
   	structuringElement.SetRadius(1);
   	structuringElement.CreateStructuringElement();
 
-	typedef itk::BinaryDilateImageFilter <input1Type, input1Type, StructuringElementType>
-	    BinaryDilateImageFilterType; 
-	BinaryDilateImageFilterType::Pointer dilateFilter
-	    = BinaryDilateImageFilterType::New();
+	typedef itk::BinaryDilateImageFilter <ImageType, ImageType, StructuringElementType> BinaryDilateImageFilterType; 
+	BinaryDilateImageFilterType::Pointer dilateFilter = BinaryDilateImageFilterType::New();
 	dilateFilter->SetInput(reader1->GetOutput());
 	dilateFilter->SetKernel(structuringElement);
 	dilateFilter->SetForegroundValue(1); 
 	dilateFilter->Update();
 
-	typedef itk::MultiplyImageFilter <input1Type, input2Type, input1Type> 
-		MultiplyImageFilterType ;
+	typedef itk::MultiplyImageFilter <ImageType, ImageType, ImageType> MultiplyImageFilterType ;
 	MultiplyImageFilterType::Pointer multiplyfilter = MultiplyImageFilterType::New();
-	multiplyfilter->SetInput1(dilateFilter->GetOutput()); 	
+	multiplyfilter->SetInput1(reader1->GetOutput()); 	
 	multiplyfilter->SetInput2(reader2->GetOutput());
 	multiplyfilter->Update();
 
- 	typedef itk::MinimumMaximumImageCalculator <input1Type> 
-       MinimumMaximumImageCalculatorType ;
+ 	typedef itk::MinimumMaximumImageCalculator <ImageType> MinimumMaximumImageCalculatorType ;
     MinimumMaximumImageCalculatorType::Pointer MinimumMaximumImage = MinimumMaximumImageCalculatorType::New();
     MinimumMaximumImage->SetImage(multiplyfilter->GetOutput());   
     MinimumMaximumImage->ComputeMaximum();
+    std::cout << MinimumMaximumImage->GetMaximum() << std::endl;
+
 
   
-    typedef itk::ImageRegionIterator<input1Type>       IteratorType;
+    typedef itk::ImageRegionIterator<ImageType>       IteratorType;
   	IteratorType      MyIt1(multiplyfilter->GetOutput(), multiplyfilter->GetOutput()->GetRequestedRegion());
 	MyIt1.GoToBegin();
 
@@ -70,15 +70,16 @@ int  main(int argc, char** argv)
 	}
 
 	 // Compute Volume
-	itk::ImageRegionIterator<input1Type> MyIt(multiplyfilter->GetOutput(),multiplyfilter->GetOutput()->GetLargestPossibleRegion());
+	typedef itk::ImageRegionIterator<ImageType>       IteratorType;
+  	IteratorType      MyIt(multiplyfilter->GetOutput(), multiplyfilter->GetOutput()->GetRequestedRegion());
 	MyIt.GoToBegin();
-	int SumOfCSFProbabilities = 0;
+	double SumOfCSFProbabilities = 0;
 	while (!MyIt.IsAtEnd())
 	{	
-		SumOfCSFProbabilities = SumOfCSFProbabilities + MyIt.Get();
+		SumOfCSFProbabilities = SumOfCSFProbabilities + double(MyIt.Get()) ;
 		++MyIt;		
 	}
-	input2Type::SpacingType spacing = multiplyfilter->GetOutput()->GetSpacing();
+	ImageType::SpacingType spacing = multiplyfilter->GetOutput()->GetSpacing();
 	double VolumeOfOneVoxel = spacing[0] * spacing[1] * spacing[2];		
 	double TotalVolume = SumOfCSFProbabilities * VolumeOfOneVoxel;
 	TotalVolume = int(TotalVolume);

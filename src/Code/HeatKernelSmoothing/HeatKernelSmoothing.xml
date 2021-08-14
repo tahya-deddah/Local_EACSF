@@ -3,7 +3,7 @@
   <category></category>
   <title>HeatKernelSmoothing</title>
   <description>Smooth a surface</description>
-  <version></version>
+  <version>0.0.5</version>
    <parameters>
 	   	<file>
 	   		<name>InputSurface</name>
