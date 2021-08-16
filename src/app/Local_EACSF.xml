@@ -2,7 +2,7 @@
 <executable>
   <category>PROJECT</category>
   <title>Local_EACSF</title>
-  <version>0.0.5</version>
+  <version>0.1.5</version>
   <contributor>Tahya Deddah, Martin Styner, Juan Prieto</contributor>
   <description>Local EACSF Quantification</description>
   <parameters advanced="false">

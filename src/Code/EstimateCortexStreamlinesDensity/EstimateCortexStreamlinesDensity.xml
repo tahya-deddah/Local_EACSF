@@ -3,7 +3,7 @@
   <category></category>
   <title>EstimateCortexStreamlinesDensity</title>
   <description>Estimate the CSF density in each vertex of the input polydata</description>
-  <version>0.0.5</version>
+  <version>0.1.5</version>
   <parameters advanced="false">
     <file>
       <name>InputSurfaceFileName</name>

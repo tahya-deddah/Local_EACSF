@@ -3,7 +3,7 @@
   <category></category>
   <title>CreateOuterImage</title>
   <description>Create a binary image from the tissue segmentation by dilating closing and tresholding it. This outer image will be used after for the creation of CSF outer surface </description>
-  <version>0.0.5</version>
+  <version>0.1.5</version>
    <parameters advanced="false">
 	   	<file>
 	   		<name>InputImageFile</name>

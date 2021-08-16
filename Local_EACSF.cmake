@@ -214,7 +214,7 @@ if(UNIX AND NOT APPLE)
 
   install(FILES ${QtWidgets_location} ${QtCore_location} ${QtGui_location} ${QtDBus_location} ${QtX11Extras_location}
     ${Qt5_location}/${QtWidgets_SOFT} ${Qt5_location}/${QtCore_SOFT} ${Qt5_location}/${QtGui_SOFT} ${Qt5_location}/${QtX11Extras_SOFT} ${Qt5_location}/${QtDBus_SOFT}
-    ${Qt5_location}/libQt5XcbQpa.so.5.5.1 ${Qt5_location}/libQt5XcbQpa.so.5
+    #${Qt5_location}/libQt5XcbQpa.so.5.5.1 ${Qt5_location}/libQt5XcbQpa.so.5
     ${Qt5_location}/libicui18n.so.56.1 ${Qt5_location}/libicuuc.so.56.1 ${Qt5_location}/libicudata.so.56.1 ${Qt5_location}/libicui18n.so.56 ${Qt5_location}/libicuuc.so.56 ${Qt5_location}/libicudata.so.56
       DESTINATION lib
       COMPONENT Runtime)

@@ -3,7 +3,7 @@
   <category></category>
   <title>FitPlane</title>
   <description>Fit a mid-sagital plan in the intersection of two input images.  Gives as an output two images without intersection </description>
-  <version>0.0.5</version>
+  <version>0.1.5</version>
    <parameters advanced="false">
 	   	<file>
 	   		<name>input1</name>

@@ -3,7 +3,7 @@
   	<category></category>
   	<title>ComputeAverageMesh</title>
   	<description>Compute the mesh average of two meshs given as inputs </description>
-  	<version>0.0.5</version>
+  	<version>0.1.5</version>
    	<parameters>
 	   	<file>
 	   		<name>inputFilename1</name>

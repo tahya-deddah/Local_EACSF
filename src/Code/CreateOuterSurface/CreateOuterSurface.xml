@@ -3,7 +3,7 @@
     <category></category>
     <title>Create Outer Surface</title>
     <description>Create The CSF outer surface from a binary image (the tissue segmenation dilated)</description>
-    <version>0.0.5</version>
+    <version>0.1.5</version>
     <parameters>
      	<file>
             <name>InputBinaryImage</name>
