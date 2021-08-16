@@ -141,8 +141,8 @@ if(verbose)
 endif()
 
 set(proj ${PRIMARY_PROJECT_NAME}-inner)
-#set(${proj}_INSTALL_PATH "${CMAKE_CURRENT_BINARY_DIR}/${proj}-install")
-set(${proj}_INSTALL_PATH "/tools/Local_EACSF/Local_EACSFv0.1.5")
+set(${proj}_INSTALL_PATH "${CMAKE_CURRENT_BINARY_DIR}/${proj}-install")
+#set(${proj}_INSTALL_PATH "/tools/Local_EACSF/Local_EACSFv0.1.5")
 ExternalProject_Add(${proj}
   DEPENDS ${${PRIMARY_PROJECT_NAME}_DEPENDENCIES}
   DOWNLOAD_COMMAND ""  

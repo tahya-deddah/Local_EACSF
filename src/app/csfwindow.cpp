@@ -19,7 +19,7 @@
 #define Local_EACSF_CONTRIBUTORS "Tahya Deddah, Martin Styner, Juan Prieto"
 #endif
 
-const QString CSFWindow::m_github_url = "https://github.com/tahya-deddah/Local_EACSF";
+const QString CSFWindow::m_github_url = "https://github.com/NIRALUser/Local_EACSF";
 
 CSFWindow::CSFWindow(QWidget *m_parent)
     :QMainWindow(m_parent)
@@ -1086,21 +1086,6 @@ void CSFWindow::on_Compare_clicked()
             tableWidget->setItem( row, 2, new QTableWidgetItem( QString::number( difference * 100, 'f' , 2 ))); 
         }                   
     }
-
-    for( int i = 0; i<tableWidget->columnCount() -1 ; i++)
-    {
-        if(tableWidget->item(0,i) != 0 && tableWidget->item(1,i) != 0)
-        {
-            float diff = tableWidget->item(1,i)->text().toFloat() - tableWidget->item(0,i)->text().toFloat();
-            if (diff > 0 )
-            { 
-                tableWidget->item(1,i)->setBackground(Qt::green);
-            }
-            if (diff < 0 ){ 
-                tableWidget->item(1,i)->setBackground(Qt::red);               
-            }
-        } 
-    }   
 }
 
 void CSFWindow::on_visualize_batch_clicked()
