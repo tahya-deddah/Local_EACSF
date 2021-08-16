@@ -76,8 +76,8 @@ private:
 private slots:
 
     void prc_finished(QProcess *prc, QString outlog_filename, QString errlog_filename, int row);
-    void disp_output(QProcess *prc, QString outlog_filename);
-    void disp_err(QProcess *prc, QString errlog_filename);
+    //void disp_output(QProcess *prc, QString outlog_filename);
+    //void disp_err(QProcess *prc, QString errlog_filename);
 
     //File
     void on_actionSave_Config_File_triggered();

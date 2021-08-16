@@ -3,7 +3,7 @@
   <category></category>
   <title>EditPolyData</title>
   <description>Flip the input Surface</description>
-  <version></version>
+  <version>0.1.5</version>
    <parameters>
       <file>
         <name>InputSurfaceFileName</name>

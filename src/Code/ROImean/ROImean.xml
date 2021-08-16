@@ -3,7 +3,7 @@
   <category></category>
   <title>ROImean</title>
   <description> Compute the EACSF sum and mean by region</description>
-  <version></version>
+  <version>0.1.5</version>
    <parameters>
 	   	<file>
 	   		<name>InputMeasurement</name>
