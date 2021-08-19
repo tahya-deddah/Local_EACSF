@@ -124,7 +124,6 @@ void Execute_One_Case( QJsonObject root_obj)
         prc->waitForFinished(-1);
         prc->close(); 
     }
-
 }
 
 int  main(int argc, char** argv) 
@@ -139,7 +138,15 @@ int  main(int argc, char** argv)
         QJsonObject param_obj = root_obj["parameters"].toObject();
         if(BatchProcessing)
         {
-            QList<QMap<QString, QString>> CSVFile = readCSV(QString::fromStdString(csv_file));    
+            QList<QMap<QString, QString>> CSVFile = readCSV(QString::fromStdString(csv_file));
+            if(!CSVFile.isEmpty())
+            { 
+                QString data_directory = CSVFile[0].value("Output Directory").mid(0, CSVFile[0].value("Output Directory").lastIndexOf("/"));
+                QString OutputCSVFile =  data_directory + QString("/Outputs.csv");
+                QFile file(OutputCSVFile);
+                file.open(QIODevice::WriteOnly | QIODevice::Append);
+                file.close();
+            }     
             for(int i = 0 ; i< CSVFile.size(); i++)
             {
                

@@ -775,7 +775,6 @@ void CSFWindow::updateExecutables(QString exeName, QString path)
 }
 
 
-
 // 4rd Tab -  Smoothing + Cleaning + Server
 void CSFWindow::on_radioButton_slurm_clicked(bool checked)
 {
@@ -839,7 +838,7 @@ void CSFWindow::prc_finished(QProcess *prc, QString outlog_filename, QString err
         cout<<exit_message.toStdString()<<endl;
         QFile file(errlog_filename);
         file.open(QIODevice::WriteOnly | QIODevice::Append);
-        QTextStream out(&file); out <<exit_message;
+        QTextStream out(&file); out << exit_message;
         file.close();
     }  
     if (batch_processing)

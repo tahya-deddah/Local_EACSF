@@ -38,12 +38,12 @@ int  main(int argc, char** argv)
   	structuringElement.SetRadius(1);
   	structuringElement.CreateStructuringElement();
 
-	typedef itk::BinaryDilateImageFilter <ImageType, ImageType, StructuringElementType> BinaryDilateImageFilterType; 
+	/*typedef itk::BinaryDilateImageFilter <ImageType, ImageType, StructuringElementType> BinaryDilateImageFilterType; 
 	BinaryDilateImageFilterType::Pointer dilateFilter = BinaryDilateImageFilterType::New();
 	dilateFilter->SetInput(reader1->GetOutput());
 	dilateFilter->SetKernel(structuringElement);
 	dilateFilter->SetForegroundValue(1); 
-	dilateFilter->Update();
+	dilateFilter->Update();*/
 
 	typedef itk::MultiplyImageFilter <ImageType, ImageType, ImageType> MultiplyImageFilterType ;
 	MultiplyImageFilterType::Pointer multiplyfilter = MultiplyImageFilterType::New();
