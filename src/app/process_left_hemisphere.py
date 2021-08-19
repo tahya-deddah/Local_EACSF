@@ -165,11 +165,13 @@ def main_loop(args):
 
 		##### Compute regional mean and sum of EA-CSF
 		if(args.Compute_regional_CSF_density):
-			call_and_print([args.ROImean, "--InputMeasurement", args.Label + "_LH_" + surface + "_CSF_Density_Final.txt", "--AtlasSurfaceLabeling", args.Left_Atlas_Surface,\
-				"--OutputFileName1", args.Label + "_LH_" + surface + "_CSF_Density_regional_mean.txt","--OutputFileName2", args.Label + "_LH_" + surface + "_CSF_Density_regional_sum.txt"])
 			if(args.Smooth) :
 				call_and_print([args.ROImean, "--InputMeasurement", args.Label + "_LH_" + surface + "_CSF_Density_Final_Smoothed.txt", "--AtlasSurfaceLabeling", args.Left_Atlas_Surface,\
 				"--OutputFileName1", args.Label + "_LH_" + surface + "_CSF_Density_regional_mean.txt", "--OutputFileName2", args.Label + "_LH_" + surface + "_CSF_Density_regional_sum.txt"])
+			else :
+				call_and_print([args.ROImean, "--InputMeasurement", args.Label + "_LH_" + surface + "_CSF_Density_Final.txt", "--AtlasSurfaceLabeling", args.Left_Atlas_Surface,\
+				"--OutputFileName1", args.Label + "_LH_" + surface + "_CSF_Density_regional_mean.txt","--OutputFileName2", args.Label + "_LH_" + surface + "_CSF_Density_regional_sum.txt"])	
+			
 			call_and_print([args.AddScalarstoPolyData, "--InputFile", args.Label + "_LH_" + surface + "_CSF_Density.vtk", "--OutputFile", args.Label + "_LH_" + surface + "_CSF_Density.vtk",\
 			"--ScalarsFile", args.Label + "_LH_" + surface + "_CSF_Density_regional_mean.txt", "--Scalars_Name", 'CSF_Density_Regional_Mean'])
 			call_and_print([args.AddScalarstoPolyData, "--InputFile", args.Label + "_LH_" + surface + "_CSF_Density.vtk", "--OutputFile", args.Label + "_LH_" + surface + "_CSF_Density.vtk",\
