@@ -20,7 +20,6 @@ Requirements : Qt and python
 ```
 mkdir /Local_EACSF-build
 cd Local_EACSF-build
-
 ```
 
 3. Configure the build:
