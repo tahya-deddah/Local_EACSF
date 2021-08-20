@@ -23,13 +23,13 @@ cd Local_EACSF-build
 
 3.Configure the build:
 ```
- cmake ../Local_EACSF  \
+ cmake ../Local_EACSF  
  make 
   
 ```
 4.Open the application by typing the line below :  
 ```
- cd /Local_EACSF-inner-build/bin \
+ cd /Local_EACSF-inner-build/bin 
  ./Local_EACSF
   
 ```
