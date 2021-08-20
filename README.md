@@ -7,14 +7,14 @@ cerbrospinal fluid (EA-CSF).
 
 <h2>Build instructions</h2>
 
-1.Get files from Github:  
+* 1.Get files from Github:  
  ```
  $ git clone https://github.com/NIRALUser/Local_EACSF
  
  ```
  
   
-2.Make an out-of-source build directory: 
+* 2.Make an out-of-source build directory: 
 ```
 mkdir /Local_EACSF-build
 cd Local_EACSF-build
