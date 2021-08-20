@@ -9,21 +9,29 @@ cerbrospinal fluid (EA-CSF).
 
 1.Get files from Github:  
  ```
- git clone https://github.com/NIRALUser/Local_EACSF
+ $ git clone https://github.com/NIRALUser/Local_EACSF
  
  ```
+ 
   
-2.Make an out-of-source build directory:  
-  mkdir /Local_EACSF-build\
-  cd Local_EACSF-build 
+2.Make an out-of-source build directory: 
+```
+mkdir /Local_EACSF-build
+cd Local_EACSF-build
+
+```
+
+3.Configure the build:
+```
+ cmake ../Local_EACSF  \
+ make 
   
-   
-
-
-3.Configure the build:  
-  cmake ../Local_EACSF  \
-  make  
-
+```
 4.Open the application by typing the line below :  
-  cd /Local_EACSF-inner-build/bin \
-  ./Local_EACSF
+```
+ cd /Local_EACSF-inner-build/bin \
+ ./Local_EACSF
+  
+```
+ 
+ 
