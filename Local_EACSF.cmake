@@ -93,7 +93,7 @@ if(CREATE_BUNDLE)
     SET(APPS "\${CMAKE_INSTALL_PREFIX}/${bundle_name}.app")
 
     set(MACOSX_BUNDLE_BUNDLE_NAME "${bundle_name}")
-    set(MACOSX_BUNDLE_INFO_STRING "Local_EACSF: automatic extra axial cerebrospinal fluid segmentation.")
+    set(MACOSX_BUNDLE_INFO_STRING "Local_EACSF: Local quantification of extra axial cerebrospinal fluid.")
     set(MACOSX_BUNDLE_LONG_VERSION_STRING "Local_EACSF version - ${version}")
     set(MACOSX_BUNDLE_SHORT_VERSION_STRING "${version}")
     set(MACOSX_BUNDLE_BUNDLE_VERSION "${version}")
