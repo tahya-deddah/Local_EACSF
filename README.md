@@ -12,7 +12,6 @@ Requirements : Qt and python
 1. Get files from Github:  
  ```
  $ git clone https://github.com/NIRALUser/Local_EACSF
- 
  ```
  
   
